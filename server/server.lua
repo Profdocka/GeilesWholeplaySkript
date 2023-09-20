@@ -1,5 +1,10 @@
 CHARFOLDER = "./../characters"
 VEHFOLDER = "./../vehicles"
+VEHICLE_VARIANT = -1
+PLAYER_VARIANT = 0
+NEUTRAL_VARIANT = 1
+
+NETWORK_ID_SYNC_DELAY = 1000
 
 Charakter = { networkID = 0, name = "JohnDoe", skin = "JohnDoe", faction = "Citizen" }
 Vehikel = { networkID = 1, name = "Sedan", skin = "blackSedan" }
@@ -14,16 +19,17 @@ Players = {}
 Characters = {}
 Vehicles = {}
 FactionsAndMembers = {}
+FactionLeaders = {}
 
 --CheckIfCharacterExists
 --CheckIfVehicleExists
 --DecideWhatToSpawn
 
-RegisterNetEvent("SEv_CheckIfEntityIsKussKult", CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4))
+RegisterNetEvent("SEv_CheckIfEntityIsKussKult", CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4, faction))
 
-CheckIfEntityIsKussKult = function(source, input, variant)
+CheckIfEntityIsKussKult = function(source, input, variant, hasWeapon, vector4, faction)
     if IsKussKultCharacter(input) then
-        TriggerClientEvent("CEv_SpawnCharacter", source, variant, input, hasWeapon, vector4)
+        TriggerClientEvent("CEv_SpawnCharacter", source, variant, input, hasWeapon, vector4, faction)
     elseif IsKussKultVehicle(input) then
         return true
     else
@@ -102,7 +108,7 @@ CreateTableOfSkins = function(tableOfAll, folder)
     return allSkins
 end
 
-LookforRootNameOfSkin = function (skinTable, skinName)
+LookforRootNameOfSkin = function(skinTable, skinName)
     for nameKey, nameValue in ipairs(skinTable) do
         if nameKey == skinName then
             return nameKey
@@ -115,32 +121,71 @@ LookforRootNameOfSkin = function (skinTable, skinName)
     end
 end
 
-OrganizeTableOfFactions = function ()
-    local oldFactionAndMembers = FactionsAndMembers
-    for index, value in ipairs(Players) do
-        if FactionsAndMembers[value.faction] == nil then
-            table.insert(FactionsAndMembers[value.faction], value.name)
+OrganizeTableOfFactions = function()
+    --local oldFactionLeaders = FactionLeaders
+    table.remove(FactionsAndMembers)
+    table.remove(FactionLeaders)
+    FactionsAndMembers = {}
+    --FactionLeaders = {}
+    for _, player in ipairs(Players) do
+        if FactionsAndMembers[player.faction] == nil then
+            FactionsAndMembers[player.faction] = {}
         end
-        
+        table.insert(FactionsAndMembers[player.faction], player.networkID)
+        --[[if FactionLeaders[player.faction] == nil then
+            FactionLeaders[player.faction] = player.networkID
+        end]]--
+    end
+    for _, character in ipairs(Characters) do
+        if FactionsAndMembers[character.faction] == nil then
+            FactionsAndMembers[character.faction] = {}
+        end
+        table.insert(FactionsAndMembers[character.faction], character.networkID)
     end
 end
 
-RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function (variant, name, hasWeapon, faction)
+RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID)
     local skin = LookforRootNameOfSkin(TableOfAllCharacterSkins, name)
+    if variant == PLAYER_VARIANT then
+        local oldFaction = Players[networkID].faction
+        RegisterEntity(variant, networkID, name, skin, faction)
+        FactionLeaders[oldFaction] = nil
+        FactionLeaders[faction] = networkID
+        UpdateFaction(oldFaction, faction)
+    else
+        RegisterEntity(variant, networkID, name, skin, faction)
+    end
+    OrganizeTableOfFactions()
+    Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+    TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, faction, FactionsAndMembers, FactionLeaders)
 end)
 
-RegisterEntity = function (variant, networkID, name, skin, faction)
-    if variant == -1 then
-        --vehicle
-    elseif variant == 0 then
+RegisterEntity = function(variant, networkID, name, skin, faction)
+    if variant == VEHICLE_VARIANT then
+        --vehicles
+        local vehicle = { networkID = networkID, name = name, skin = skin}
+        Vehicles[networkID] = vehicle
+    elseif variant == PLAYER_VARIANT then
         --player
+        local player = { networkID = networkID, name = name, skin = skin, faction = faction }
+        Players[networkID] = player
     else
         --npc
-
-        
-
-        local character = {networkID = networkID, name = name, skin = skin, faction = faction}
+        local character = { networkID = networkID, name = name, skin = skin, faction = faction }
         Characters[networkID] = character
+    end
+end
+
+UpdateFaction = function (oldFaction, newFaction)
+    for _, player in ipairs(Players) do
+        if player.faction == oldFaction then
+            player.faction = newFaction
+        end
+    end
+    for _, character in ipairs(Characters) do
+        if character.faction == oldFaction then
+            character.faction = newFaction
+        end
     end
 end
 --[[

@@ -16,23 +16,22 @@ Citizen.CreateThread(function ()
             local OutputString = GetInputWindowOutput();
             if OutputString ~= nil then
                 Citizen.Wait(sleepThread)
-                TriggerServerEvent("SEv_CheckIfEntityIsKussKult", OutputString, PLAYER_VARIANT, true, GetPlayerCoordsAndHeading())
+                TriggerServerEvent("SEv_CheckIfEntityIsKussKult", OutputString, PLAYER_VARIANT, true, GetPlayerCoordsAndHeading(), OutputString)
                 Citizen.Wait(1000)
             end
         end
     end
 end)
 
-RegisterNetEvent("CEv_SpawnCharacter", function (variant, name, hasWeapon, vector4)
+RegisterNetEvent("CEv_SpawnCharacter", function (variant, name, hasWeapon, vector4, faction)
     local pedHandle = SpawnCharacter(variant, name, hasWeapon, vector4)
 
     local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
     SetNetworkIdExistsOnAllMachines(networkID, true)
 	SetNetworkIdCanMigrate(networkID, true)
 
-    --ServerEvent Für Faction, Name, Skin
+    TriggerServerEvent("SEv_GiveCharacterSkinAndFaction", variant, name, hasWeapon, faction, networkID)
 end)
-
 
 RegisterNetEvent("CEv_ShowNotificationEvent", function(msg)
 	ShowNotification(msg)
