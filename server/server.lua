@@ -3,6 +3,8 @@ VEHFOLDER = "./../vehicles"
 VEHICLE_VARIANT = -1
 PLAYER_VARIANT = 0
 NEUTRAL_VARIANT = 1
+FRIENDLY_VARIANT = 2
+AGGRESSIVE_VARIANT = 3
 
 NETWORK_ID_SYNC_DELAY = 1000
 
@@ -14,6 +16,9 @@ TableOfAllCharacters, TableOfAllCharactersLower = ListAllEntriesInFolder("charac
 TableOfAllVehicles, TableOfAllVehiclesLower = ListAllEntriesInFolder("vehicles")
 TableOfAllCharacterSkins = CreateTableOfSkins(TableOfAllCharacters, "characters")
 TableOfAllVehicleSkins = CreateTableOfSkins(TableOfAllVehicles, "vehicles")
+
+TableOfAllCharactersIndexes = CreateIndexTable(TableOfAllCharactersLower)
+TableOfAllVehiclesIndexes = CreateIndexTable(TableOfAllVehiclesLower)
 
 Players = {}
 Characters = {}
@@ -145,6 +150,7 @@ OrganizeTableOfFactions = function()
 end
 
 RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID)
+    name = GetStandardSpellingOfName(name, TableOfAllCharactersIndexes, TableOfAllCharacters)
     local skin = LookforRootNameOfSkin(TableOfAllCharacterSkins, name)
     if variant == PLAYER_VARIANT then
         local oldFaction = Players[networkID].faction
@@ -157,7 +163,7 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
     end
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-    TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, faction, FactionsAndMembers, FactionLeaders)
+    TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, hasWeapon, source, variant, FactionsAndMembers, FactionLeaders)
 end)
 
 RegisterEntity = function(variant, networkID, name, skin, faction)
@@ -188,9 +194,22 @@ UpdateFaction = function (oldFaction, newFaction)
         end
     end
 end
---[[
-    Character = {networkID, name, skin, faction}
-    Characters[networkID] = Character
 
-    TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, faction)
-]]
+GetPlayerFactionFromSource = function (source)
+    local networkID = NetworkGetNetworkIdFromEntity(GetPlayerPed(GetPlayerFromServerId(source)))
+    return Players[networkID].faction
+end
+
+CreateIndexTable = function (toBeIndexTable)
+    local index = {}
+    for k,v in pairs(toBeIndexTable) do
+        index[v]=k
+    end
+    return index
+end
+
+GetStandardSpellingOfName = function (name, usedTableLower, usedTable)
+    local tempName = string.lower(name)
+    local index = usedTableLower[tempName]
+    return usedTable[index]
+end

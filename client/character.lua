@@ -13,8 +13,9 @@ end
 
 ChooseCharacterSpawnVariant = {
     [PLAYER_VARIANT] = function (modelHash, name, hasWeapon, vector4) return SpawnCharacterAsPlayer(modelHash, name, hasWeapon, vector4) end,
-    [NEUTRAL_VARIANT] = function () 
-    end
+    [NEUTRAL_VARIANT] = function (modelHash, vector4) return SpawnCharacterAsNPC(modelHash, vector4) end,
+    [FRIENDLY_VARIANT] = function (modelHash, vector4) return SpawnCharacterAsNPC(modelHash, vector4) end,
+    [AGGRESSIVE_VARIANT] = function (modelHash, vector4) return SpawnCharacterAsNPC(modelHash, vector4) end,
 }
 
 SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
@@ -25,7 +26,7 @@ SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     local newPlayerPed = GetPlayerPed(PlayerID())
 
     if lastVehicle ~= nil then
-        TaskWarpPedIntoVehicle(newPlayerPed, vehiclePlayerIsIn, seatOfPlayer)
+        TaskWarpPedIntoVehicle(newPlayerPed, lastVehicle, lastSeat)
     end
 
     if IsInvincible then
@@ -33,4 +34,14 @@ SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     end
 
     return newPlayerPed
+end
+
+SpawnCharacterAsNPC = function (modelHash, vector4)
+    local pedHandle = CreatePed(26, modelHash, vector4.x, vector4.y, vector4.z, (vector4[3] - 180.0), true, true)
+	ApplyCharacterModifiers(pedHandle)
+    return pedHandle
+end
+
+ApplyCharacterModifiers = function (pedHandle)
+    SetRagdollBlockingFlags(pedHandle, 1)
 end
