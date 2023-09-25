@@ -30,13 +30,16 @@ FactionLeaders = {}
 --CheckIfVehicleExists
 --DecideWhatToSpawn
 
-RegisterNetEvent("SEv_CheckIfEntityIsKussKult", CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4, faction))
+RegisterNetEvent("SEv_CheckIfEntityIsKussKult", function (source, input, variant, hasWeapon, vector4, faction)
+    CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4, faction)
+end)
 
 CheckIfEntityIsKussKult = function(source, input, variant, hasWeapon, vector4, faction)
     if IsKussKultCharacter(input) then
         TriggerClientEvent("CEv_SpawnCharacter", source, variant, input, hasWeapon, vector4, faction)
     elseif IsKussKultVehicle(input) then
-        return true
+        local networkIDDriver = GetNetworkIDPlayerFromSource(source)
+        TriggerClientEvent("CEv_SpawnVehicle", source, input, networkIDDriver)
     else
         TriggerClientEvent("CEv_ShowNotificationEvent", source,
             "~r~" + input + " existiert nicht im Kuss Kult Universum!")
@@ -150,21 +153,6 @@ TurnVariantToAggressive = function (name, source)
 	end
 end
 
-Checker = function(input, folder)
-    --local path = folder .. "/" .. input .. ".json"
-    local entityName = TableOfAllCharacters[input]
-    if entityName ~= nil then
-        return entityName
-    else
-        entityName = TableOfAllVehicles[input]
-        if entityName ~= nil then
-            return entityName
-        end
-    end
-
-    return nil
-end
-
 ListAllEntriesInFolder = function(folder)
     local resourcePath = GetResourcePath(GetCurrentResourceName()) + "/" + folder + "/"
     local filenames = {}
@@ -239,8 +227,8 @@ OrganizeTableOfFactions = function()
 end
 
 RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID)
-    name = GetStandardSpellingOfName(name, TableOfAllCharactersIndexes, TableOfAllCharacters)
-    local skin = LookforRootNameOfSkin(TableOfAllCharacterSkins, name)
+    local skin = GetStandardSpellingOfName(name, TableOfAllCharactersIndexes, TableOfAllCharacters)
+    name = LookforRootNameOfSkin(TableOfAllCharacterSkins, skin)
     if variant == PLAYER_VARIANT then
         local oldFaction = Players[networkID].faction
         RegisterEntity(variant, networkID, name, skin, faction)
@@ -255,9 +243,15 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
     TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, hasWeapon, source, variant, FactionsAndMembers, FactionLeaders)
 end)
 
+RegisterNetEvent("SEv_RegisterVehicle", function (name, networkID)
+    local skin = GetStandardSpellingOfName(name, TableOfAllVehiclesIndexes, TableOfAllVehicles)
+    name = LookforRootNameOfSkin(TableOfAllVehicleSkins, skin)
+    RegisterEntity(VEHICLE_VARIANT, networkID, name, skin, nil)
+end)
+
 RegisterEntity = function(variant, networkID, name, skin, faction)
     if variant == VEHICLE_VARIANT then
-        --vehicles
+        --vehicle
         local vehicle = { networkID = networkID, name = name, skin = skin}
         Vehicles[networkID] = vehicle
     elseif variant == PLAYER_VARIANT then
@@ -305,4 +299,21 @@ GetStandardSpellingOfName = function (name, usedTableLower, usedTable)
     local tempName = string.lower(name)
     local index = usedTableLower[tempName]
     return usedTable[index]
+end
+
+DropSpecificEntityByName = function (name, source)
+    local isFound, entity = CheckIfCharacterExistsByName(name)
+    if isFound then
+        Characters[entity.networkID] = nil
+        OrganizeTableOfFactions()
+        TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, entity.networkID, FactionsAndMembers, FactionLeaders)
+    else
+        isFound, entity = CheckIfVehicleExistsByName(name)
+        if isFound then
+            Vehicles[entity.networkID] = nil
+            TriggerClientEvent("CEv_DropEntity", -1, VEHICLE_VARIANT, entity.networkID)
+        else
+            TriggerClientEvent("CEv_ShowNotificationEvent", source, "Kein aktiver Charakter/aktives Fahrzeug gefunden!")
+        end
+    end
 end
