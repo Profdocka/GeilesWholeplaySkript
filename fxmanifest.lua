@@ -13,6 +13,10 @@ server_scripts {
 	'server/*.lua'
 }
 
+shared_scripts {
+	'utils.lua'
+}
+
 files {
 	'characters/*.json',
 	'vehicles/*.json',

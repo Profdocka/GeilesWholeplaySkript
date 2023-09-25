@@ -20,7 +20,7 @@ BuildVehicle = function(modelHash, vehicleJson, driver)
 
 	local coords = GetEntityCoords(driver)
 	local heading = GetEntityHeading(driver)
-	local vehHandle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, true, true) --Spawnt das Fahrzeug, versucht es auf den Boden zu stellen und setzt den Spieler in dieses
+	local vehHandle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, true, true)
 	SetVehicleOnGroundProperly(vehHandle);
 	TaskWarpPedIntoVehicle(driver, vehHandle, -1);
 
@@ -35,7 +35,7 @@ VehicleAddons = function(vehHandle, carMis, carColors, carNeon, carExtras, carMo
 	--Sonstiges
 	Mis(vehHandle, carMis)
 
-	--Neonslichter
+	--Neonlichter
 	Neons(vehHandle, carNeon)
 
 	--Extras

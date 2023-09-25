@@ -26,6 +26,10 @@ Citizen.CreateThread(function()
     end
 end)
 
+RegisterNetEvent("CEv_ShowNotificationEvent", function(msg)
+    ShowNotification(msg)
+end)
+
 RegisterNetEvent("CEv_SpawnCharacter", function(variant, name, hasWeapon, vector4, faction)
     local pedHandle = SpawnCharacter(variant, name, hasWeapon, vector4)
 
@@ -87,88 +91,3 @@ RegisterNetEvent("CEv_DropEntity", function(variant, networkID, FactionsAndMembe
         end
     end
 end)
-
-RegisterNetEvent("CEv_ShowNotificationEvent", function(msg)
-    ShowNotification(msg)
-end)
-
-ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer)
-    for faction, factionMembers in ipairs(FactionsAndMembersFromServer) do
-        local u, factionHash = AddRelationshipGroup(faction)
-        local factionLeader = FactionLeadersFromServer[faction]
-        local squad = nil
-        if factionLeader ~= nil then
-            if TryForNetworkIDAvailability(factionLeader) then
-                local pedHandleLeader = NetworkGetEntityFromNetworkId(factionLeader)
-                if IsPedInGroup(pedHandleLeader) then
-                    RemoveGroup(GetPedGroupIndex(pedHandleLeader))
-                end
-                squad = CreateGroup()
-                SetPedAsGroupMember(pedHandleLeader, squad)
-                SetPedAsGroupLeader(pedHandleLeader, squad)
-            end
-        end
-        for _, factionMember in ipairs(factionMembers) do
-            if TryForNetworkIDAvailability(factionMember) then
-                local pedHandle = NetworkGetEntityFromNetworkId(factionMember)
-                SetPedRelationshipGroupHash(pedHandle, factionHash)
-                --if IsPedInGroup(pedHandle) then
-                --    RemoveGroup(GetPedGroupIndex(pedHandle))
-                --end
-                if squad ~= nil and factionMember ~= factionLeader then
-                    SetPedAsGroupMember(pedHandle, squad)
-                end
-            end
-        end
-    end
-end
-
-RemoveFactions = function(FactionsTable)
-    for factionKey, _ in ipairs(FactionsTable) do
-        local factionHash = AddRelationshipGroup(factionKey)
-        RemoveRelationshipGroup(factionHash)
-    end
-end
-
-AutomaticlyApplyRelationshipBetweenAllPlayers = function(FactionLeadersFromServer)
-    for _, networkID in ipairs(FactionLeadersFromServer) do
-        if TryForNetworkIDAvailability(networkID) then
-            local player1Handle = NetworkGetEntityFromNetworkId(networkID)
-            for _, otherPnetworkID in ipairs(FactionLeadersFromServer) do
-                if networkID ~= otherPnetworkID and TryForNetworkIDAvailability(otherPnetworkID) then
-                    local player2Handle = NetworkGetEntityFromNetworkId(otherPnetworkID)
-                    SetRelationshipBetweenGroups(3, GetPedRelationshipGroupHash(player1Handle),
-                        GetPedRelationshipGroupHash(player2Handle))
-                end
-            end
-        end
-    end
-end
-
-TryForNetworkIDAvailability = function(networkID)
-    local tries = 5
-    for i = 1, tries, 1 do
-        if NetworkDoesNetworkIdExist(networkID) then
-            return true
-        else
-            Citizen.Wait(1000)
-        end
-    end
-    return false
-end
-
-ShowNotification = function(msg)
-    SetNotificationTextEntry('STRING')
-    AddTextComponentSubstringPlayerName(msg)
-    DrawNotification(false, true)
-end
-
-GetPlayerCoordsAndHeading = function(serverID, offset)
-    local playerPed = GetPlayerPed(serverID)
-    local positionData = {}
-    local coords = GetOffsetFromEntityInWorldCoords(playerPed, 0.0, (0.0 + offset), 0.0)
-    local heading = GetEntityHeading(playerPed)
-    table.insert(positionData, coords)
-    table.insert(positionData, heading)
-    return positionData
-end
