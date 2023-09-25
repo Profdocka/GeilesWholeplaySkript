@@ -44,3 +44,27 @@ RegisterCommand("SpawnGegner", function(source, args, raw)
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
 end)
+
+RegisterCommand("VariantNeutral", function (source, args)
+	if args[1] ~= nil then
+		TurnVariantToNeutral(args[1], source)
+	else
+		TriggerClientEvent("ShowNotificationEvent", source, "Da fehlt was!")
+	end
+end)
+
+RegisterCommand("VariantFriendly", function (source, args)
+	if args[1] ~= nil then
+		TurnVariantToFriendly(args[1], source)
+	else
+		TriggerClientEvent("ShowNotificationEvent", source, "Da fehlt was!")
+	end
+end)
+
+RegisterCommand("VariantAggressive", function (source, args)
+	if args[1] ~= nil then
+		TurnVariantToAggressive(args[1], source)
+	else
+		TriggerClientEvent("ShowNotificationEvent", source, "Da fehlt was!")
+	end
+end)

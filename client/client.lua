@@ -41,10 +41,22 @@ RegisterNetEvent("CEv_GiveCharacterSkinAndRole", function(networkID, skin, hasWe
         local pedJson = Looker(skin, "characters")
         Cosmetics(pedHandle, pedJson, hasWeapon)
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
-        if variant == AGGRESSIVE_VARIANT then
+        if variant == PLAYER_VARIANT then
+            AutomaticlyApplyRelationshipBetweenAllPlayers(FactionLeadersFromServer)
+        elseif variant == AGGRESSIVE_VARIANT then
             local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
             TaskCombatPed(pedHandle, playerHandle, 0, 16)
         end
+    end
+end)
+
+RegisterNetEvent("CEv_GiveRoles", function (FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant)
+    ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
+    if variant == AGGRESSIVE_VARIANT and TryForNetworkIDAvailability(networkIDEmitter) and TryForNetworkIDAvailability(networkIDReciever) then
+        local recieverHandle = NetworkGetEntityFromNetworkId(networkIDReciever)
+        local emitterHandle = NetworkGetEntityFromNetworkId(networkIDEmitter)
+        --ClearPedTasks(recieverHandle)
+        TaskCombatPed(recieverHandle, emitterHandle, 0, 16)
     end
 end)
 

@@ -61,6 +61,95 @@ IsKussKultVehicle = function(input)
     end
 end
 
+CheckIfPlayerExistsByName = function (input)
+    if TableOfAllCharactersLower[string.lower(input)] == nil then
+        return false
+    end
+    for _, player in ipairs(Players) do
+        if string.lower(player.name) == string.lower(input) then
+            return true, player
+        end
+    end
+    return false
+end
+
+CheckIfCharacterExistsByName = function (input)
+    if TableOfAllCharactersLower[string.lower(input)] == nil then
+        return false
+    end
+    for _, character in ipairs(Characters) do
+        if string.lower(character.name) == string.lower(input) then
+            return true, character
+        end
+    end
+    return false
+end
+
+CheckIfVehicleExistsByName = function (input)
+    if TableOfAllVehiclesLower[string.lower(input)] == nil then
+        return false
+    end
+    for _, vehicle in ipairs(Vehicles) do
+        if string.lower(vehicle.name) == string.lower(input) then
+            return true, vehicle
+        end
+    end
+    return false
+end
+
+TurnVariantToNeutral = function (name, source)
+	local networkIDSource = GetNetworkIDPlayerFromSource(source)
+	--local IsFound, character = CheckIfPlayerExistsByName(name)
+	--if (IsFound) then
+        --MUSS NOCH ÜBERPRÜFT WERDEN. LASS ICH VIELLEICHT WEG. Anderung wird auf einen selber gemacht
+      --  if character.networkID ~= networkIDSource and character.faction == Players[networkIDSource].faction then
+        --    local key = character.networkID
+          --  local newCharacter = {networkID = character.networkID, name = character.name, skin = character.skin, faction = character.name}
+            --Players[key] = newCharacter
+      --  end
+		--return
+	--end
+	local isFound, character = CheckIfCharacterExistsByName(name)
+	if (isFound) then
+		local key = character.networkID
+        if character.faction == Players[networkIDSource].faction then
+            local newCharacter = {networkID = character.networkID, name = character.name, skin = character.skin, faction = character.name}
+            Characters[key] = newCharacter
+            OrganizeTableOfFactions()
+        end
+        TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, NEUTRAL_VARIANT)
+	end
+end
+
+TurnVariantToFriendly = function (name, source)
+    local networkIDSource = GetNetworkIDPlayerFromSource(source)
+    local isFound, character = CheckIfCharacterExistsByName(name)
+    if (isFound) then
+		local key = character.networkID
+        if character.faction ~= Players[networkIDSource].faction then
+            local newCharacter = {networkID = character.networkID, name = character.name, skin = character.skin, faction = Players[networkIDSource].faction}
+            Characters[key] = newCharacter
+            OrganizeTableOfFactions()
+            TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, FRIENDLY_VARIANT)
+        end
+	end
+end
+
+TurnVariantToAggressive = function (name, source)
+	local networkIDSource = GetNetworkIDPlayerFromSource(source)
+	local isFound, character = CheckIfCharacterExistsByName(name)
+	if (isFound) then
+		local key = character.networkID
+        if character.faction == Players[networkIDSource].faction then
+            local newCharacter = {networkID = character.networkID, name = character.name, skin = character.skin, faction = character.name}
+            Characters[key] = newCharacter
+            OrganizeTableOfFactions()
+        end
+        --Aggressivität?
+        TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, AGGRESSIVE_VARIANT)
+	end
+end
+
 Checker = function(input, folder)
     --local path = folder .. "/" .. input .. ".json"
     local entityName = TableOfAllCharacters[input]
@@ -196,8 +285,12 @@ UpdateFaction = function (oldFaction, newFaction)
 end
 
 GetPlayerFactionFromSource = function (source)
-    local networkID = NetworkGetNetworkIdFromEntity(GetPlayerPed(GetPlayerFromServerId(source)))
+    local networkID = GetNetworkIDPlayerFromSource(source)
     return Players[networkID].faction
+end
+
+GetNetworkIDPlayerFromSource = function (source)
+    return NetworkGetNetworkIdFromEntity(GetPlayerPed(GetPlayerFromServerId(source)))
 end
 
 CreateIndexTable = function (toBeIndexTable)
