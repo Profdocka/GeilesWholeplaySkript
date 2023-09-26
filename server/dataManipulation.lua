@@ -76,6 +76,23 @@ CheckIfEntityIsKussKult = function(source, input, variant, hasWeapon, vector4, f
     end
 end
 
+CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vector4)
+    local inputLower = string.lower(input)
+    local Group = AllFactions[inputLower]
+    if Group ~= nil then
+        local variant = GetVariantFromInput(variantInput)
+        local factionName = nil
+        if variant == FRIENDLY_VARIANT then
+            factionName = GetPlayerFactionFromSource(source)
+        else
+            factionName = inputLower
+        end
+        --TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
+    else
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" + input + " existiert nicht als Fraktion im Kuss Kult Universum!")
+    end
+end
+
 DropSpecificEntityByName = function(name, source)
     local isFound, entity = CheckIfCharacterExistsByName(name)
     if isFound then
@@ -91,6 +108,21 @@ DropSpecificEntityByName = function(name, source)
             TriggerClientEvent("CEv_ShowNotificationEvent", source, "Kein aktiver Charakter/aktives Fahrzeug gefunden!")
         end
     end
+end
+
+DropAllCharacters = function ()
+    local tempCharacters = Characters
+    Characters = nil
+    Characters = {}
+    OrganizeTableOfFactions()
+    TriggerClientEvent("CEv_DropAllCharacters", -1, tempCharacters, FactionsAndMembers, FactionLeaders)
+end
+
+DropAllVehicles = function()
+    local tempVehicles = Vehicles
+    Vehicles = nil
+    Vehicles = {}
+    TriggerClientEvent("CEv_DropAllCharacters", -1, tempVehicles)
 end
 
 CheckIfPlayerExistsByName = function (input)

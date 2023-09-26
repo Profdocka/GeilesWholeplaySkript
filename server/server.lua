@@ -47,6 +47,19 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
         FactionsAndMembers, FactionLeaders)
 end)
 
+RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function (GroupNetwork, variant, hasWeapon, faction)
+    local skin = nil
+    local name = nil
+    for _, character in ipairs(GroupNetwork) do
+        skin = GetStandardSpellingOfName(character.name, TableOfAllCharactersIndexes, TableOfAllCharacters)
+        name = LookforRootNameOfSkin(TableOfAllCharacterSkins, skin)
+        RegisterEntity(variant, character.networkID, name, skin, faction)
+    end
+    OrganizeTableOfFactions()
+    Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+    TriggerClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, GroupNetwork, hasWeapon, source, variant, FactionsAndMembers, FactionLeaders)
+end)
+
 RegisterNetEvent("SEv_RegisterVehicle", function(name, networkID)
     local skin = GetStandardSpellingOfName(name, TableOfAllVehiclesIndexes, TableOfAllVehicles)
     name = LookforRootNameOfSkin(TableOfAllVehicleSkins, skin)

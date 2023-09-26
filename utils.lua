@@ -118,3 +118,13 @@ GetStandardSpellingOfName = function(name, usedTableLower, usedTable)
     local index = usedTableLower[tempName]
     return usedTable[index]
 end
+
+GetVariantFromInput = function (variantInput)
+    if (variantInput == "buddy") then
+		return FRIENDLY_VARIANT
+	elseif (variantInput == "gegner") then
+		return AGGRESSIVE_VARIANT
+	else
+		return NEUTRAL_VARIANT
+	end
+end
