@@ -1,0 +1,78 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "-730659924",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0xd47303ac",
+    "InitialHandle": "665095",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "-1,-1",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "1,1",
+        "_1": "0,0",
+        "_2": "0,0",
+        "_3": "0,0",
+        "_4": "1,2",
+        "_5": "0,0",
+        "_6": "0,0",
+        "_7": "0,0",
+        "_8": "2,0",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "1,1"
+      },
+	  "Weapon": "weapon_knife",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0xfade4843",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "16960",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "false",
+    "IsBulletProof": "false",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "false",
+    "IsFireProof": "false",
+    "IsMeleeProof": "false",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "-876.636841",
+      "Y": "134.750336",
+      "Z": "59.7568893",
+      "Pitch": "0",
+      "Roll": "-0",
+      "Yaw": "103.995071"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

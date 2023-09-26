@@ -1,0 +1,78 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "-1320879687",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0xb144f9b9",
+    "InitialHandle": "1061127",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "255",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "1,0",
+        "_1": "0,0",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "2,2",
+        "_1": "0,0",
+        "_2": "0,0",
+        "_3": "1,0",
+        "_4": "0,0",
+        "_5": "0,0",
+        "_6": "0,0",
+        "_7": "0,0",
+        "_8": "0,0",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "0,0"
+      },
+	  "Weapon": "weapon_pumpshotgun_mk2",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0xa49e591c",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "16960",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "false",
+    "IsBulletProof": "false",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "false",
+    "IsFireProof": "false",
+    "IsMeleeProof": "false",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "448.055542",
+      "Y": "-977.276611",
+      "Z": "30.6867142",
+      "Pitch": "0",
+      "Roll": "-0",
+      "Yaw": "-170.265625"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

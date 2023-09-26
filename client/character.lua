@@ -19,18 +19,18 @@ ChooseCharacterSpawnVariant = {
 }
 
 SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
-    local previousPlayerPed = GetPlayerPed(PlayerID())
+    local previousPlayerPed = GetPlayerPed(PlayerId())
     local lastVehicle, lastSeat = GetCurrentVehicleAndSeatNumber(previousPlayerPed)
 
-    SetPlayerModel(PlayerID(), modelHash)
-    local newPlayerPed = GetPlayerPed(PlayerID())
+    SetPlayerModel(PlayerId(), modelHash)
+    local newPlayerPed = GetPlayerPed(PlayerId())
 
     if lastVehicle ~= nil then
         TaskWarpPedIntoVehicle(newPlayerPed, lastVehicle, lastSeat)
     end
 
     if IsInvincible then
-        SetPlayerInvincibleKeepRagdollEnabled(PlayerID(), true)
+        SetPlayerInvincibleKeepRagdollEnabled(PlayerId(), true)
     end
 
     return newPlayerPed

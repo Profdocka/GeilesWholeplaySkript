@@ -1,0 +1,206 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "1885233650",
+    "IsSkinOf": "BensonBotrob",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0x705e61f2",
+    "InitialHandle": "349466",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0x9d07f764",
+      "PedProps": {
+        "_0": "50,0",
+        "_1": "0,0",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "9,0",
+        "_3": "42,0",
+        "_4": "4,0",
+        "_5": "0,0",
+        "_6": "60,0",
+        "_7": "0,0",
+        "_8": "27,1",
+        "_9": "19,6",
+        "_10": "0,0",
+        "_11": "166,2"
+      },
+      "HeadFeatures": {
+        "WasInArray": "true",
+        "ShapeAndSkinTone": {
+          "ShapeFatherId": "26",
+          "ShapeMotherId": "3",
+          "ShapeOverrideId": "0",
+          "ToneFatherId": "12",
+          "ToneMotherId": "0",
+          "ToneOverrideId": "1",
+          "ShapeVal": "0",
+          "ToneVal": "0",
+          "OverrideVal": "0",
+          "IsP": "1"
+        },
+        "HairColour": "18",
+        "HairColourStreaks": "17",
+        "EyeColour": "6",
+        "FacialFeatures": {
+          "_0": "0.000000",
+          "_1": "0.000000",
+          "_2": "0.050000",
+          "_3": "-0.050000",
+          "_4": "0.000000",
+          "_5": "0.100000",
+          "_6": "0.000000",
+          "_7": "-0.300000",
+          "_8": "0.300000",
+          "_9": "0.250000",
+          "_10": "0.250000",
+          "_11": "0.000000",
+          "_12": "0.050000",
+          "_13": "0.650000",
+          "_14": "-0.000000",
+          "_15": "-0.150000",
+          "_16": "-1.000000",
+          "_17": "1.000000",
+          "_18": "0.400000",
+          "_19": "0.750000"
+        },
+        "Overlays": {
+          "_0": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_1": {
+            "index": "27",
+            "colour": "18",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_2": {
+            "index": "22",
+            "colour": "18",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_3": {
+            "index": "13",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "0.57000041"
+          },
+          "_4": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_5": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_6": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_7": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_8": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_9": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_10": {
+            "index": "0",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_11": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_12": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          }
+        }
+      },
+      "TattooLogoDecals": {
+        ":anonymous": {
+          "collection": "0xffe0288b",
+          "value": "0x736ee103"
+        }
+      },
+	  "Weapon": "weapon_combatmg",
+      "DamagePacks": null,
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0xfade4843",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "16960",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "true",
+    "IsBulletProof": "false",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "true",
+    "IsFireProof": "false",
+    "IsMeleeProof": "true",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "19.2304401",
+      "Y": "-1739.20679",
+      "Z": "29.3029537",
+      "Pitch": "2.33732244e-05",
+      "Roll": "1.38032183e-10",
+      "Yaw": "0.000344096188"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

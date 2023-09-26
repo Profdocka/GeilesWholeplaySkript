@@ -20,7 +20,7 @@ Citizen.CreateThread(function()
             if OutputString ~= nil then
                 Citizen.Wait(sleepThread)
                 TriggerServerEvent("SEv_CheckIfEntityIsKussKult", OutputString, PLAYER_VARIANT, true,
-                    GetPlayerCoordsAndHeading(PlayerID(), 0.0), OutputString)
+                    GetPlayerCoordsAndHeading(PlayerId(), 0.0), OutputString)
                 Citizen.Wait(1000)
             end
         end

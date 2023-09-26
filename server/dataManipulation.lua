@@ -87,7 +87,7 @@ CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vec
         else
             factionName = inputLower
         end
-        --TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
+        TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
     else
         TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" + input + " existiert nicht als Fraktion im Kuss Kult Universum!")
     end
