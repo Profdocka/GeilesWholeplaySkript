@@ -1,4 +1,5 @@
 RegisterEntity = function(variant, networkID, name, skin, faction)
+    print("Es wird etwas regestriert: " .. networkID .. ", " .. name .. ", " .. skin)
     if variant == VEHICLE_VARIANT then
         --vehicle
         local vehicle = { networkID = networkID, name = name, skin = skin}
@@ -15,16 +16,19 @@ RegisterEntity = function(variant, networkID, name, skin, faction)
 end
 
 ListAllEntriesInFolder = function(folder)
-    local resourcePath = GetResourcePath(GetCurrentResourceName()) + "/" + folder + "/"
+    local resourcePath = GetResourcePath(GetCurrentResourceName()) .. "/" .. folder .. "/"
     local filenames = {}
     local filesnamesLower = {}
 
     for filename in io.popen('dir "' .. resourcePath .. '" /b'):lines() do
         if filename:match("%.json$") then
             filename = filename:gsub("%.json$", "")
-            table.insert(filenames, filename)
+            --table.insert(filenames, filename)
+            filenames[filename] = filename
+            --print("Name: " .. filename)
             local filenameLower = string.lower(filename)
-            table.insert(filesnamesLower, filenameLower)
+            --table.insert(filesnamesLower, filenameLower)
+            filesnamesLower[filenameLower] = filenameLower
         end
     end
 
@@ -33,15 +37,30 @@ end
 
 CreateTableOfSkins = function(tableOfAll, folder)
     local allSkins = {}
-    for _, filename in ipairs(tableOfAll) do
+    --print("Hi")
+    --print(tableOfAll["WernerWrack"])
+    for _, filename in pairs(tableOfAll) do
         local fileContent = Looker(filename, folder)
-
+        --print("Mein Filecontent")
         if fileContent then
-            local rootEntity = fileContent.OutfitPedData.IsSkinOf
+            local rootEntity
+            if folder == CHARFOLDER then
+                rootEntity = fileContent.OutfitPedData.IsSkinOf
+            else
+                rootEntity = fileContent.Vehicle.IsSkinOf
+            end
             if rootEntity ~= nil then
+                --print("Der Hinzugefügte Skin: " .. filename)
+                if allSkins[rootEntity] == nil then
+                    allSkins[rootEntity] = {}
+                end
                 table.insert(allSkins[rootEntity], filename)
             else
-                table.insert(allSkins, filename)
+                --print("Der rootEntity Name: " .. filename)
+                --table.insert(allSkins, filename)
+                if allSkins[filename] == nil then
+                    allSkins[filename] = {}
+                end
             end
         else
             print("Fehler beim Laden der Datei: " .. filename)
@@ -52,11 +71,13 @@ CreateTableOfSkins = function(tableOfAll, folder)
 end
 
 LookforRootNameOfSkin = function(skinTable, skinName)
-    for nameKey, nameValue in ipairs(skinTable) do
+    --print("Der Name des Skins: " .. skinName)
+    for nameKey, nameValue in pairs(skinTable) do
+        --print("Name Key: " .. nameKey)
         if nameKey == skinName then
             return nameKey
         end
-        for skinKey, skinValue in ipairs(nameValue) do
+        for skinKey, skinValue in pairs(nameValue) do
             if skinValue == skinName then
                 return nameKey
             end
@@ -72,11 +93,11 @@ CheckIfEntityIsKussKult = function(source, input, variant, hasWeapon, vector4, f
         TriggerClientEvent("CEv_SpawnVehicle", source, input, networkIDDriver)
     else
         TriggerClientEvent("CEv_ShowNotificationEvent", source,
-            "~r~" + input + " existiert nicht im Kuss Kult Universum!")
+            "~r~" .. input .. " existiert nicht im Kuss Kult Universum!")
     end
 end
 
-CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vector4)
+CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vector4, exceptionTarget)
     local inputLower = string.lower(input)
     local Group = AllFactions[inputLower]
     if Group ~= nil then
@@ -87,9 +108,15 @@ CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vec
         else
             factionName = inputLower
         end
+        for i, name in pairs(Group) do
+            --print("Mitglieder der Gruppe: " .. name)
+            if name == exceptionTarget then
+                table.remove(Group, i)
+            end
+        end
         TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
     else
-        TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" + input + " existiert nicht als Fraktion im Kuss Kult Universum!")
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. input .. " existiert nicht als Fraktion im Kuss Kult Universum!")
     end
 end
 
@@ -98,7 +125,7 @@ DropSpecificEntityByName = function(name, source)
     if isFound then
         Characters[entity.networkID] = nil
         OrganizeTableOfFactions()
-        TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, entity.networkID, FactionsAndMembers, FactionLeaders)
+        TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, entity.networkID, FactionsAndMembers, FactionLeaders, Players)
     else
         isFound, entity = CheckIfVehicleExistsByName(name)
         if isFound then
@@ -115,21 +142,21 @@ DropAllCharacters = function ()
     Characters = nil
     Characters = {}
     OrganizeTableOfFactions()
-    TriggerClientEvent("CEv_DropAllCharacters", -1, tempCharacters, FactionsAndMembers, FactionLeaders)
+    TriggerClientEvent("CEv_DropAllCharacters", -1, tempCharacters, FactionsAndMembers, FactionLeaders, Players)
 end
 
 DropAllVehicles = function()
     local tempVehicles = Vehicles
     Vehicles = nil
     Vehicles = {}
-    TriggerClientEvent("CEv_DropAllCharacters", -1, tempVehicles)
+    TriggerClientEvent("CEv_DropAllCars", -1, tempVehicles)
 end
 
 CheckIfPlayerExistsByName = function (input)
     if TableOfAllCharactersLower[string.lower(input)] == nil then
         return false
     end
-    for _, player in ipairs(Players) do
+    for _, player in pairs(Players) do
         if string.lower(player.name) == string.lower(input) then
             return true, player
         end
@@ -141,7 +168,7 @@ CheckIfCharacterExistsByName = function (input)
     if TableOfAllCharactersLower[string.lower(input)] == nil then
         return false
     end
-    for _, character in ipairs(Characters) do
+    for _, character in pairs(Characters) do
         if string.lower(character.name) == string.lower(input) then
             return true, character
         end
@@ -153,10 +180,14 @@ CheckIfVehicleExistsByName = function (input)
     if TableOfAllVehiclesLower[string.lower(input)] == nil then
         return false
     end
-    for _, vehicle in ipairs(Vehicles) do
+    for _, vehicle in pairs(Vehicles) do
         if string.lower(vehicle.name) == string.lower(input) then
             return true, vehicle
         end
     end
     return false
+end
+
+ListAllActiveForClient = function (source)
+    TriggerClientEvent("CEv_ListAll", source, Players, Characters, Vehicles)
 end

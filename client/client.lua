@@ -16,7 +16,7 @@ Citizen.CreateThread(function()
     local sleepThread = 5
     while true do
         if IsControlJustPressed(0, 168) then
-            local OutputString = GetInputWindowOutput();
+            local OutputString = GetInputWindowOutput("Name des Kuss Kult Charakters/Fahrzeugs");
             if OutputString ~= nil then
                 Citizen.Wait(sleepThread)
                 TriggerServerEvent("SEv_CheckIfEntityIsKussKult", OutputString, PLAYER_VARIANT, true,
@@ -24,7 +24,31 @@ Citizen.CreateThread(function()
                 Citizen.Wait(1000)
             end
         end
+        Citizen.Wait(sleepThread)
     end
+end)
+
+---DebugThread
+Citizen.CreateThread(function()
+    while true do
+        local sleepThread = 5
+        if IsControlJustPressed(0, 214) then
+            --TriggerServerEvent("SEv_ListAll", GetPlayerServerId(PlayerId()))
+            TriggerServerEvent("SEv_StopAllCharacters", GetPlayerServerId(PlayerId()))
+            ShowNotification("Alle Charaktere gestoppt!")
+            Citizen.Wait(2000)
+        end
+        Citizen.Wait(sleepThread)
+    end
+end)
+
+AddEventHandler("playerSpawned", function()
+    Citizen.Wait(2000)
+    TriggerServerEvent("SEv_PlayerSpawned", GetPlayerServerId(PlayerId()))
+end)
+
+RegisterNetEvent("CEv_ListAll", function(_Players, _Characters, _Vehicles)
+    ListAllOnClient(_Players, _Characters, _Vehicles)
 end)
 
 RegisterNetEvent("CEv_ShowNotificationEvent", function(msg)
@@ -32,6 +56,9 @@ RegisterNetEvent("CEv_ShowNotificationEvent", function(msg)
 end)
 
 RegisterNetEvent("CEv_SpawnCharacter", function(variant, name, hasWeapon, vector4, faction)
+    if vector4 == nil then
+        vector4 = GetPlayerCoordsAndHeading(PlayerId(), 3.0)
+    end
     local pedHandle = SpawnCharacter(variant, name, hasWeapon, vector4)
 
     local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
@@ -61,13 +88,17 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
 
         local characterNetwork = { networkID = networkID, name = characterName }
         GroupNetwork[networkID] = characterNetwork
+        --print("Mitglied der Gruppe: " ..
+        --GroupNetwork[networkID].networkID .. " mit Name " .. GroupNetwork[networkID].name)
     end
-    --TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction)
+    TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction)
 end)
 
 RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
     if TryForNetworkIDAvailability(networkIDDriver) then
-        local driverHandle = NetworkGetNetworkIdFromEntity(networkIDDriver)
+        --print("Die untersuchte NetworkID: " .. networkIDDriver)
+        local driverHandle = NetworkGetEntityFromNetworkId(networkIDDriver)
+        --print("Das Ergebnis " .. driverHandle)
         local vehHandle = SpawnVehicle(name, driverHandle)
 
         local networkID = NetworkGetNetworkIdFromEntity(vehHandle)
@@ -79,80 +110,133 @@ RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
 end)
 
 RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
-    function(networkID, skin, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer)
+    function(networkID, skin, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         if TryForNetworkIDAvailability(networkID) then
             local pedHandle = NetworkGetEntityFromNetworkId(networkID)
-            local pedJson = Looker(skin, "characters")
+            --print("NetworkID: " .. networkID)
+            --print("Mein Skin: " .. skin)
+            local pedJson = Looker(skin, CHARFOLDER)
             Cosmetics(pedHandle, pedJson, hasWeapon)
-            ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
+            ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
             if variant == PLAYER_VARIANT then
+                --print("Hier wollen Freunde entstehen!")
                 AutomaticlyApplyRelationshipBetweenAllPlayers(FactionLeadersFromServer)
             elseif variant == AGGRESSIVE_VARIANT then
                 local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
                 TaskCombatPed(pedHandle, playerHandle, 0, 16)
+                if PlayersFromServer[networkID] == nil then
+                    SetBlipAsFriendly(GetBlipFromEntity(pedHandle), false)
+                    SetBlipColour(GetBlipFromEntity(pedHandle), 49)
+                end
             end
         end
     end)
 
 RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
-    function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer)
+    function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         local pedHandle = nil
         local pedJson = nil
-        for _, character in ipairs(GroupNetwork) do
+        for _, character in pairs(GroupNetwork) do
             if TryForNetworkIDAvailability(character.networkID) then
                 pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
-                pedJson = Looker(skin, CHARFOLDER)
+                pedJson = Looker(character.name, CHARFOLDER)
                 Cosmetics(pedHandle, pedJson, hasWeapon)
             end
         end
-        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
+        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         if variant == AGGRESSIVE_VARIANT then
             local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
             TaskCombatPed(pedHandle, playerHandle, 0, 16)
+            if PlayersFromServer[NetworkGetNetworkIdFromEntity(pedHandle)] == nil then
+                SetBlipAsFriendly(GetBlipFromEntity(pedHandle), false)
+                SetBlipColour(GetBlipFromEntity(pedHandle), 49)
+            end
         end
     end)
 
 RegisterNetEvent("CEv_GiveRoles",
-    function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant)
-        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
+    function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant, PlayersFromServer)
+        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         if variant == AGGRESSIVE_VARIANT and TryForNetworkIDAvailability(networkIDEmitter) and TryForNetworkIDAvailability(networkIDReciever) then
             local recieverHandle = NetworkGetEntityFromNetworkId(networkIDReciever)
             local emitterHandle = NetworkGetEntityFromNetworkId(networkIDEmitter)
             --ClearPedTasks(recieverHandle)
             TaskCombatPed(recieverHandle, emitterHandle, 0, 16)
+            --print("playerHandle: " .. emitterHandle)
+            --print("PlayerPedId: " .. PlayerPedId())
+            if PlayersFromServer[networkIDReciever] == nil then
+                --print("Bekommt einen Bösen Blip: " .. networkIDReciever)
+                SetBlipColour(GetBlipFromEntity(recieverHandle), 59)
+                SetBlipAsFriendly(GetBlipFromEntity(recieverHandle), false)
+            end
         end
     end)
 
-RegisterNetEvent("CEv_DropEntity", function(variant, networkID, FactionsAndMembersFromServer, FactionLeadersFromServer)
+RegisterNetEvent("CEv_DropEntity", function(variant, networkID, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     if TryForNetworkIDAvailability(networkID) then
         local handle = NetworkGetEntityFromNetworkId(networkID)
         if variant == NEUTRAL_VARIANT then
             DeletePed(handle)
-            ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
+            ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         else
             DeleteVehicle(handle)
         end
     end
 end)
 
-RegisterNetEvent("CEv_DropAllCharacters", function (Characters, FactionsAndMembersFromServer, FactionLeadersFromServer)
+RegisterNetEvent("CEv_DropAllCharacters", function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     local handle = nil
-    for _, character in ipairs(Characters) do
+    local counter = 0
+    for _, character in pairs(Characters) do
         if TryForNetworkIDAvailability(character.networkID) then
             handle = NetworkGetEntityFromNetworkId(character.networkID)
             DeletePed(handle)
+            counter = counter + 1
         end
     end
-    ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer)
+    print("Deleted " .. counter .. " Character(s)")
+    ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
 end)
 
-RegisterNetEvent("CEv_DropAllCars", function (Vehicles)
+RegisterNetEvent("CEv_DropAllCars", function(Vehicles)
     local handle = nil
-    for _, vehicle in ipairs(Vehicles) do
+    local counter = 0
+    for _, vehicle in pairs(Vehicles) do
         if TryForNetworkIDAvailability(vehicle.networkID) then
             handle = NetworkGetEntityFromNetworkId(vehicle.networkID)
             DeleteVehicle(handle)
+            counter = counter + 1
+        end
+    end
+    print("Deleted " .. counter .. " Vehicle(s)")
+end)
+
+RegisterNetEvent("CEv_Regroup", function (FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+    ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+end)
+
+RegisterNetEvent("CEv_ReskinAll", function (PlayersFromServer, Characters)
+    for _, player in pairs(PlayersFromServer) do
+        if TryForNetworkIDAvailability(player.networkID) then
+            local pedHandle = NetworkGetEntityFromNetworkId(player.networkID)
+            local pedJson = Looker(player.skin, CHARFOLDER)
+            Cosmetics(pedHandle, pedJson, false)
+        end
+    end
+    for _, character in pairs(Characters) do
+        if TryForNetworkIDAvailability(character.networkID) then
+            local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
+            local pedJson = Looker(character.skin, CHARFOLDER)
+            Cosmetics(pedHandle, pedJson, false)
         end
     end
 end)
 
+RegisterNetEvent("CEv_StopAllCharacters", function (Characters)
+    for _, character in pairs(Characters) do
+        if TryForNetworkIDAvailability(character.networkID) then
+            local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
+            ClearPedTasksImmediately(pedHandle)
+        end
+    end
+end)

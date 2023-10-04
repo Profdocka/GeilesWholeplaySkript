@@ -1,10 +1,10 @@
 UpdateFaction = function (oldFaction, newFaction)
-    for _, player in ipairs(Players) do
+    for _, player in pairs(Players) do
         if player.faction == oldFaction then
             player.faction = newFaction
         end
     end
-    for _, character in ipairs(Characters) do
+    for _, character in pairs(Characters) do
         if character.faction == oldFaction then
             character.faction = newFaction
         end
@@ -17,7 +17,7 @@ OrganizeTableOfFactions = function()
     table.remove(FactionLeaders)
     FactionsAndMembers = {}
     --FactionLeaders = {}
-    for _, player in ipairs(Players) do
+    for _, player in pairs(Players) do
         if FactionsAndMembers[player.faction] == nil then
             FactionsAndMembers[player.faction] = {}
         end
@@ -26,7 +26,7 @@ OrganizeTableOfFactions = function()
             FactionLeaders[player.faction] = player.networkID
         end]]--
     end
-    for _, character in ipairs(Characters) do
+    for _, character in pairs(Characters) do
         if FactionsAndMembers[character.faction] == nil then
             FactionsAndMembers[character.faction] = {}
         end
@@ -54,7 +54,7 @@ TurnVariantToNeutral = function (name, source)
             Characters[key] = newCharacter
             OrganizeTableOfFactions()
         end
-        TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, NEUTRAL_VARIANT)
+        TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, NEUTRAL_VARIANT, Players)
 	end
 end
 
@@ -67,7 +67,7 @@ TurnVariantToFriendly = function (name, source)
             local newCharacter = {networkID = character.networkID, name = character.name, skin = character.skin, faction = Players[networkIDSource].faction}
             Characters[key] = newCharacter
             OrganizeTableOfFactions()
-            TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, FRIENDLY_VARIANT)
+            TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, FRIENDLY_VARIANT, Players)
         end
 	end
 end
@@ -83,6 +83,18 @@ TurnVariantToAggressive = function (name, source)
             OrganizeTableOfFactions()
         end
         --Aggressivität?
-        TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, AGGRESSIVE_VARIANT)
+        TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, AGGRESSIVE_VARIANT, Players)
 	end
+end
+
+ReapplyPlayerCharacters = function (message)
+    for _, serverID in pairs(GetPlayers()) do
+        local networkID = GetNetworkIDPlayerFromSource(serverID)
+        local player = Players[networkID]
+        if IsKussKultCharacter(player.name) then
+            TriggerClientEvent("CEv_SpawnCharacter", serverID, PLAYER_VARIANT, player.skin, true, nil, player.faction)
+            TriggerClientEvent("CEv_ShowNotificationEvent", serverID, message)
+            Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+        end
+    end
 end

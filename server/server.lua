@@ -14,8 +14,8 @@ TableOfAllVehicles, TableOfAllVehiclesLower = ListAllEntriesInFolder(VEHFOLDER)
 TableOfAllCharacterSkins = CreateTableOfSkins(TableOfAllCharacters, CHARFOLDER)
 TableOfAllVehicleSkins = CreateTableOfSkins(TableOfAllVehicles, VEHFOLDER)
 
-TableOfAllCharactersIndexes = CreateIndexTable(TableOfAllCharactersLower)
-TableOfAllVehiclesIndexes = CreateIndexTable(TableOfAllVehiclesLower)
+TableOfAllCharactersIndexes = CreateIndexTable(TableOfAllCharacters)
+TableOfAllVehiclesIndexes = CreateIndexTable(TableOfAllVehicles)
 
 Players = {}
 Characters = {}
@@ -25,12 +25,68 @@ FactionLeaders = {}
 
 --SERVER EVENTS
 
-RegisterNetEvent("SEv_CheckIfEntityIsKussKult", function(source, input, variant, hasWeapon, vector4, faction)
+AddEventHandler("onServerResourceStart", function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+        local onlinePlayers = GetPlayers()
+        for _, serverID in ipairs(onlinePlayers) do
+            local pedHandle = GetPlayerPed(serverID)
+            local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
+            RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(serverID), GetPlayerName(serverID),
+                GetPlayerName(serverID))
+        end
+    end
+end)
+
+AddEventHandler("onResourceStop", function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+        DropAllVehicles()
+        DropAllCharacters()
+    end
+end)
+
+RegisterNetEvent("SEv_PlayerSpawned", function(source)
+    print("Player spawned: " .. GetPlayerName(source))
+    Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+    local pedHandle = GetPlayerPed(source)
+
+    local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
+
+    RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(source), GetPlayerName(source), GetPlayerName(source))
+
+    OrganizeTableOfFactions()
+    ReapplyPlayerCharacters("Neuer Spieler betritt das Spiel. Dein Charakter wird neu geladen.")
+    --TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
+end)
+
+AddEventHandler("playerDropped", function(source)
+    local _source = source
+	local playerHandle = GetPlayerPed(_source)
+	local networkID = NetworkGetNetworkIdFromEntity(playerHandle)
+
+	Players[networkID] = nil
+    Players[networkID] = Players[networkID]
+    --table.remove(Players, networkID)
+
+    OrganizeTableOfFactions()
+    ReapplyPlayerCharacters("Ein Spieler hat das Spiel verlassen. Dein Charakter wird neu geladen.")
+    --TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
+end)
+
+RegisterNetEvent("SEv_ListAll", function(source)
+    ListAllActiveForClient(source)
+end)
+
+RegisterNetEvent("SEv_CheckIfEntityIsKussKult", function(input, variant, hasWeapon, vector4, faction)
     CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4, faction)
 end)
 
 RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID)
-    local skin = GetStandardSpellingOfName(name, TableOfAllCharactersIndexes, TableOfAllCharacters)
+    local skin = GetStandardSpellingOfName(name, TableOfAllCharactersLower, TableOfAllCharacters,
+        TableOfAllCharactersIndexes)
+    --print("Der Skin richtig geschrieben: " .. skin)
+    --print(TableOfAllCharacterSkins)
     name = LookforRootNameOfSkin(TableOfAllCharacterSkins, skin)
     if variant == PLAYER_VARIANT then
         local oldFaction = Players[networkID].faction
@@ -44,24 +100,30 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
     TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, hasWeapon, source, variant,
-        FactionsAndMembers, FactionLeaders)
+        FactionsAndMembers, FactionLeaders, Players)
 end)
 
-RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function (GroupNetwork, variant, hasWeapon, faction)
+RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function(GroupNetwork, variant, hasWeapon, faction)
     local skin = nil
     local name = nil
-    for _, character in ipairs(GroupNetwork) do
-        skin = GetStandardSpellingOfName(character.name, TableOfAllCharactersIndexes, TableOfAllCharacters)
+    for _, character in pairs(GroupNetwork) do
+        skin = GetStandardSpellingOfName(character.name, TableOfAllCharactersLower, TableOfAllCharacters,
+            TableOfAllCharactersIndexes)
         name = LookforRootNameOfSkin(TableOfAllCharacterSkins, skin)
         RegisterEntity(variant, character.networkID, name, skin, faction)
     end
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-    TriggerClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, GroupNetwork, hasWeapon, source, variant, FactionsAndMembers, FactionLeaders)
+    TriggerClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, GroupNetwork, hasWeapon, source, variant,
+        FactionsAndMembers, FactionLeaders, Players)
 end)
 
 RegisterNetEvent("SEv_RegisterVehicle", function(name, networkID)
-    local skin = GetStandardSpellingOfName(name, TableOfAllVehiclesIndexes, TableOfAllVehicles)
+    local skin = GetStandardSpellingOfName(name, TableOfAllVehiclesLower, TableOfAllVehicles, TableOfAllVehiclesIndexes)
     name = LookforRootNameOfSkin(TableOfAllVehicleSkins, skin)
     RegisterEntity(VEHICLE_VARIANT, networkID, name, skin, nil)
+end)
+
+RegisterNetEvent("SEv_StopAllCharacters", function (source)
+	StopAllCharacters(source)
 end)

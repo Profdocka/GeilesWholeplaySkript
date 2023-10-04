@@ -7,10 +7,13 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	local pedWalk = pedJson.OutfitPedData.PedProperties.WalkStyle
 	local pedWeapon = pedJson.OutfitPedData.PedProperties.Weapon
 
+	pedHash = tonumber(pedHash)
+
 	Components(pedHandle, pedComps)
 	Props(pedHandle, pedProps)
 
 	if (pedHash == 1885233650 or pedHash == -1667301416) then
+		--print("Ist Freemode Charakter")
 		local headFeatures = pedJson.OutfitPedData.PedProperties.HeadFeatures
 		Freemode(pedHandle, headFeatures)
 	end

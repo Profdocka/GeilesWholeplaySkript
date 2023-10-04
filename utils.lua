@@ -1,5 +1,6 @@
-GetInputWindowOutput = function()
-    DisplayOnscreenKeyboard(1, "FMMC_MPM_NA", "", "", "", "", "", 30)
+GetInputWindowOutput = function(title)
+    AddTextEntry("CH_INPUT", title)
+    DisplayOnscreenKeyboard(1, "CH_INPUT", "", "", "", "", "", 30)
 
     while UpdateOnscreenKeyboard() == 0 do
         DisableAllControlActions(0)
@@ -16,7 +17,7 @@ end
 Looker = function(input, folder)
     if (input ~= nil) then
         local path = folder .. "/" .. input .. ".json"
-        print(path)
+        --print(path)
         local file = LoadResourceFile(GetCurrentResourceName(), path)
         local content = {}
         content = json.decode(file)
@@ -48,22 +49,40 @@ GetCurrentVehicleAndSeatNumber = function(pedHandle)
     return nil
 end
 
+GetVehicleSeatOfPed = function (vehicleHandle, pedHandle)
+	local passengerAmount = GetVehicleModelNumberOfSeats(GetEntityModel(vehicleHandle))
+	for i = -1, passengerAmount, 1 do
+		local occupantOfSeat = GetPedInVehicleSeat(vehicleHandle, i)
+		if occupantOfSeat == pedHandle then
+			return i
+		end
+	end
+end
+
 TryForNetworkIDAvailability = function(networkID)
     local tries = 5
     for i = 1, tries, 1 do
         if NetworkDoesNetworkIdExist(networkID) then
-            return true
+            --print("Die Network ID die geprüft wird: " .. networkID)
+            if NetworkDoesEntityExistWithNetworkId(networkID) then
+              --print("gefunden!")
+                return true
+            else
+                --print("Ich warte...")
+                Wait(1000)
+            end
         else
-            Citizen.Wait(1000)
+            Wait(1000)
         end
     end
     return false
 end
 
 ShowNotification = function(msg)
-    SetNotificationTextEntry('STRING')
+    BeginTextCommandThefeedPost('STRING')
     AddTextComponentSubstringPlayerName(msg)
-    DrawNotification(false, true)
+    EndTextCommandThefeedPostMessagetextTu("CHAR_AMMUNATION", "CHAR_AMMUNATION", false, 8, "Das Geile Wholeplay Skript", "von Profdocka", 1.0)
+    --DrawNotification(false, true)
 end
 
 GetPlayerCoordsAndHeading = function(serverID, offset)
@@ -71,9 +90,41 @@ GetPlayerCoordsAndHeading = function(serverID, offset)
     local positionData = {}
     local coords = GetOffsetFromEntityInWorldCoords(playerPed, 0.0, (0.0 + offset), 0.0)
     local heading = GetEntityHeading(playerPed)
-    table.insert(positionData, coords)
-    table.insert(positionData, heading)
+    --table.insert(positionData, coords)
+    positionData["coords"] = coords
+    --table.insert(positionData, heading)
+    positionData["heading"] = heading
     return positionData
+end
+
+ListAllOnClient = function(_Players, _Characters, _Vehicles)
+    print("-------------------------")
+    print("SPIELER: ")
+    PrintEveryMemberOfSet(_Players)
+    print("-------------------------")
+    print("ALL CHARACTERS: ")
+    PrintEveryMemberOfSet(_Characters)
+    print("-------------------------")
+    print("ALL VEHICLES: ")
+    PrintEveryMemberOfSet(_Vehicles)
+    print("-------------------------")
+end
+
+PrintEveryMemberOfSet = function(set)
+    for i, member in pairs(set) do
+        local handle = 0
+        print("Network-ID: " .. i)
+        if TryForNetworkIDAvailability(member.networkID) then
+            handle = NetworkGetEntityFromNetworkId(member.networkID)
+        end
+        print("Handle: " .. handle)
+        print("Name: " .. member.name)
+        print("Skin: " .. member.skin)
+        if (member.faction ~= nil) then
+            print("Faction: " .. member.faction)
+        end
+        print("--------")
+    end
 end
 
 ---SERVER---
@@ -102,29 +153,33 @@ GetPlayerFactionFromSource = function(source)
 end
 
 GetNetworkIDPlayerFromSource = function(source)
-    return NetworkGetNetworkIdFromEntity(GetPlayerPed(GetPlayerFromServerId(source)))
+    return NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
 end
 
 CreateIndexTable = function(toBeIndexTable)
     local index = {}
     for k, v in pairs(toBeIndexTable) do
-        index[v] = k
+        index[string.lower(v)] = k
     end
     return index
 end
 
-GetStandardSpellingOfName = function(name, usedTableLower, usedTable)
+GetStandardSpellingOfName = function(name, usedTableLower, usedTable, usedTableIndex)
     local tempName = string.lower(name)
-    local index = usedTableLower[tempName]
+
+    local index = usedTableIndex[usedTableLower[tempName]]
+    --print("usedTableLower: " .. usedTableLower[tempName])
+    --print("usedTableIndex: " .. index)
+    --print("usedTable: " .. usedTable[index])
     return usedTable[index]
 end
 
-GetVariantFromInput = function (variantInput)
+GetVariantFromInput = function(variantInput)
     if (variantInput == "buddy") then
-		return FRIENDLY_VARIANT
-	elseif (variantInput == "gegner") then
-		return AGGRESSIVE_VARIANT
-	else
-		return NEUTRAL_VARIANT
-	end
+        return FRIENDLY_VARIANT
+    elseif (variantInput == "gegner") then
+        return AGGRESSIVE_VARIANT
+    else
+        return NEUTRAL_VARIANT
+    end
 end
