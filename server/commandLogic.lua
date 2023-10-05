@@ -129,14 +129,87 @@ RegisterCommand("gwlistall", function(source)
 	ListAllActiveForClient(source)
 end)
 
-RegisterCommand("gwreskin", function (source)
+RegisterCommand("gwreskin", function(source)
 	TriggerClientEvent("CEv_ReskinAll", source, Players, Characters)
 end)
 
-RegisterCommand("gwstopall", function (source)
+RegisterCommand("gwstopall", function(source)
 	StopAllCharacters(source)
 end)
 
-StopAllCharacters = function (source)
+StopAllCharacters = function(source)
 	TriggerClientEvent("CEv_StopAllCharacters", source, Characters)
+end
+
+RegisterCommand("gwchangeskin", function(source, args)
+	local networkID = GetNetworkIDPlayerFromSource(source)
+	local name = Players[networkID].name
+	local skinTable = TableOfAllCharacterSkins[name]
+	local offset = args[1]
+	if skinTable ~= nil and type(skinTable) == "table" then
+		local length = #skinTable
+		if length > 0 then
+			if offset ~= nil and type(offset) == "number" then
+				if offset < 1 then
+					offset = 1
+				end
+				if offset > length then
+					--RegisterEntity(PLAYER_VARIANT, networkID, name, name, Players[networkID].faction)
+					FullModelSwitchOrJustCosmetics(networkID, name, CHARFOLDER, source, Players[networkID].faction)
+				else
+					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source, Players[networkID].faction)
+				end
+			else
+				offset = GetCurrentSkinIndex(TableOfAllCharacterSkins, name, Players[networkID].skin)
+				if offset == -1 then
+					offset = 1
+				else
+					offset = offset + 1
+				end
+				if offset > length then
+					--RegisterEntity(PLAYER_VARIANT, networkID, name, name, Players[networkID].faction)
+					FullModelSwitchOrJustCosmetics(networkID, name, CHARFOLDER, source, Players[networkID].faction)
+				else
+					--RegisterEntity(PLAYER_VARIANT, networkID, name, skinTable[offset], Players[networkID].faction)
+					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source, Players[networkID].faction)
+				end
+			end
+		else
+			TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. name .. " hat keine Verkleidungen!")
+		end
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. name .. " hat keine Verkleidungen!")
+	end
+end)
+
+GetCurrentSkinIndex = function(tabl, name, skin)
+	if skin == name then
+		return -1
+	end
+	for index, value in ipairs(tabl[name]) do
+		if value == skin then
+			return index
+		end
+	end
+end
+
+FullModelSwitchOrJustCosmetics = function(networkID, skin, folder, source, faction)
+	local pedHandle = NetworkGetEntityFromNetworkId(networkID)
+	local hash = GetEntityModel(pedHandle)
+	local pedJson = Looker(skin, folder)
+	--print(skin)
+	local newModelHash = pedJson.OutfitPedData.ModelHash
+	newModelHash = tonumber(newModelHash)
+	if hash == newModelHash then
+		--JustCosmetics
+		TriggerEvent("SEv_GiveCharacterSkinAndFaction", PLAYER_VARIANT, skin, true, faction, networkID)
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Deine neue Verkleidung: " .. skin)
+	else
+		--FullModelSwitch
+		local vector4 = {}
+		vector4["coords"] = GetEntityCoords(pedHandle)
+		vector4["heading"] = GetEntityHeading(pedHandle)
+		TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, skin, true, vector4, faction)
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Deine neue Verkleidung: " .. skin)
+	end
 end

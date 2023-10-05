@@ -14,6 +14,8 @@ TableOfAllVehicles, TableOfAllVehiclesLower = ListAllEntriesInFolder(VEHFOLDER)
 TableOfAllCharacterSkins = CreateTableOfSkins(TableOfAllCharacters, CHARFOLDER)
 TableOfAllVehicleSkins = CreateTableOfSkins(TableOfAllVehicles, VEHFOLDER)
 
+--PrintAllMembersOfTable(TableOfAllCharacterSkins)
+
 TableOfAllCharactersIndexes = CreateIndexTable(TableOfAllCharacters)
 TableOfAllVehiclesIndexes = CreateIndexTable(TableOfAllVehicles)
 
@@ -88,6 +90,9 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
     --print("Der Skin richtig geschrieben: " .. skin)
     --print(TableOfAllCharacterSkins)
     name = LookforRootNameOfSkin(TableOfAllCharacterSkins, skin)
+    if string.lower(faction) == string.lower(skin) then
+        faction = name
+    end
     if variant == PLAYER_VARIANT then
         local oldFaction = Players[networkID].faction
         RegisterEntity(variant, networkID, name, skin, faction)

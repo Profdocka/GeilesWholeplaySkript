@@ -110,7 +110,8 @@ RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
 end)
 
 RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
-    function(networkID, skin, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+    function(networkID, skin, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
+             PlayersFromServer)
         if TryForNetworkIDAvailability(networkID) then
             local pedHandle = NetworkGetEntityFromNetworkId(networkID)
             --print("NetworkID: " .. networkID)
@@ -133,7 +134,8 @@ RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
     end)
 
 RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
-    function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+    function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
+             PlayersFromServer)
         local pedHandle = nil
         local pedJson = nil
         for _, character in pairs(GroupNetwork) do
@@ -155,7 +157,8 @@ RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
     end)
 
 RegisterNetEvent("CEv_GiveRoles",
-    function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant, PlayersFromServer)
+    function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant,
+             PlayersFromServer)
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         if variant == AGGRESSIVE_VARIANT and TryForNetworkIDAvailability(networkIDEmitter) and TryForNetworkIDAvailability(networkIDReciever) then
             local recieverHandle = NetworkGetEntityFromNetworkId(networkIDReciever)
@@ -172,31 +175,33 @@ RegisterNetEvent("CEv_GiveRoles",
         end
     end)
 
-RegisterNetEvent("CEv_DropEntity", function(variant, networkID, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
-    if TryForNetworkIDAvailability(networkID) then
-        local handle = NetworkGetEntityFromNetworkId(networkID)
-        if variant == NEUTRAL_VARIANT then
-            DeletePed(handle)
-            ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
-        else
-            DeleteVehicle(handle)
+RegisterNetEvent("CEv_DropEntity",
+    function(variant, networkID, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+        if TryForNetworkIDAvailability(networkID) then
+            local handle = NetworkGetEntityFromNetworkId(networkID)
+            if variant == NEUTRAL_VARIANT then
+                DeletePed(handle)
+                ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+            else
+                DeleteVehicle(handle)
+            end
         end
-    end
-end)
+    end)
 
-RegisterNetEvent("CEv_DropAllCharacters", function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
-    local handle = nil
-    local counter = 0
-    for _, character in pairs(Characters) do
-        if TryForNetworkIDAvailability(character.networkID) then
-            handle = NetworkGetEntityFromNetworkId(character.networkID)
-            DeletePed(handle)
-            counter = counter + 1
+RegisterNetEvent("CEv_DropAllCharacters",
+    function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+        local handle = nil
+        local counter = 0
+        for _, character in pairs(Characters) do
+            if TryForNetworkIDAvailability(character.networkID) then
+                handle = NetworkGetEntityFromNetworkId(character.networkID)
+                DeletePed(handle)
+                counter = counter + 1
+            end
         end
-    end
-    print("Deleted " .. counter .. " Character(s)")
-    ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
-end)
+        print("Deleted " .. counter .. " Character(s)")
+        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+    end)
 
 RegisterNetEvent("CEv_DropAllCars", function(Vehicles)
     local handle = nil
@@ -211,11 +216,11 @@ RegisterNetEvent("CEv_DropAllCars", function(Vehicles)
     print("Deleted " .. counter .. " Vehicle(s)")
 end)
 
-RegisterNetEvent("CEv_Regroup", function (FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+RegisterNetEvent("CEv_Regroup", function(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
 end)
 
-RegisterNetEvent("CEv_ReskinAll", function (PlayersFromServer, Characters)
+RegisterNetEvent("CEv_ReskinAll", function(PlayersFromServer, Characters)
     for _, player in pairs(PlayersFromServer) do
         if TryForNetworkIDAvailability(player.networkID) then
             local pedHandle = NetworkGetEntityFromNetworkId(player.networkID)
@@ -232,7 +237,7 @@ RegisterNetEvent("CEv_ReskinAll", function (PlayersFromServer, Characters)
     end
 end)
 
-RegisterNetEvent("CEv_StopAllCharacters", function (Characters)
+RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
     for _, character in pairs(Characters) do
         if TryForNetworkIDAvailability(character.networkID) then
             local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)

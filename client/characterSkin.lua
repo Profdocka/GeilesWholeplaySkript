@@ -47,10 +47,12 @@ end
 
 Props = function(pedHandle, pedProps)
 	local findex = { 0, 1, 2, 6, 7 }
+	--local findex = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	for i = 1, #findex do
 		local whole = pedProps["_" .. findex[i]]
 		local prop, texture = string.match(whole, "(-?%d+),(-?%d+)")
-		if (prop ~= nil) then
+		--print("index " .. findex[i] .. " und der prop " .. prop)
+		if (prop ~= "-1") then
 			SetPedPropIndex(pedHandle, findex[i], tonumber(prop), tonumber(texture), false)
 		else
 			CorrectionProp[findex[i]](pedHandle)
@@ -99,8 +101,8 @@ end
 
 --Der Standard einer jeden Propgruppe (Der ist unsichtbar)
 CorrectionProp = {
-	[0] = function(ped) SetPedPropIndex(ped, 0, -1, 0, false) end,
-	[1] = function(ped) SetPedPropIndex(ped, 1, 0, 0, false) end,
+	[0] = function(ped) SetPedPropIndex(ped, 0, 8, 0, false) end,
+	[1] = function(ped) SetPedPropIndex(ped, 1, 6, 0, false) end,
 	[2] = function(ped) SetPedPropIndex(ped, 2, 33, 0, false) end,
 	[6] = function(ped) SetPedPropIndex(ped, 6, -1, 0, false) end,
 	[7] = function(ped) SetPedPropIndex(ped, 7, -1, 0, false) end,

@@ -47,4 +47,8 @@ Citizen.CreateThread(function()
 		{})
 	TriggerEvent("chat:addSuggestion", "/gwreskin", "Kleidet alle Charaktere erneut ein. Stichwort, grüne Haare", {})
 	TriggerEvent("chat:addSuggestion", "/gwstopall", "Stop alle aktiven Charaktere", {})
+	TriggerEvent("chat:addSuggestion", "/gwchangeskin",
+		"Schaltet durch die Verkleidungen des Charakters durch", {
+			{ name = "?index", help = "Zahlenindex um eine bestimmte Verkleidung zu bekommen. NOT WORKING" },
+		})
 end)

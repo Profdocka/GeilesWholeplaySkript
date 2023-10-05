@@ -135,6 +135,7 @@ PrintAllMembersOfTable = function (tabl)
 		if type(value) == "table" then
 			PrintAllMembersOfTable(value)
 		end
+        print("\t")
 	end
 end
 
