@@ -1,11 +1,15 @@
 --Alle kosmetischen Veränderungen am Charakter
 Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
-
 	local pedHash = pedJson.OutfitPedData.ModelHash
 	local pedComps = pedJson.OutfitPedData.PedProperties.PedComps
 	local pedProps = pedJson.OutfitPedData.PedProperties.PedProps
 	local pedWalk = pedJson.OutfitPedData.PedProperties.WalkStyle
 	local pedWeapon = pedJson.OutfitPedData.PedProperties.Weapon
+
+	local pedDecals = pedJson.OutfitPedData.PedProperties.TattooLogoDecals
+	if pedDecals ~= nil then
+		pedDecals = pedDecals[":anonymous"]
+	end
 
 	pedHash = tonumber(pedHash)
 
@@ -16,6 +20,10 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 		--print("Ist Freemode Charakter")
 		local headFeatures = pedJson.OutfitPedData.PedProperties.HeadFeatures
 		Freemode(pedHandle, headFeatures)
+	end
+	if pedDecals ~= nil then
+		--print("cool")
+		Decals(pedHandle, pedDecals)
 	end
 	if (pedWalk ~= nil) then
 		Walkstyle(pedHandle, pedWalk)
@@ -62,10 +70,9 @@ end
 
 Freemode = function(pedHandle, headFeatures)
 	local blend = headFeatures.ShapeAndSkinTone
-	SetPedHeadBlendData(pedHandle, tonumber(blend.ShapeFatherId), tonumber(blend.ShapeMotherId),
-		tonumber(blend.ShapeOverrideId), tonumber(blend.ToneFatherId), tonumber(blend.ToneMotherId),
-		tonumber(blend.ToneOverrideId), tonumber(blend.ShapeVal), tonumber(blend.ToneVal), tonumber(blend.OverrideVal),
-		false)
+	--SetPedHeadBlendData(pedHandle, 41, 3, 0, 41, 3, 0, 0.300000012, 1.0, 0.0, false)
+	SetPedHeadBlendData(pedHandle, tonumber(blend.ShapeFatherId), tonumber(blend.ShapeMotherId), tonumber(blend.ShapeOverrideId), tonumber(blend.ToneFatherId), tonumber(blend.ToneMotherId), tonumber(blend.ToneOverrideId), tonumber(CheckAndConvertToFloat(blend.ShapeVal)), tonumber(CheckAndConvertToFloat(blend.ToneVal)), tonumber(CheckAndConvertToFloat(blend.OverrideVal)), OneAndZeroToBoolean(blend.IsP))
+	--PrintAllMembersOfTable(blend)
 	SetPedHairColor(pedHandle, tonumber(headFeatures.HairColour), tonumber(headFeatures.HairColourStreaks))
 	SetPedEyeColor(pedHandle, tonumber(headFeatures.EyeColour))
 
@@ -109,4 +116,39 @@ end
 Weapon = function(pedHandle, weaponName)
 	local weaponHash = GetHashKey(weaponName)
 	GiveDelayedWeaponToPed(pedHandle, weaponHash, 9999, false)
+end
+
+Decals = function(pedHandle, pedDecals)
+	if pedDecals.collection ~= nil then
+		local collection = pedDecals.collection
+		local val = pedDecals.value
+		--print("Collection:", collection)
+		--print("Value:", val)
+		AddPedDecorationFromHashes(pedHandle, tonumber(collection), tonumber(val))
+	else
+		for _, entry in pairs(pedDecals) do
+			local collection = entry.collection
+			local val = entry.value
+			AddPedDecorationFromHashes(pedHandle, tonumber(collection), tonumber(val))
+		end
+	end
+end
+
+OneAndZeroToBoolean = function(inputString)
+	local input = tonumber(inputString)
+	if input == 1 then
+		return true
+	else
+		return false
+	end
+end
+
+CheckAndConvertToFloat = function (number)
+    -- Überprüfen, ob die Zahl eine Ganzzahl ist
+	number = tonumber(number)
+    if number == math.floor(number) then
+        return number .. ".0" -- Wenn ja, ".0" hinzufügen
+    else
+        return number -- Andernfalls die Zahl unverändert zurückgeben
+    end
 end

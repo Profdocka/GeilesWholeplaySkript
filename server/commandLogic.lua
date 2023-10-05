@@ -1,7 +1,7 @@
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 
 --Befehlerstellung und -definition für den Neutralen
-RegisterCommand("SpawnNeutral", function(source, args, raw)
+RegisterCommand("gwspawnneutral", function(source, args, raw)
 	if args[1] ~= nil then
 		local netID = source
 		--local vector4 = GetPlayerCoordsAndHeading(netID, CHARACTER_SPAWN_OFFSET_Y)
@@ -17,7 +17,7 @@ RegisterCommand("SpawnNeutral", function(source, args, raw)
 end)
 
 --Befehlerstellung und -definition für den Bodyguard
-RegisterCommand("SpawnBuddy", function(source, args, raw)
+RegisterCommand("gwspawnbuddy", function(source, args, raw)
 	if args[1] ~= nil then
 		local netID = source
 		--local vector4 = GetPlayerCoordsAndHeading(netID, CHARACTER_SPAWN_OFFSET_Y)
@@ -33,7 +33,7 @@ RegisterCommand("SpawnBuddy", function(source, args, raw)
 end)
 
 --Befehlerstellung und -definition für den Gegner
-RegisterCommand("SpawnGegner", function(source, args, raw)
+RegisterCommand("gwspawngegner", function(source, args, raw)
 	if args[1] ~= nil then
 		local netID = source
 		--local vector4 = GetPlayerCoordsAndHeading(netID, CHARACTER_SPAWN_OFFSET_Y)
@@ -48,7 +48,7 @@ RegisterCommand("SpawnGegner", function(source, args, raw)
 	end
 end)
 
-RegisterCommand("SpawnGroup", function(source, args)
+RegisterCommand("gwspawngruppe", function(source, args)
 	local index = NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
 	local exceptionTarget = Players[index].name
 	if args[1] == nil then
@@ -65,7 +65,7 @@ RegisterCommand("SpawnGroup", function(source, args)
 	end
 end)
 
-RegisterCommand("SpawnMyCar", function(source, args)
+RegisterCommand("gwspawnmycar", function(source, args)
 	local index = NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
 	local characterName = Players[index].name
 	characterName = ReplaceUmlaute(characterName)
@@ -80,7 +80,7 @@ RegisterCommand("SpawnMyCar", function(source, args)
 	end
 end)
 
-RegisterCommand("VariantNeutral", function(source, args)
+RegisterCommand("gwgesinnungneutral", function(source, args)
 	if args[1] ~= nil then
 		TurnVariantToNeutral(args[1], source)
 	else
@@ -88,7 +88,7 @@ RegisterCommand("VariantNeutral", function(source, args)
 	end
 end)
 
-RegisterCommand("VariantFriendly", function(source, args)
+RegisterCommand("gwgesinnungbuddy", function(source, args)
 	if args[1] ~= nil then
 		TurnVariantToFriendly(args[1], source)
 	else
@@ -96,7 +96,7 @@ RegisterCommand("VariantFriendly", function(source, args)
 	end
 end)
 
-RegisterCommand("VariantAggressive", function(source, args)
+RegisterCommand("gwgesinnunggegner", function(source, args)
 	if args[1] ~= nil then
 		TurnVariantToAggressive(args[1], source)
 	else
@@ -104,7 +104,7 @@ RegisterCommand("VariantAggressive", function(source, args)
 	end
 end)
 
-RegisterCommand("DropSingle", function(source, args)
+RegisterCommand("gwdropsingle", function(source, args)
 	if (args[1] ~= nil) then
 		DropSpecificEntityByName(args[1], source)
 	else
@@ -112,28 +112,28 @@ RegisterCommand("DropSingle", function(source, args)
 	end
 end)
 
-RegisterCommand("DropAllPeds", function(source, args)
+RegisterCommand("gwdropallpeds", function(source, args)
 	DropAllCharacters()
 end)
 
-RegisterCommand("DropAllCars", function(source, args)
+RegisterCommand("gwdropallcars", function(source, args)
 	DropAllVehicles()
 end)
 
-RegisterCommand("DropEverything", function(source, args)
+RegisterCommand("gwdropeverything", function(source, args)
 	DropAllVehicles()
 	DropAllCharacters()
 end)
 
-RegisterCommand("ListAll", function(source)
+RegisterCommand("gwlistall", function(source)
 	ListAllActiveForClient(source)
 end)
 
-RegisterCommand("Reskin", function (source)
+RegisterCommand("gwreskin", function (source)
 	TriggerClientEvent("CEv_ReskinAll", source, Players, Characters)
 end)
 
-RegisterCommand("StopAll", function (source)
+RegisterCommand("gwstopall", function (source)
 	StopAllCharacters(source)
 end)
 

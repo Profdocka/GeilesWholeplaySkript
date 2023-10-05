@@ -1,19 +1,3 @@
-Owners = {
-	williammcfred = {
-		"McFredsTornado",
-		"McFredsHelikopter",
-		"McFredsHyperjet",
-		"McFredsKITT",
-		"McFredsAlterTornado"
-	},
-	igorscrubs = {
-		"ScrubsPigalle"
-	},
-	omaroswita = {
-		"OmaRoswitasBus"
-	}
-}
-
 --Owners.alfonsvonschändler = {}
 --Owners.amandagoingnorth = {}
 Owners.andremiller = { "MillersBison" }
@@ -54,7 +38,7 @@ Owners.herbertgoverneur = { "GoverneuersValkurie" }
 Owners.hooliganhoppelkinn = { "HopkinsDubsta" }
 Owners.hudsonhudson = { "HudsonsCruiser", "HudsonsWarrener" }
 --Owners.hunterhotwire = {}
---Owners.igorscrubs = {}
+Owners.igorscrubs = {"ScrubsPigalle"}
 Owners.joesephfrecher = { "FrechersBobcat", "FrechersFieldmaster" }
 --Owners.johnjjcranford = {}
 Owners.karlkarlson = { "KarlsonsGlendale" }
@@ -75,7 +59,7 @@ Owners.michaelmarty = { "MichaelsTailgater" }
 Owners.nehadhussein = { "HusseinsStallion" }
 Owners.nestornewton = { "NewtonsJetpack" }
 --Owners.nigelhavock = {}
---Owners.omaroswita = {}
+Owners.omaroswita = {"OmaRoswitasBus"}
 Owners.ottokoeder = { "MSBirdseye" }
 Owners.pammeladummigton = { "DummigtonsCoquette" }
 Owners.patpaddington = { "PaddingtonsRiot" }
@@ -99,9 +83,10 @@ Owners.tysondoorhound = { "DoorhoundsSanctus" }
 Owners.udowarndt = { "WarndtsGolf" }
 Owners.uwestroehbaecker = { "WuffDuster" }
 --Owners.viktorraswinova = {}
+Owners.vincentvicente = { "VicentesTyrant" }
 Owners.vladimirsmirnov = { "SmirnovsAbschleppwagen" }
 Owners.wernerwrack = { "WracksStafford", "WracksYacht" }
---Owners.williammcfred = {}
+Owners.williammcfred = { "McFredsTornado", "McFredsHelikopter",	"McFredsHyperjet", "McFredsKITT", "McFredsAlterTornado" }
 --Owners.willihammcfett = {}
 Owners.williwagner = { "McFredsSupersportwagen", "PRIUS" }
 --Owners.winfriedmcfred = {}

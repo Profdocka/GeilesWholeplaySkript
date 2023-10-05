@@ -127,6 +127,17 @@ PrintEveryMemberOfSet = function(set)
     end
 end
 
+PrintAllMembersOfTable = function (tabl)
+	--print(tabl)
+	for key, value in pairs(tabl) do
+		print("Key: ", key)
+		print("Value: ", value)
+		if type(value) == "table" then
+			PrintAllMembersOfTable(value)
+		end
+	end
+end
+
 ---SERVER---
 
 IsKussKultCharacter = function(input)
