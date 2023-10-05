@@ -39,7 +39,8 @@
         "_10": "0,0",
         "_11": "0,0"
       },
-	  "Weapon": "weapon_heavysniper_mk2",
+      "Weapon": "weapon_heavysniper_mk2",
+      "Voice": "g_m_y_korean_02_korean_mini_01",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

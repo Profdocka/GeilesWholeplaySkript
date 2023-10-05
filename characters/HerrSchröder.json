@@ -39,7 +39,8 @@
         "_10": "0,0",
         "_11": "0,0"
       },
-	  "Weapon": "weapon_knife",
+      "Weapon": "weapon_knife",
+      "Voice": "a_m_m_tramp_01_black_mini_01",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0xfade4843",
       "ScenarioActive": "false",

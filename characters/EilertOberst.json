@@ -40,8 +40,9 @@
         "_11": "0,0"
       },
       "TattooLogoDecals": null,
-	  "WalkStyle": "move_m@drunk@slightlydrunk",
-	  "Weapon": "weapon_flaregun",
+      "WalkStyle": "move_m@drunk@slightlydrunk",
+      "Weapon": "weapon_flaregun",
+      "Voice": "redr1drunk1",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

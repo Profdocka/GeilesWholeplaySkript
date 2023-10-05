@@ -159,7 +159,8 @@
           }
         }
       },
-	  "Weapon": "weapon_heavypistol",
+      "Weapon": "weapon_heavypistol",
+      "Voice": "s_f_y_cop_01_white_full_02",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

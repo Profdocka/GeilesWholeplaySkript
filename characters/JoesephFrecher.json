@@ -39,7 +39,8 @@
         "_10": "0,0",
         "_11": "0,0"
       },
-	  "Weapon": "weapon_dbshotgun",
+      "Weapon": "weapon_dbshotgun",
+      "Voice": "a_m_m_farmer_01_white_mini_01",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

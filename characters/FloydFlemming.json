@@ -39,7 +39,8 @@
         "_10": "0,0",
         "_11": "0,0"
       },
-	  "Weapon": "weapon_marksmanrifle",
+      "Weapon": "weapon_marksmanrifle",
+      "Voice": "s_m_y_hwaycop_01_white_full_01",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

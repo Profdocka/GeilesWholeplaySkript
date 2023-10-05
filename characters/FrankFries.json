@@ -39,7 +39,8 @@
         "_10": "0,0",
         "_11": "0,0"
       },
-	  "Weapon": "weapon_nightstick",
+      "Weapon": "weapon_nightstick",
+      "Voice": "s_m_m_genericsecurity_01_white_mini_03",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

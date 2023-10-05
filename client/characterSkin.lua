@@ -5,6 +5,7 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	local pedProps = pedJson.OutfitPedData.PedProperties.PedProps
 	local pedWalk = pedJson.OutfitPedData.PedProperties.WalkStyle
 	local pedWeapon = pedJson.OutfitPedData.PedProperties.Weapon
+	local pedVoice = pedJson.OutfitPedData.PedProperties.Voice
 
 	local pedDecals = pedJson.OutfitPedData.PedProperties.TattooLogoDecals
 	if pedDecals ~= nil then
@@ -31,7 +32,9 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	if (pedWeapon ~= nil and ShouldHaveWeapon == true) then
 		Weapon(pedHandle, pedWeapon)
 	end
-	--Voice
+	if pedVoice ~= nil then
+		Voice(pedHandle, pedVoice)
+	end
 end
 
 Components = function(pedHandle, pedComps)
@@ -132,6 +135,10 @@ Decals = function(pedHandle, pedDecals)
 			AddPedDecorationFromHashes(pedHandle, tonumber(collection), tonumber(val))
 		end
 	end
+end
+
+Voice = function (pedHandle, pedVoice)
+	SetAmbientVoiceName(pedHandle, pedVoice)
 end
 
 OneAndZeroToBoolean = function(inputString)

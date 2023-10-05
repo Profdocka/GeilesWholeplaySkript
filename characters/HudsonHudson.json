@@ -39,7 +39,8 @@
         "_10": "1,0",
         "_11": "-1,0"
       },
-	  "Weapon": "weapon_appistol",
+      "Weapon": "weapon_appistol",
+      "Voice": "s_m_y_cop_01_white_full_02",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0xa49e591c",
       "ScenarioActive": "false",

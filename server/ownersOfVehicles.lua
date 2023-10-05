@@ -1,3 +1,19 @@
+Owners = {
+	williammcfred = {
+		"McFredsTornado",
+		"McFredsHelikopter",
+		"McFredsHyperjet",
+		"McFredsKITT",
+		"McFredsAlterTornado"
+	},
+	igorscrubs = {
+		"ScrubsPigalle"
+	},
+	omaroswita = {
+		"OmaRoswitasBus"
+	}
+}
+
 --Owners.alfonsvonschändler = {}
 --Owners.amandagoingnorth = {}
 Owners.andremiller = { "MillersBison" }
