@@ -245,3 +245,21 @@ RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
         end
     end
 end)
+
+RegisterCommand("UI_SetPlayerModel", function ()
+    --SetNuiFocus(true, true)
+    SendNUIMessage({
+        type = "cool"
+    })
+end)
+
+RegisterKeyMapping("UI_SetPlayerModel", "", "keyboard", "F6")
+
+RegisterKeyMapping("gwspawnmycar", "", "keyboard", "F4")
+
+RegisterNUICallback("UI_PlayerModelSwitch", function (data, cb)
+    cb({})
+
+    TriggerServerEvent("SEv_CheckIfEntityIsKussKult", data.characterName, PLAYER_VARIANT, true,
+    GetPlayerCoordsAndHeading(PlayerId(), 0.0), data.characterName)
+end)

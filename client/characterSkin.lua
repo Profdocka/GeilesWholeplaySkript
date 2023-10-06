@@ -15,7 +15,7 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	pedHash = tonumber(pedHash)
 
 	Components(pedHandle, pedComps)
-	Props(pedHandle, pedProps)
+	Props(pedHandle, pedProps, pedHash)
 
 	if (pedHash == 1885233650 or pedHash == -1667301416) then
 		--print("Ist Freemode Charakter")
@@ -45,7 +45,7 @@ Components = function(pedHandle, pedComps)
 	end
 end
 
-Props = function(pedHandle, pedProps)
+Props = function(pedHandle, pedProps, pedHash)
 	local findex = { 0, 1, 2, 6, 7 }
 	--local findex = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	for i = 1, #findex do
@@ -55,7 +55,11 @@ Props = function(pedHandle, pedProps)
 		if (prop ~= "-1") then
 			SetPedPropIndex(pedHandle, findex[i], tonumber(prop), tonumber(texture), false)
 		else
-			CorrectionProp[findex[i]](pedHandle)
+			if pedHash == 1885233650 then
+				CorrectionPropFreemodeMale[findex[i]](pedHandle)
+			else
+				CorrectionProp[findex[i]](pedHandle)
+			end
 		end
 	end
 end
@@ -100,9 +104,17 @@ Freemode = function(pedHandle, headFeatures)
 end
 
 --Der Standard einer jeden Propgruppe (Der ist unsichtbar)
-CorrectionProp = {
+CorrectionPropFreemodeMale = {
 	[0] = function(ped) SetPedPropIndex(ped, 0, 8, 0, false) end,
 	[1] = function(ped) SetPedPropIndex(ped, 1, 6, 0, false) end,
+	[2] = function(ped) SetPedPropIndex(ped, 2, 33, 0, false) end,
+	[6] = function(ped) SetPedPropIndex(ped, 6, -1, 0, false) end,
+	[7] = function(ped) SetPedPropIndex(ped, 7, -1, 0, false) end,
+}
+
+CorrectionProp = {
+	[0] = function(ped) SetPedPropIndex(ped, 0, -1, 0, false) end,
+	[1] = function(ped) SetPedPropIndex(ped, 1, -1, 0, false) end,
 	[2] = function(ped) SetPedPropIndex(ped, 2, 33, 0, false) end,
 	[6] = function(ped) SetPedPropIndex(ped, 6, -1, 0, false) end,
 	[7] = function(ped) SetPedPropIndex(ped, 7, -1, 0, false) end,

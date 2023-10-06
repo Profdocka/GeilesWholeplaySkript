@@ -1,5 +1,6 @@
-fx_version 'adamant'
+fx_version 'cerulean'
 games { 'rdr3', 'gta5' }
+lua54 'yes'
 
 author 'ME'
 description 'Alles wichtige fürs Geile Wholeplay'
@@ -17,7 +18,13 @@ shared_scripts {
 	'utils.lua'
 }
 
+ui_page 'ui/index.html'
+
 files {
 	'characters/*.json',
 	'vehicles/*.json',
+	'ui/index.html',
+	'ui/script.js',
+	'ui/style.css',
+	'ui/images/*',
 }
