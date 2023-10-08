@@ -1,0 +1,78 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "225514697",
+	"IsSkinOf": "MichaelDeSanta",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0x0d7114c9",
+    "InitialHandle": "2",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "-1,-1",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "0,0",
+        "_3": "26,0",
+        "_4": "18,0",
+        "_5": "0,0",
+        "_6": "1,0",
+        "_7": "0,0",
+        "_8": "0,0",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "0,0"
+      },
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0x6f0783f5",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "240",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "true",
+    "IsBulletProof": "true",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "true",
+    "IsFireProof": "false",
+    "IsMeleeProof": "true",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "-804.210571",
+      "Y": "178.417313",
+      "Z": "76.7433014",
+      "Pitch": "1.30588535e-06",
+      "Roll": "2.6757798e-05",
+      "Yaw": "-10.5032253"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

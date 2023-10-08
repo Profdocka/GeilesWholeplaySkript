@@ -40,6 +40,8 @@
         "_10": "0,0",
         "_11": "-1,0"
       },
+	  "WalkStyle": "move_m@brave",
+	  "Weapon": "weapon_smg",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",
@@ -68,7 +70,7 @@
       "Yaw": "35.5220146"
     },
     "Attachment": {
-      "@isAttached": "false"
+      "isAttached": "false"
     },
     "SpoonerAttachments": {
       "@SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",

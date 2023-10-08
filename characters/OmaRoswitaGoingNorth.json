@@ -1,0 +1,96 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "-1667301416",
+	"IsSkinOf": "OmaRoswita",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0x9c9effd8",
+    "InitialHandle": "475142",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "1,2",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "6,0",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "20,0",
+        "_3": "7,0",
+        "_4": "37,6",
+        "_5": "0,0",
+        "_6": "29,0",
+        "_7": "83,1",
+        "_8": "38,0",
+        "_9": "0,0",
+        "_10": "5,0",
+        "_11": "34,0"
+      },
+      "HeadFeatures": {
+        "WasInArray": "false",
+        "ShapeAndSkinTone": {
+          "ShapeFatherId": "45",
+          "ShapeMotherId": "22",
+          "ShapeOverrideId": "0",
+          "ToneFatherId": "19",
+          "ToneMotherId": "0",
+          "ToneOverrideId": "0",
+          "ShapeVal": "0.560000002",
+          "ToneVal": "0.660000026",
+          "OverrideVal": "0",
+          "IsP": "0"
+        }
+      },
+      "TattooLogoDecals": null,
+	  "Weapon": "weapon_raycarbine",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0xfade4843",
+      "ScenarioActive": "false",
+      "AnimActive": "false",
+      "FacialMood": "mood_aiming_1"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "16960",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "false",
+    "IsBulletProof": "false",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "false",
+    "IsFireProof": "false",
+    "IsMeleeProof": "false",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "-9.88859081",
+      "Y": "-1741.53784",
+      "Z": "29.3077679",
+      "Pitch": "0",
+      "Roll": "-0",
+      "Yaw": "-111.69751"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

@@ -14,6 +14,7 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 
 	pedHash = tonumber(pedHash)
 
+	ClearAllPedProps(pedHandle)
 	Components(pedHandle, pedComps)
 	Props(pedHandle, pedProps, pedHash)
 
@@ -113,9 +114,9 @@ CorrectionPropFreemodeMale = {
 }
 
 CorrectionProp = {
-	[0] = function(ped) SetPedPropIndex(ped, 0, -1, 0, false) end,
+	[0] = function(ped) SetPedPropIndex(ped, 0, 120, 0, false) end,
 	[1] = function(ped) SetPedPropIndex(ped, 1, -1, 0, false) end,
-	[2] = function(ped) SetPedPropIndex(ped, 2, 33, 0, false) end,
+	[2] = function(ped) SetPedPropIndex(ped, 2, -1, 0, false) end,
 	[6] = function(ped) SetPedPropIndex(ped, 6, -1, 0, false) end,
 	[7] = function(ped) SetPedPropIndex(ped, 7, -1, 0, false) end,
 }

@@ -162,6 +162,7 @@
       "TattooLogoDecals": null,
       "DamagePacks": null,
 	  "WalkStyle": "move_m@casual@b",
+	  "Weapon": "weapon_railgun",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

@@ -1,0 +1,80 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "1126998116",
+	"IsSkinOf": "LudmillaLeuvenia",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0x432ca064",
+    "InitialHandle": "674562",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "-1,-1",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "2,0",
+        "_3": "0,0",
+        "_4": "2,1",
+        "_5": "0,0",
+        "_6": "2,0",
+        "_7": "-1,0",
+        "_8": "1,0",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "4,0"
+      },
+	  "Weapon": "weapon_snspistol",
+      "TattooLogoDecals": null,
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0x6f0783f5",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "300",
+    "IsVisible": "true",
+    "MaxHealth": "150",
+    "Health": "150",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "true",
+    "IsBulletProof": "true",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "true",
+    "IsFireProof": "false",
+    "IsMeleeProof": "true",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "5358.1416",
+      "Y": "-5179.62891",
+      "Z": "82.7675323",
+      "Pitch": "-0",
+      "Roll": "-0",
+      "Yaw": "-27.6523266"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

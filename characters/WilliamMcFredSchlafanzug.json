@@ -162,6 +162,8 @@
       },
       "TattooLogoDecals": null,
       "DamagePacks": null,
+	  "WalkStyle": "move_p_m_zero",
+	  "Weapon": "weapon_revolver",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

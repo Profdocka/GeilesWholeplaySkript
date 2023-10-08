@@ -1,0 +1,222 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "1885233650",
+	"IsSkinOf": "WilliamMcFred",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0x705e61f2",
+    "InitialHandle": "370690",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "false",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "8,2",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "54,0",
+        "_3": "11,0",
+        "_4": "15,0",
+        "_5": "0,0",
+        "_6": "24,0",
+        "_7": "128,0",
+        "_8": "-1,0",
+        "_9": "14,0",
+        "_10": "0,0",
+        "_11": "43,0"
+      },
+      "HeadFeatures": {
+        "WasInArray": "false",
+        "ShapeAndSkinTone": {
+          "ShapeFatherId": "32",
+          "ShapeMotherId": "13",
+          "ShapeOverrideId": "0",
+          "ToneFatherId": "32",
+          "ToneMotherId": "13",
+          "ToneOverrideId": "0",
+          "ShapeVal": "0.70119369",
+          "ToneVal": "0.493958354",
+          "OverrideVal": "0",
+          "IsP": "1"
+        },
+		"HairColour": "0",
+        "HairColourStreaks": "0",
+        "EyeColour": "1",
+        "FacialFeatures": {
+          "_0": "0.000000",
+          "_1": "0.000000",
+          "_2": "0.000000",
+          "_3": "0.000000",
+          "_4": "0.000000",
+          "_5": "0.000000",
+          "_6": "0.000000",
+          "_7": "0.000000",
+          "_8": "0.000000",
+          "_9": "0.000000",
+          "_10": "0.000000",
+          "_11": "0.000000",
+          "_12": "0.000000",
+          "_13": "0.000000",
+          "_14": "0.000000",
+          "_15": "0.000000",
+          "_16": "0.000000",
+          "_17": "0.000000",
+          "_18": "0.000000",
+          "_19": "0.000000"
+        },
+        "Overlays": {
+          "_0": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "self-closing": "true"
+          },
+          "_1": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "self-closing": "true"
+          },
+          "_2": {
+            "index": "26",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "self-closing": "true"
+          },
+          "_3": {
+            "index": "12",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "self-closing": "true"
+          },
+          "_4": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_5": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_6": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_7": {
+            "index": "9",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_8": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_9": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_10": {
+            "index": "0",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_11": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          },
+          "_12": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1",
+            "-self-closing": "true"
+          }
+        }
+      },
+      "TattooLogoDecals": null,
+	  "WalkStyle": "move_p_m_zero",
+	  "Weapon": "weapon_revolver",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0x6f0783f5",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "240",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "true",
+    "IsBulletProof": "true",
+    "IsCollisionProof": "true",
+    "IsExplosionProof": "true",
+    "IsFireProof": "false",
+    "IsMeleeProof": "true",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "2414.23169",
+      "Y": "3826.22925",
+      "Z": "37.6396408",
+      "Pitch": "2.5078814",
+      "Roll": "-4.70010328",
+      "Yaw": "-22.7909031"
+    },
+    "Attachment": {
+      "isAttached": "true",
+      "AttachedTo": "295682",
+      "BoneIndex": "0",
+      "X": "0",
+      "Y": "0",
+      "Z": "0",
+      "Pitch": "0",
+      "Roll": "0",
+      "Yaw": "0"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

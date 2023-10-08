@@ -1,0 +1,80 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "-277793362",
+	"IsSkinOf": "MarionDunby",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "0xef7135ae",
+    "InitialHandle": "5348100",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "0xa2719263",
+      "PedProps": {
+        "_0": "0,1",
+        "_1": "0,0",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,2",
+        "_1": "0,0",
+        "_2": "0,0",
+        "_3": "0,1",
+        "_4": "0,1",
+        "_5": "0,0",
+        "_6": "0,0",
+        "_7": "0,0",
+        "_8": "0,0",
+        "_9": "1,0",
+        "_10": "1,0",
+        "_11": "0,0"
+      },
+	  "Weapon": "weapon_pumpshotgun",
+      "Voice": "s_m_y_sheriff_01_white_full_01",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "0x6f0783f5",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "240",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "true",
+    "IsBulletProof": "true",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "true",
+    "IsFireProof": "false",
+    "IsMeleeProof": "true",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "-1432.43848",
+      "Y": "-553.586487",
+      "Z": "34.7418442",
+      "Pitch": "0",
+      "Roll": "-0",
+      "Yaw": "-146.707687"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}
