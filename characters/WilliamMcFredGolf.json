@@ -163,7 +163,7 @@
       "TattooLogoDecals": null,
       "DamagePacks": null,
 	  "WalkStyle": "move_p_m_zero",
-	  "Weapon": "weapon_revolver",
+	  "Weapon": "weapon_golfclub",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0xfade4843",
       "ScenarioActive": "false",

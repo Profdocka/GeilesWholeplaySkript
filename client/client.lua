@@ -246,20 +246,21 @@ RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
     end
 end)
 
-RegisterCommand("UI_SetPlayerModel", function ()
-    --SetNuiFocus(true, true)
+RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins)
     SendNUIMessage({
-        type = "cool"
+        type = "GW_InitialInfos",
+        characterSkins = CharacterSkins,
+        vehicleSkins = VehicleSkins
     })
 end)
 
-RegisterKeyMapping("UI_SetPlayerModel", "", "keyboard", "F6")
-
-RegisterKeyMapping("gwspawnmycar", "", "keyboard", "F4")
-
-RegisterNUICallback("UI_PlayerModelSwitch", function (data, cb)
-    cb({})
-
-    TriggerServerEvent("SEv_CheckIfEntityIsKussKult", data.characterName, PLAYER_VARIANT, true,
-    GetPlayerCoordsAndHeading(PlayerId(), 0.0), data.characterName)
+RegisterNetEvent("CEvUI_OpenMenu", function (Players, Characters, Vehicles)
+    SendNUIMessage({
+        type = "GW_OpenMenu",
+        players = Players,
+        characters = Characters,
+        vehicles = Vehicles
+    })
+    SetNuiFocus(true, true)
+    TriggerScreenblurFadeIn(3000)
 end)

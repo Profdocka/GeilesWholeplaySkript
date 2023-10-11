@@ -4,13 +4,34 @@
 <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel='stylesheet' type='text/css' media='screen' href='./style.css'>
     <script src='./script.js'></script>
 </head>
 
+
 <body>
     <div id="watermark-container" class="watermark">
-        <img src="./images/KussKultLogo.png" id="watermark-itself" class="watermark"/>
+        <img src="./images/KussKultLogo.png" id="watermark-itself" class="watermark" />
+    </div>
+    <div id="gw-menu-screen" class="head-menu">
+        <div class="options-container">
+            <span id="home" class="material-icons md-18 sidebar" style="color: white;">home</span>
+            <span id="favorite" class="material-icons md-18 sidebar" style="color: white;">bookmark</span>
+        </div>
+        <div class="content-container">
+            <nav class="navbar">
+                <div>
+                    <input id="search-bar" class="search-bar" placeholder="Search Kuss Kult Universe...">
+                    <span class="material-icons" style="color: white;">search</span>
+                </div>
+                <span id="cancel" class="material-icons md-18 controls" style="color: white;">pause</span>
+                <span id="exit" class="material-icons md-18 sidebar" style="color: white;">power_settings_new</span>
+            </nav>
+            <main id="content-holder" class="anims-block">
+                <!--Data inserted by Javascript-->
+            </main>
+        </div>
     </div>
 </body>
 
