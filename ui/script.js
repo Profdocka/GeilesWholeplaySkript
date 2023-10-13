@@ -19,6 +19,26 @@ window.addEventListener("load", (e) => {
     })
 })
 
+document.getElementById('search-bar').addEventListener('input', e => {
+    let input = e.target.value.toUpperCase();
+    const panels = document.getElementsByClassName('entity');
+    for (let i = 0; i < panels.length; i++) {
+        let text = panels[i].getElementsByTagName('div')[0].firstChild
+        let val = text.textContent || text.innerText;
+        if (val.toUpperCase().indexOf(input) > -1) {
+            panels[i].style.display = "";
+        } else {
+            text = panels[i].getElementsByTagName('div')[0].lastChild
+            val = text.textContent || text.innerText;
+            if (val.toUpperCase().indexOf(input) > -1) {
+                panels[i].style.display = "";
+            } else {
+                panels[i].style.display = "none";
+            }
+        }
+    }
+})
+
 const fetchNUI = async (cbname, data) => {
     const options = {
         method: 'POST',
@@ -32,11 +52,12 @@ const fetchNUI = async (cbname, data) => {
 };
 
 const registerSkinsForCharAndVeh = (characterSkins, vehicleSkins) => {
-    memory.characters = Object.entries(characterSkins)
-    memory.vehicles = Object.entries(vehicleSkins)
+    memory.characters = sortObjectKeysAlphabetically(characterSkins)
+    memory.vehicles = sortObjectKeysAlphabetically(vehicleSkins)
     //console.log(memory.characters)
     //console.log(memory.vehicles)
     //console.log(memory)
+    //console.log(memory);
 }
 
 const openGWMenu = (gwData) => {
@@ -60,13 +81,13 @@ const openGWMenu = (gwData) => {
             })
 
         });
-        document.getElementById("gw-menu-screen").hidden = false
+        document.getElementById("gw-menu-screen").style.display = "flex";
     }
 }
 
 const closeGWMenu = () => {
     isMenuOpen = !isMenuOpen
-    document.getElementById("gw-menu-screen").hidden = true
+    document.getElementById("gw-menu-screen").style.display = "none";
     let contentHolder = document.getElementById("content-holder").innerHTML = "";
     fetchNUI("UI_CloseMenu", {})
 }
@@ -77,7 +98,7 @@ const addBlock = (ParentElement, name) => {
     const textBlock = document.createElement('div')
     const title = document.createElement('span');
 
-    block.classList.add('anim');
+    block.classList.add('entity');
 
     block.addEventListener('click', e => {
         console.log(e.target.textContent);
@@ -91,4 +112,13 @@ const addBlock = (ParentElement, name) => {
     textBlock.append(title);
     block.append(textBlock);
     ParentElement.appendChild(block);
+}
+
+function sortObjectKeysAlphabetically(obj) {
+    const sortedEntries = Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+    const sortedObj = {};
+    for (const [key, value] of sortedEntries) {
+        sortedObj[key] = value;
+    }
+    return Object.entries(sortedObj);
 }
