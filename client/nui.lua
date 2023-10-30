@@ -25,7 +25,13 @@ RegisterNUICallback("UI_SpawnCharacterOrVehicle", function (data, cb)
     cb({})
 
     print("Der erhaltene Name: ", data.name)
+    print("Die Variante: ", data.variant)
 
-    TriggerServerEvent("SEv_CheckIfEntityIsKussKult", data.name, PLAYER_VARIANT, true,
-    GetPlayerCoordsAndHeading(PlayerId(), 0.0), data.name)
+    local faction = data.name
+    if data.variant == FRIENDLY_VARIANT then
+        faction = "PLAYER"
+    end
+
+    TriggerServerEvent("SEv_CheckIfEntityIsKussKult", data.name, tonumber(data.variant), true,
+    GetPlayerCoordsAndHeading(PlayerId(), 3.0), faction)
 end)

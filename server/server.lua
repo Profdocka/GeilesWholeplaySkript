@@ -83,6 +83,11 @@ RegisterNetEvent("SEv_ListAll", function(source)
 end)
 
 RegisterNetEvent("SEv_CheckIfEntityIsKussKult", function(input, variant, hasWeapon, vector4, faction)
+    --print("Neues Objekt. Variante: ", variant, " Faction: ", faction)
+    if faction == "PLAYER" then
+        faction = GetPlayerFactionFromSource(source)
+        --print("Neue Faction: ", faction)
+    end
     CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4, faction)
 end)
 

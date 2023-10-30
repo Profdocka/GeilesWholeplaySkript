@@ -1,5 +1,5 @@
 RegisterEntity = function(variant, networkID, name, skin, faction)
-    print("Es wird etwas regestriert: " .. networkID .. ", " .. name .. ", " .. skin)
+    print("Es wird etwas registriert: " .. networkID .. ", " .. name .. ", " .. skin)
     if variant == VEHICLE_VARIANT then
         --vehicle
         local vehicle = { networkID = networkID, name = name, skin = skin}

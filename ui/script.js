@@ -1,6 +1,12 @@
 var memory = {};
 var isMenuOpen = false
 
+const VEHICLE_VARIANT = -1
+const PLAYER_VARIANT = 0
+const NEUTRAL_VARIANT = 1
+const FRIENDLY_VARIANT = 2
+const AGGRESSIVE_VARIANT = 3
+
 window.addEventListener("load", (e) => {
     document.getElementById("gw-menu-screen").hidden = true
     window.addEventListener("message", e => {
@@ -60,24 +66,31 @@ const registerSkinsForCharAndVeh = (characterSkins, vehicleSkins) => {
     //console.log(memory);
 }
 
+const registerActiveData = (gwData) => {
+    memory.players = gwData.players
+    memory.Acharacters = gwData.characters
+    memory.Avehicles = gwData.vehicles
+}
+
 const openGWMenu = (gwData) => {
     if (isMenuOpen == true) {
         closeGWMenu();
     }
     else {
+        registerActiveData(gwData)
         isMenuOpen = !isMenuOpen
         const domElement = document.getElementById("content-holder")
         memory.characters.forEach(rootskin => {
-            addBlock(domElement, rootskin[0])
+            addBlock(domElement, rootskin[0], PLAYER_VARIANT)
             rootskin[1].forEach(subskin => {
-                addBlock(domElement, subskin)
+                addBlock(domElement, subskin, PLAYER_VARIANT)
             })
 
         });
         memory.vehicles.forEach(rootskin => {
             addBlock(domElement, rootskin[0])
             rootskin[1].forEach(subskin => {
-                addBlock(domElement, subskin)
+                addBlock(domElement, subskin, VEHICLE_VARIANT)
             })
 
         });
@@ -92,7 +105,7 @@ const closeGWMenu = () => {
     fetchNUI("UI_CloseMenu", {})
 }
 
-const addBlock = (ParentElement, name) => {
+const addBlock = (ParentElement, name, variant) => {
     //console.log(name)
     const block = document.createElement('div');
     const textBlock = document.createElement('div')
@@ -101,9 +114,8 @@ const addBlock = (ParentElement, name) => {
     block.classList.add('entity');
 
     block.addEventListener('click', e => {
-        console.log(e.target.textContent);
         closeGWMenu();
-        fetchNUI("UI_SpawnCharacterOrVehicle", {name: e.target.textContent})
+        fetchNUI("UI_SpawnCharacterOrVehicle", {name: name, variant: PLAYER_VARIANT})
     })
 
     title.innerHTML = name
@@ -111,6 +123,32 @@ const addBlock = (ParentElement, name) => {
 
     textBlock.append(title);
     block.append(textBlock);
+
+    if (variant === PLAYER_VARIANT) {
+        const variantButtons = document.createElement('div')
+        const neutralVariantButton = document.createElement('div')
+        neutralVariantButton.textContent = "sentiment_neutral";
+        const friendlyVariantButton = document.createElement('div')
+        friendlyVariantButton.textContent = "sentiment_excited";
+        const aggressiveVariantButton = document.createElement('div')
+        aggressiveVariantButton.textContent = "sentiment_extremely_dissatisfied";
+
+        addClickEventHandler(neutralVariantButton, "UI_SpawnCharacterOrVehicle", {name: name, variant: NEUTRAL_VARIANT})
+        addClickEventHandler(friendlyVariantButton, "UI_SpawnCharacterOrVehicle", {name: name, variant: FRIENDLY_VARIANT})
+        addClickEventHandler(aggressiveVariantButton, "UI_SpawnCharacterOrVehicle", {name: name, variant: AGGRESSIVE_VARIANT})
+
+        variantButtons.classList.add('variants')
+        neutralVariantButton.classList.add('material-symbols-outlined','variant-neutral')
+        friendlyVariantButton.classList.add('material-symbols-outlined','variant-friendly')
+        aggressiveVariantButton.classList.add('material-symbols-outlined','variant-aggressive')
+
+        variantButtons.append(neutralVariantButton);
+        variantButtons.append(friendlyVariantButton);
+        variantButtons.append(aggressiveVariantButton);
+
+        block.append(variantButtons)
+    }
+
     ParentElement.appendChild(block);
 }
 
@@ -122,3 +160,20 @@ function sortObjectKeysAlphabetically(obj) {
     }
     return Object.entries(sortedObj);
 }
+
+function addClickEventHandler(recievingObject, nuiEventName, optionsObject) {
+    recievingObject.addEventListener('click', e => {
+        e.stopPropagation();
+        console.log(e.target.textContent);
+        closeGWMenu();
+        fetchNUI(nuiEventName, optionsObject)
+    })
+}
+
+/*
+    <div id="players-section">
+    <div id="active-characters-section">
+    <div id="active-vehicles-section">
+    <div id="character-section">
+    <div id="vehicle-section">
+*/
