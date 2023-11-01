@@ -37,7 +37,7 @@ AddEventHandler("onServerResourceStart", function(resourceName)
             RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(serverID), GetPlayerName(serverID),
                 GetPlayerName(serverID))
         end
-        TriggerClientEvent("CEvUI_InitialGWInfos", -1, TableOfAllCharacterSkins, TableOfAllVehicleSkins)
+        TriggerClientEvent("CEvUI_InitialGWInfos", -1, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
     end
 end)
 
@@ -60,7 +60,7 @@ RegisterNetEvent("SEv_PlayerSpawned", function(source)
 
     OrganizeTableOfFactions()
     ReapplyPlayerCharacters("Neuer Spieler betritt das Spiel. Dein Charakter wird neu geladen.")
-    TriggerClientEvent("CEvUI_InitialGWInfos", source, TableOfAllCharacterSkins, TableOfAllVehicleSkins)
+    TriggerClientEvent("CEvUI_InitialGWInfos", source, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
     --TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
 end)
 
@@ -89,6 +89,10 @@ RegisterNetEvent("SEv_CheckIfEntityIsKussKult", function(input, variant, hasWeap
         --print("Neue Faction: ", faction)
     end
     CheckIfEntityIsKussKult(source, input, variant, hasWeapon, vector4, faction)
+end)
+
+RegisterNetEvent("SEv_CheckIfFactionIsKussKult", function (source, factionName, factionVariant, hasWeapon, vector4, exceptionTarget)
+    CheckIfFactionIsKussKult(source, factionName, factionVariant, hasWeapon, vector4, exceptionTarget)
 end)
 
 RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID)
@@ -142,4 +146,18 @@ end)
 
 RegisterNetEvent("SEv_OpenMenu", function (source)
     TriggerClientEvent("CEvUI_OpenMenu", source, Players, Characters, Vehicles)
+end)
+
+RegisterNetEvent("SEv_SpawnMyCar", function (source)
+    local index = NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
+	local characterName = Players[index].name
+	characterName = ReplaceUmlaute(characterName)
+	characterName = string.lower(characterName)
+	local ownerString = Owners[characterName]
+	if ownerString ~= nil then
+		local vehicleString = ownerString[1]
+		TriggerClientEvent("CEv_SpawnVehicle", source, vehicleString, index);
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Dieser Charakter besitzt kein Fahrzeug!")
+	end
 end)

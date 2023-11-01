@@ -108,6 +108,9 @@ CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vec
         else
             factionName = inputLower
         end
+        if exceptionTarget == "PLAYER" then
+            exceptionTarget = Players[GetNetworkIDPlayerFromSource(source)].name
+        end
         for i, name in pairs(Group) do
             --print("Mitglieder der Gruppe: " .. name)
             if name == exceptionTarget then

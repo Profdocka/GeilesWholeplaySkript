@@ -246,11 +246,12 @@ RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
     end
 end)
 
-RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins)
+RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, allFactions)
     SendNUIMessage({
         type = "GW_InitialInfos",
         characterSkins = CharacterSkins,
-        vehicleSkins = VehicleSkins
+        vehicleSkins = VehicleSkins,
+        allFactions = allFactions
     })
 end)
 

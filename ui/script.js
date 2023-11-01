@@ -6,13 +6,14 @@ const PLAYER_VARIANT = 0
 const NEUTRAL_VARIANT = 1
 const FRIENDLY_VARIANT = 2
 const AGGRESSIVE_VARIANT = 3
+const GROUP_VARIANT = 4
 
 window.addEventListener("load", (e) => {
     document.getElementById("gw-menu-screen").hidden = true
     window.addEventListener("message", e => {
         switch (e.data.type) {
             case 'GW_InitialInfos':
-                registerSkinsForCharAndVeh(e.data.characterSkins, e.data.vehicleSkins)
+                registerSkinsForCharAndVeh(e.data)
                 break;
             case 'GW_OpenMenu':
                 openGWMenu(e.data);
@@ -23,6 +24,7 @@ window.addEventListener("load", (e) => {
     document.getElementById("exit").addEventListener("click", (e) => {
         closeGWMenu();
     })
+    addClickEventHandler(document.getElementById("mycar"), "UI_SpawnMyCar", {})
 })
 
 document.getElementById('search-bar').addEventListener('input', e => {
@@ -45,6 +47,18 @@ document.getElementById('search-bar').addEventListener('input', e => {
     }
 })
 
+// Fokus auf das Suchfeld setzen, wenn die Taste "F" gedrückt wird
+document.addEventListener("keydown", function (event) {
+    const searchbar = document.getElementById("search-bar");
+    if (event.key === "Escape") {
+        closeGWMenu();
+    }
+    else if (event.key === "f" && document.activeElement !== searchbar) {
+        event.preventDefault(); // Verhindert, dass "F" im Textfeld erscheint
+        searchbar.focus();
+    }
+});
+
 const fetchNUI = async (cbname, data) => {
     const options = {
         method: 'POST',
@@ -57,9 +71,10 @@ const fetchNUI = async (cbname, data) => {
     return await resp.json();
 };
 
-const registerSkinsForCharAndVeh = (characterSkins, vehicleSkins) => {
-    memory.characters = sortObjectKeysAlphabetically(characterSkins)
-    memory.vehicles = sortObjectKeysAlphabetically(vehicleSkins)
+const registerSkinsForCharAndVeh = (data) => {
+    memory.characters = sortObjectKeysAlphabetically(data.characterSkins)
+    memory.vehicles = sortObjectKeysAlphabetically(data.vehicleSkins)
+    memory.factions = Object.keys(data.allFactions)
     //console.log(memory.characters)
     //console.log(memory.vehicles)
     //console.log(memory)
@@ -81,19 +96,22 @@ const openGWMenu = (gwData) => {
         isMenuOpen = !isMenuOpen
         const domElement = document.getElementById("content-holder")
         memory.characters.forEach(rootskin => {
-            addBlock(domElement, rootskin[0], PLAYER_VARIANT)
+            addBlock(domElement, rootskin[0], PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
             rootskin[1].forEach(subskin => {
-                addBlock(domElement, subskin, PLAYER_VARIANT)
+                addBlock(domElement, subskin, PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
             })
 
         });
         memory.vehicles.forEach(rootskin => {
-            addBlock(domElement, rootskin[0])
+            addBlock(domElement, rootskin[0], VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
             rootskin[1].forEach(subskin => {
-                addBlock(domElement, subskin, VEHICLE_VARIANT)
+                addBlock(domElement, subskin, VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
             })
 
         });
+        memory.factions.forEach(faction => {
+            addBlock(domElement, faction, GROUP_VARIANT, "UI_SpawnGroup")
+        })
         document.getElementById("gw-menu-screen").style.display = "flex";
     }
 }
@@ -105,7 +123,7 @@ const closeGWMenu = () => {
     fetchNUI("UI_CloseMenu", {})
 }
 
-const addBlock = (ParentElement, name, variant) => {
+const addBlock = (ParentElement, name, variant, gameEvent) => {
     //console.log(name)
     const block = document.createElement('div');
     const textBlock = document.createElement('div')
@@ -113,10 +131,12 @@ const addBlock = (ParentElement, name, variant) => {
 
     block.classList.add('entity');
 
-    block.addEventListener('click', e => {
-        closeGWMenu();
-        fetchNUI("UI_SpawnCharacterOrVehicle", {name: name, variant: PLAYER_VARIANT})
-    })
+    if (variant === PLAYER_VARIANT || variant === VEHICLE_VARIANT) {
+        block.addEventListener('click', e => {
+            closeGWMenu();
+            fetchNUI(gameEvent, { name: name, variant: variant })
+        })
+    }
 
     title.innerHTML = name
     //setText(title, name);
@@ -124,7 +144,7 @@ const addBlock = (ParentElement, name, variant) => {
     textBlock.append(title);
     block.append(textBlock);
 
-    if (variant === PLAYER_VARIANT) {
+    if (variant === PLAYER_VARIANT || variant === GROUP_VARIANT) {
         const variantButtons = document.createElement('div')
         const neutralVariantButton = document.createElement('div')
         neutralVariantButton.textContent = "sentiment_neutral";
@@ -133,14 +153,14 @@ const addBlock = (ParentElement, name, variant) => {
         const aggressiveVariantButton = document.createElement('div')
         aggressiveVariantButton.textContent = "sentiment_extremely_dissatisfied";
 
-        addClickEventHandler(neutralVariantButton, "UI_SpawnCharacterOrVehicle", {name: name, variant: NEUTRAL_VARIANT})
-        addClickEventHandler(friendlyVariantButton, "UI_SpawnCharacterOrVehicle", {name: name, variant: FRIENDLY_VARIANT})
-        addClickEventHandler(aggressiveVariantButton, "UI_SpawnCharacterOrVehicle", {name: name, variant: AGGRESSIVE_VARIANT})
+        addClickEventHandler(neutralVariantButton, gameEvent, { name: name, variant: NEUTRAL_VARIANT })
+        addClickEventHandler(friendlyVariantButton, gameEvent, { name: name, variant: FRIENDLY_VARIANT })
+        addClickEventHandler(aggressiveVariantButton, gameEvent, { name: name, variant: AGGRESSIVE_VARIANT })
 
         variantButtons.classList.add('variants')
-        neutralVariantButton.classList.add('material-symbols-outlined','variant-neutral')
-        friendlyVariantButton.classList.add('material-symbols-outlined','variant-friendly')
-        aggressiveVariantButton.classList.add('material-symbols-outlined','variant-aggressive')
+        neutralVariantButton.classList.add('material-symbols-outlined', 'variant-neutral')
+        friendlyVariantButton.classList.add('material-symbols-outlined', 'variant-friendly')
+        aggressiveVariantButton.classList.add('material-symbols-outlined', 'variant-aggressive')
 
         variantButtons.append(neutralVariantButton);
         variantButtons.append(friendlyVariantButton);

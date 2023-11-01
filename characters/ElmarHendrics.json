@@ -1,0 +1,78 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "-1229853272",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "-1229853272",
+    "InitialHandle": "7643650",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "-1569615261",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "0,2",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "0,0",
+        "_3": "1,0",
+        "_4": "0,0",
+        "_5": "0,0",
+        "_6": "0,0",
+        "_7": "0,0",
+        "_8": "0,0",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "0,0"
+      },
+      "Weapon": "weapon_fireextinguisher",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "-958483322",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "240",
+    "IsVisible": "true",
+    "MaxHealth": "175",
+    "Health": "175",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "false",
+    "IsBulletProof": "false",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "false",
+    "IsFireProof": "false",
+    "IsMeleeProof": "false",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "-44.3878212",
+      "Y": "-800.787842",
+      "Z": "44.2251244",
+      "Pitch": "0",
+      "Roll": "0",
+      "Yaw": "70.7721558"
+    },
+    "Attachment": {
+      "@isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "@SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "@StartTaskSequencesOnLoad": "true"
+    }
+  }
+}
