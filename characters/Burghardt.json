@@ -39,7 +39,7 @@
         "_10": "0,0",
         "_11": "0,0"
       },
-	  "Weapon": "weapon_combatpdw",
+      "Weapon": "weapon_combatpdw",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

@@ -27,6 +27,7 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 		--print("cool")
 		Decals(pedHandle, pedDecals)
 	end
+	ResetPedMovementClipset(pedHandle, 0.5)
 	if (pedWalk ~= nil) then
 		Walkstyle(pedHandle, pedWalk)
 	end
