@@ -246,21 +246,23 @@ RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
     end
 end)
 
-RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, allFactions)
+RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, allFactions, ownersOfVehicles)
     SendNUIMessage({
         type = "GW_InitialInfos",
         characterSkins = CharacterSkins,
         vehicleSkins = VehicleSkins,
-        allFactions = allFactions
+        allFactions = allFactions,
+        myVehicles = ownersOfVehicles
     })
 end)
 
-RegisterNetEvent("CEvUI_OpenMenu", function (Players, Characters, Vehicles)
+RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName)
     SendNUIMessage({
         type = "GW_OpenMenu",
         players = Players,
         characters = Characters,
-        vehicles = Vehicles
+        vehicles = Vehicles,
+        playerName = playerName
     })
     SetNuiFocus(true, true)
     TriggerScreenblurFadeIn(3000)

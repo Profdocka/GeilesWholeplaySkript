@@ -37,7 +37,7 @@ AddEventHandler("onServerResourceStart", function(resourceName)
             RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(serverID), GetPlayerName(serverID),
                 GetPlayerName(serverID))
         end
-        TriggerClientEvent("CEvUI_InitialGWInfos", -1, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
+        TriggerClientEvent("CEvUI_InitialGWInfos", -1, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions, Owners)
     end
 end)
 
@@ -59,7 +59,8 @@ RegisterNetEvent("SEv_PlayerSpawned", function(source)
     RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(source), GetPlayerName(source), GetPlayerName(source))
 
     OrganizeTableOfFactions()
-    ReapplyPlayerCharacters("Neuer Spieler betritt das Spiel. Dein Charakter wird neu geladen.")
+    --ReapplyPlayerCharacters wird VORERST entfernt!!!
+    --ReapplyPlayerCharacters("Neuer Spieler betritt das Spiel. Dein Charakter wird neu geladen.")
     TriggerClientEvent("CEvUI_InitialGWInfos", source, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
     --TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
 end)
@@ -145,7 +146,11 @@ RegisterNetEvent("SEv_StopAllCharacters", function (source)
 end)
 
 RegisterNetEvent("SEv_OpenMenu", function (source)
-    TriggerClientEvent("CEvUI_OpenMenu", source, Players, Characters, Vehicles)
+    TriggerClientEvent("CEvUI_OpenMenu", source, Players, Characters, Vehicles, Players[GetNetworkIDPlayerFromSource(source)].name)
+end)
+
+RegisterNetEvent("SEv_RequestMenuData", function (source)
+    TriggerClientEvent("CEvUI_InitialGWInfos", -1, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions, Owners)
 end)
 
 RegisterNetEvent("SEv_SpawnMyCar", function (source)

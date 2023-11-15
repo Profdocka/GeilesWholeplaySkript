@@ -21,11 +21,17 @@ RegisterNUICallback("UI_CloseMenu", function (data, cb)
     TriggerScreenblurFadeOut(3000)
 end)
 
+RegisterNUICallback("UI_RequestMenuData", function (data, cb)
+    cb({})
+
+    TriggerServerEvent("SEv_RequestMenuData", GetPlayerServerId(PlayerId()))
+end)
+
 RegisterNUICallback("UI_SpawnCharacterOrVehicle", function (data, cb)
     cb({})
 
-    print("Der erhaltene Name: ", data.name)
-    print("Die Variante: ", data.variant)
+    --print("Der erhaltene Name: ", data.name)
+    --print("Die Variante: ", data.variant)
 
     local faction = data.name
     if data.variant == FRIENDLY_VARIANT then
@@ -39,8 +45,8 @@ end)
 RegisterNUICallback("UI_SpawnGroup", function (data, cb)
     cb({})
 
-    print("Der erhaltene Name: ", data.name)
-    print("Die Variante: ", data.variant)
+    --print("Der erhaltene Name: ", data.name)
+    --print("Die Variante: ", data.variant)
 
     local exceptionTarget = "PLAYER"
 

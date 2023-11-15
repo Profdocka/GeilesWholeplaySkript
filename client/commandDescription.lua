@@ -51,4 +51,8 @@ Citizen.CreateThread(function()
 		"Schaltet durch die Verkleidungen des Charakters durch", {
 			{ name = "?index", help = "Zahlenindex um eine bestimmte Verkleidung zu bekommen. NOT WORKING" },
 		})
+	TriggerEvent("chat:addSuggestion", "/gwtp",
+		"Teleportiert den Spieler zu der Location anhand des zusammengeschriebenen Namens", {
+			{ name = "LocationName", help = "Der Name der Location. (required)" }
+		})
 end)

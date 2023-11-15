@@ -85,6 +85,12 @@ ShowNotification = function(msg)
     --DrawNotification(false, true)
 end
 
+ShowHelpNotification = function (msg, duration)
+    AddTextEntry("ALERT", msg)
+    BeginTextCommandDisplayHelp("ALERT")
+    EndTextCommandDisplayHelp(0, false, true, duration)
+end
+
 GetPlayerCoordsAndHeading = function(serverID, offset)
     local playerPed = GetPlayerPed(serverID)
     local positionData = {}

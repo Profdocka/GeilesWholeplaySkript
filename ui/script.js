@@ -1,5 +1,7 @@
 var memory = {};
-var isMenuOpen = false
+var isMenuOpen = false;
+var playerName = "";
+isGoodToGo = true
 
 const VEHICLE_VARIANT = -1
 const PLAYER_VARIANT = 0
@@ -16,6 +18,7 @@ window.addEventListener("load", (e) => {
                 registerSkinsForCharAndVeh(e.data)
                 break;
             case 'GW_OpenMenu':
+                playerName = e.data.playerName;
                 openGWMenu(e.data);
                 break;
 
@@ -25,6 +28,7 @@ window.addEventListener("load", (e) => {
         closeGWMenu();
     })
     addClickEventHandler(document.getElementById("mycar"), "UI_SpawnMyCar", {})
+    optionsContainerButtons();
 })
 
 document.getElementById('search-bar').addEventListener('input', e => {
@@ -75,6 +79,7 @@ const registerSkinsForCharAndVeh = (data) => {
     memory.characters = sortObjectKeysAlphabetically(data.characterSkins)
     memory.vehicles = sortObjectKeysAlphabetically(data.vehicleSkins)
     memory.factions = Object.keys(data.allFactions)
+    memory.myVehicles = data.myVehicles
     //console.log(memory.characters)
     //console.log(memory.vehicles)
     //console.log(memory)
@@ -92,28 +97,37 @@ const openGWMenu = (gwData) => {
         closeGWMenu();
     }
     else {
-        registerActiveData(gwData)
-        isMenuOpen = !isMenuOpen
-        const domElement = document.getElementById("content-holder")
-        memory.characters.forEach(rootskin => {
-            addBlock(domElement, rootskin[0], PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
-            rootskin[1].forEach(subskin => {
-                addBlock(domElement, subskin, PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
-            })
-
-        });
-        memory.vehicles.forEach(rootskin => {
-            addBlock(domElement, rootskin[0], VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
-            rootskin[1].forEach(subskin => {
-                addBlock(domElement, subskin, VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
-            })
-
-        });
-        memory.factions.forEach(faction => {
-            addBlock(domElement, faction, GROUP_VARIANT, "UI_SpawnGroup")
-        })
-        document.getElementById("gw-menu-screen").style.display = "flex";
+        if (isMenuDataFunctional()) {
+            registerActiveData(gwData)
+            isMenuOpen = !isMenuOpen
+            addEveryEntity();
+        }
     }
+}
+
+const addEveryEntity = () => {
+    const domElement = document.getElementById("content-holder");
+    createSectionLine(domElement, "Charaktere");
+    memory.characters.forEach(rootskin => {
+        addBlock(domElement, rootskin[0], PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
+        rootskin[1].forEach(subskin => {
+            addBlock(domElement, subskin, PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
+        })
+
+    });
+    createSectionLine(domElement, "Fahrzeuge");
+    memory.vehicles.forEach(rootskin => {
+        addBlock(domElement, rootskin[0], VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
+        rootskin[1].forEach(subskin => {
+            addBlock(domElement, subskin, VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
+        })
+    });
+    createSectionLine(domElement, "Fraktionen");
+    memory.factions.forEach(faction => {
+        addBlock(domElement, faction, GROUP_VARIANT, "UI_SpawnGroup")
+    })
+    createSectionLine(domElement, "Locations");
+    document.getElementById("gw-menu-screen").style.display = "flex";
 }
 
 const closeGWMenu = () => {
@@ -189,6 +203,101 @@ function addClickEventHandler(recievingObject, nuiEventName, optionsObject) {
         fetchNUI(nuiEventName, optionsObject)
     })
 }
+
+function createSectionLine(parentElement, sectionText) {
+    const section = document.createElement('div');
+    section.classList.add("custom-hr");
+
+    const text = document.createElement('div');
+    text.textContent = sectionText
+
+    section.append(text);
+
+    parentElement.append(section);
+}
+
+function optionsContainerButtons() {
+    const homeTab = document.getElementById("homeTab");
+    const characterTab = document.getElementById("characterTab");
+    const vehicleTab = document.getElementById("vehicleTab");
+    const factionTab = document.getElementById("factionTab");
+    const locationTab = document.getElementById("locationTab");
+    const myVehiclesTab = document.getElementById("myVehiclesTab");
+
+    optionsContainerButtonHandler(homeTab, "Everything");
+    optionsContainerButtonHandler(characterTab, "Charaktere");
+    optionsContainerButtonHandler(vehicleTab, "Fahrzeuge");
+    optionsContainerButtonHandler(factionTab, "Fraktionen");
+    optionsContainerButtonHandler(locationTab, "Locations");
+    optionsContainerButtonHandler(myVehiclesTab, "MeineFahrzeuge");
+
+}
+
+function optionsContainerButtonHandler(recievingObject, tabVariant) {
+    recievingObject.addEventListener("click", e => {
+        e.stopPropagation();
+        const contentHolder = document.getElementById("content-holder");
+        contentHolder.innerHTML = "";
+        switch (tabVariant) {
+            case "Everything":
+                addEveryEntity();
+                break;
+            case "Charaktere":
+                createSectionLine(contentHolder, tabVariant);
+                memory.characters.forEach(rootskin => {
+                    addBlock(contentHolder, rootskin[0], PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
+                    rootskin[1].forEach(subskin => {
+                        addBlock(contentHolder, subskin, PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
+                    })
+                });
+                break;
+            case "Fahrzeuge":
+                createSectionLine(contentHolder, tabVariant);
+                memory.vehicles.forEach(rootskin => {
+                    addBlock(contentHolder, rootskin[0], VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
+                    rootskin[1].forEach(subskin => {
+                        addBlock(contentHolder, subskin, VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
+                    })
+                });
+                break;
+            case "Fraktionen":
+                createSectionLine(contentHolder, tabVariant);
+                memory.factions.forEach(faction => {
+                    addBlock(contentHolder, faction, GROUP_VARIANT, "UI_SpawnGroup")
+                })
+                break;
+            case "Locations":
+                createSectionLine(contentHolder, tabVariant);
+                break;
+            case "MeineFahrzeuge":
+                createSectionLine(contentHolder, tabVariant);
+                let lowerName = playerName.toLowerCase();
+                console.log("Der Owner: ", lowerName);
+                console.log(memory.myVehicles[lowerName]);
+
+                if (memory.myVehicles[lowerName] != undefined) {
+                    memory.myVehicles[lowerName].forEach(vehicle => {
+                        addBlock(contentHolder, vehicle, VEHICLE_VARIANT, "UI_SpawnCharacterOrVehicle")
+                    });
+                }
+                break;
+        }
+    })
+}
+
+function isMenuDataFunctional() {
+    if (memory.characters != null && isGoodToGo) {
+        return true
+    } else if(isGoodToGo == false) {
+        return false
+    } else {
+        isGoodToGo = false;
+        fetchNUI("UI_RequestMenuData", {});
+        setTimeout(() => isGoodToGo = true, 5000);
+        return false;
+    }
+}
+
 
 /*
     <div id="players-section">

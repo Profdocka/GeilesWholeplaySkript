@@ -1,0 +1,604 @@
+{
+  "mcfredtower": {
+    "title": "McFred Tower",
+    "isInterior": false,
+    "colour": 40,
+    "blipId": 540,
+    "x": -56.0,
+    "y": -784.0,
+    "z": 44.0
+  },
+  "mcfredatoll": {
+    "title": "McFred Atoll",
+    "isInterior": false,
+    "colour": 40,
+    "blipId": 455,
+    "x": -2039.0,
+    "y": -1033.0,
+    "z": 8.97
+  },
+  "dunesskyscraper": {
+    "title": "Dunes Skyscraper",
+    "isInterior": false,
+    "colour": 36,
+    "blipId": 475,
+    "x": -100.0,
+    "y": -612.0,
+    "z": 36.0
+  },
+  "dunesbuero": {
+    "title": "Dunes Büro",
+    "isInterior": true,
+    "colour": 36,
+    "blipId": 475,
+    "intCoords": {
+      "x": -141.5,
+      "y": -621.1,
+      "z": 168.8
+    },
+    "extCoords": {
+      "x": -116.4,
+      "y": -603.0,
+      "z": 36.3
+    }
+  },
+  "ronnyrabbitswerkstatt": {
+    "title": "Ronny Rabbits Werkstatt",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 446,
+    "x": -206.0,
+    "y": -1304.0,
+    "z": 31.0
+  },
+  "smirnovlagerhaus": {
+    "title": "Smirnov Lagerhaus",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 569,
+    "x": 763.0,
+    "y": -898.0,
+    "z": 25.0
+  },
+  "smirnovlagerdrinnen": {
+    "title": "Smirnov Lagerhaus Innenbereich",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 569,
+    "intCoords": {
+      "x": 1048.75,
+      "y": -3097.47,
+      "z": -39.0
+    },
+    "extCoords": {
+      "x": 759.8,
+      "y": -909.4,
+      "z": 25.3
+    }
+  },
+  "lateloungeclub": {
+    "title": "Late Lounge Club",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 93,
+    "x": 134.0,
+    "y": -1307.0,
+    "z": 29.0
+  },
+  "fortwashmington": {
+    "title": "Fort Washmashington",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 421,
+    "x": -2241.0,
+    "y": 3227.0,
+    "z": 32.0
+  },
+  "forttower": {
+    "title": "Fort Washmashington Tower",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 564,
+    "intCoords": {
+      "x": -2360.5,
+      "y": 3249.4,
+      "z": 92.8
+    },
+    "extCoords": {
+      "x": -2360.5,
+      "y": 3249.4,
+      "z": 32.8
+    }
+  },
+  "kusskultcamp": {
+    "title": "Kuss Kult Camp",
+    "isInterior": false,
+    "colour": 3,
+    "blipId": 594,
+    "x": -1150.0,
+    "y": 4923.0,
+    "z": 221.0
+  },
+  "mountyashorgipfel": {
+    "title": "Mount Yashor Gipfel",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 162,
+    "x": 501.0,
+    "y": 5604.0,
+    "z": 797.0
+  },
+  "frecherfarm": {
+    "title": "Frecher Farm",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 557,
+    "x": 2471.0,
+    "y": 4954.0,
+    "z": 45.0
+  },
+  "kusskultflugplatz": {
+    "title": "Kuss Kult Flugplatz",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 580,
+    "x": 2108.0,
+    "y": 4785.0,
+    "z": 41.0
+  },
+  "frecherbar": {
+    "title": "Frecher Bar",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 499,
+    "x": 1995.0,
+    "y": 3058.0,
+    "z": 47.0
+  },
+  "grandfortskindikostrafanstalt": {
+    "title": "Grandfort Skindiko Strafanstalt",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 188,
+    "x": 1693.0,
+    "y": 2522.0,
+    "z": 45.0
+  },
+  "harringtonshuette": {
+    "title": "Harringtons Hütte",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 150,
+    "x": 726.0,
+    "y": 4183.0,
+    "z": 40.0
+  },
+  "huehnchenfabrik": {
+    "title": "Hühnchenfabrik",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 489,
+    "x": -74.0,
+    "y": 6273.0,
+    "z": 31.0
+  },
+  "ericswohnwagen": {
+    "title": "Erics Wohnwagen",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 659,
+    "x": 1983.0,
+    "y": 3817.0,
+    "z": 32.0
+  },
+  "dunesranch": {
+    "title": "Dunes Ranch",
+    "isInterior": false,
+    "colour": 36,
+    "blipId": 304,
+    "x": 1373.0,
+    "y": 1147.0,
+    "z": 113.0
+  },
+  "duneshaus": {
+    "title": "Dunes Haus",
+    "isInterior": true,
+    "colour": 36,
+    "blipId": 304,
+    "intCoords": {
+      "x": 1397.3,
+      "y": 1141.9,
+      "z": 114.3
+    },
+    "extCoords": {
+      "x": 1394.8,
+      "y": 1141.9,
+      "z": 114.6
+    }
+  },
+  "luckybellcasino": {
+    "title": "Lucky Bell Casino",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 680,
+    "x": 913.0,
+    "y": 53.0,
+    "z": 80.0
+  },
+  "luckybellcasinomainhall": {
+    "title": "Lucky Bell Casino Besucher",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 680,
+    "intCoords": {
+      "x": 2468.9,
+      "y": -287.9,
+      "z": -58.0
+    },
+    "extCoords": {
+      "x": 935.5,
+      "y": 46.4,
+      "z": 81.1
+    }
+  },
+  "omaroswitaswerkstatt": {
+    "title": "Oma Roswitas Werkstatt",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 387,
+    "x": 489.0,
+    "y": -1312.0,
+    "z": 29.0
+  },
+  "polizeistation": {
+    "title": "Polizeistation",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 60,
+    "x": 427.0,
+    "y": -979.0,
+    "z": 30.0
+  },
+  "mcfredresidenz": {
+    "title": "McFred Residenz",
+    "isInterior": true,
+    "colour": 40,
+    "blipId": 457,
+    "intCoords": {
+      "x": -2587.2,
+      "y": 1908.4,
+      "z": 167.5
+    },
+    "extCoords": {
+      "x": -2588.2,
+      "y": 1911.8,
+      "z": 167.5
+    }
+  },
+  "gerichtsgebaeude": {
+    "title": "Gerichtsgebäude",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 58,
+    "x": 244.0,
+    "y": -386.0,
+    "z": 45.0
+  },
+  "stvalleyrathaus": {
+    "title": "St. Valley Rathaus",
+    "isInterior": false,
+    "colour": 46,
+    "blipId": 674,
+    "x": -535.0,
+    "y": -220.0,
+    "z": 37.0
+  },
+  "nhproductionsfilmstudio": {
+    "title": "NH Productions Filmstudio",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 135,
+    "x": -1067.0,
+    "y": -498.0,
+    "z": 36.0
+  },
+  "copperfieldbuero": {
+    "title": "Copperfields Büro",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 110,
+    "intCoords": {
+      "x": -1003.0,
+      "y": -478.0,
+      "z": 50.0
+    },
+    "extCoords": {
+      "x": -1011.9,
+      "y": -480.2,
+      "z": 40.0
+    }
+  },
+  "wrackvilla": {
+    "title": "Wrack Villa",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 40,
+    "x": -164.0,
+    "y": 857.0,
+    "z": 232.0
+  },
+  "mclinnmine": {
+    "title": "McLinn Mine",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 618,
+    "x": -597.0,
+    "y": 2094.0,
+    "z": 131.0
+  },
+  "flekkalekkamegamall": {
+    "title": "Flekka Lekka Mega Mall",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 628,
+    "x": 18.0,
+    "y": -1724.0,
+    "z": 29.0
+  },
+  "apualistankstelle": {
+    "title": "Apu Alis Tankstelle",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 52,
+    "x": -56.0,
+    "y": -1760.0,
+    "z": 28.0
+  },
+  "dunesfabrik": {
+    "title": "Dunes Fabrik",
+    "isInterior": false,
+    "colour": 36,
+    "blipId": 543,
+    "x": 1072.0,
+    "y": -1966.0,
+    "z": 31.0
+  },
+  "dockdeskaeptens": {
+    "title": "Dock des Käptens",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 751,
+    "x": 531.0,
+    "y": -3123.0,
+    "z": 6.0
+  },
+  "plazatower": {
+    "title": "Plaza Tower",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 40,
+    "x": -927.0,
+    "y": -458.0,
+    "z": 37.0
+  },
+  "karlsonsapartment": {
+    "title": "Karlsons Apartment",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 40,
+    "intCoords": {
+      "x": -907.6,
+      "y": -453.6,
+      "z": 126.0
+    },
+    "extCoords": {
+      "x": -906.6,
+      "y": -451.6,
+      "z": 39.0
+    }
+  },
+  "rhodisinsel": {
+    "title": "Rhodis Insel",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 356,
+    "x": -2165.0,
+    "y": 5181.0,
+    "z": 15.0
+  },
+  "rehabilationsklinikfuerwahnsinnige": {
+    "title": "Rehabilationsklinik für Wahnsinnige",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 153,
+    "x": -1527.0,
+    "y": 851.0,
+    "z": 181.0
+  },
+  "bottleneckuniversitaet": {
+    "title": "Bottleneck Universität",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 176,
+    "x": -1614.0,
+    "y": 189.0,
+    "z": 60.0
+  },
+  "ussgoverneuer": {
+    "title": "USS Governeuer",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 600,
+    "x": 3071.0,
+    "y": -4700.0,
+    "z": 15.0
+  },
+  "dunesisland": {
+    "title": "Dunes Island",
+    "isInterior": false,
+    "colour": 36,
+    "blipId": 766,
+    "x": 4991.0,
+    "y": -5721.0,
+    "z": 19.0
+  },
+  "flatmaker": {
+    "title": "Flatmaker",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 548,
+    "intCoords": {
+      "x": 360.47,
+      "y": 6307.90,
+      "z": -159.9275
+    },
+    "extCoords": {
+      "x": 607.0,
+      "y": 5555.0,
+      "z": 716.4
+    }
+  },
+  "mcfredsforschungsbasis": {
+    "title": "McFreds Forschungsstation",
+    "isInterior": true,
+    "colour": 40,
+    "blipId": 548,
+    "intCoords": {
+      "x": 1256.4,
+      "y": 4802.40,
+      "z": -39.3
+    },
+    "extCoords": {
+      "x": -354.4,
+      "y": 4825.3,
+      "z": 144.3
+    }
+  },
+  "mckinbayleuchtturm": {
+    "title": "McKinbay Leuchtturm",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 419,
+    "x": 3351.0,
+    "y": 5152.0,
+    "z": 19.0
+  },
+  "timeltonsapartment": {
+    "title": "Timeltons Apartment",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 459,
+    "x": -75.0,
+    "y": -23.0,
+    "z": 66.0
+  },
+  "goldfinkbankhaus": {
+    "title": "Goldfink Bankhaus",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 617,
+    "x": 225.0,
+    "y": 210.0,
+    "z": 105.0
+  },
+  "zukunftsforschungsstation": {
+    "title": "Zukunftsforschungsstation",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 596,
+    "x": 3628.1,
+    "y": 3756.0,
+    "z": 28.5
+  },
+  "glatzkopfslabor": {
+    "title": "Glatzkopfs Labor",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 596,
+    "intCoords": {
+      "x": 3540.5,
+      "y": 3675.3,
+      "z": 28.1
+    },
+    "extCoords": {
+      "x": 3540.5,
+      "y": 3675.3,
+      "z": 21.0
+    }
+  },
+  "mcfredbuero": {
+    "title": "McFreds Büro",
+    "isInterior": true,
+    "colour": 40,
+    "blipId": 642,
+    "intCoords": {
+      "x": -75.9,
+      "y": -826.6,
+      "z": 243.4
+    },
+    "extCoords": {
+      "x": -66.0,
+      "y": -801.0,
+      "z": 44.0
+    }
+  },
+  "bishauptquatier": {
+    "title": "BIS Hauptquatier",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 106,
+    "intCoords": {
+      "x": 136.0,
+      "y": -762.1,
+      "z": 242.2
+    },
+    "extCoords": {
+      "x": 136.2,
+      "y": -761.8,
+      "z": 45.8
+    }
+  },
+  "abschlepphof": {
+    "title": "Abschlepphof",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 317,
+    "x": 410.0,
+    "y": -1640.0,
+    "z": 29.0
+  },
+  "drseuchlersbuero": {
+    "title": "Dr Seuchlers Büro",
+    "isInterior": true,
+    "colour": 0,
+    "blipId": 51,
+    "intCoords": {
+      "x": 250.7,
+      "y": -1367.5,
+      "z": 39.5
+    },
+    "extCoords": {
+      "x": 240.9,
+      "y": -1379.6,
+      "z": 33.7
+    }
+  },
+  "feuerwehrwache": {
+    "title": "Feuerwehrwache",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 436,
+    "x": 220.0,
+    "y": -1638.0,
+    "z": 30.0
+  },
+  "tvtotalegalredaktion": {
+    "title": "TV Total Egal Redaktion",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 744,
+    "x": -1081.1,
+    "y": -261.8,
+    "z": 37.8
+  }
+}
