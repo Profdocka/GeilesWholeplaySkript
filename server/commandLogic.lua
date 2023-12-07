@@ -213,3 +213,19 @@ FullModelSwitchOrJustCosmetics = function(networkID, skin, folder, source, facti
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Deine neue Verkleidung: " .. skin)
 	end
 end
+
+RegisterCommand("gwjahresabschluss", function(source, args)
+	local variant = NEUTRAL_VARIANT
+	local hasWeapon = true
+	local vector4 = nil
+	local factionName = "CHAOS"
+
+	local Group = GetAllCharacterNames()
+	if (args[1] ~= nil) then
+		variant = GetVariantFromInput(args[1])
+	end
+
+	print("Alle Namen sind fertig")
+
+	TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
+end)

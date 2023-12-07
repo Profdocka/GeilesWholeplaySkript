@@ -40,7 +40,7 @@
         "_11": "0,2"
       },
 	  "WalkStyle": "move_heist_lester",
-	  "Weapon": "weapon_grenadelauncher_smoke",
+	  "Weapon": "weapon_grenadelauncher",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",

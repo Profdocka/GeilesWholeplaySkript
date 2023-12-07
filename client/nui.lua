@@ -57,8 +57,11 @@ RegisterNUICallback("UI_SpawnGroup", function (data, cb)
     end
     --]]
 
+    local vector4 = GetPlayerCoordsAndHeading(PlayerId(), 3.0)
+    vector4 = nil
+
     TriggerServerEvent("SEv_CheckIfFactionIsKussKult", GetPlayerServerId(PlayerId()), data.name, VariantNumberToString(data.variant), true,
-    GetPlayerCoordsAndHeading(PlayerId(), 3.0), exceptionTarget)
+    vector4, exceptionTarget)
 end)
 
 VariantNumberToString = function (variant)

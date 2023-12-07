@@ -85,7 +85,7 @@
     "y": -1307.0,
     "z": 29.0
   },
-  "fortwashmington": {
+  "fortwashmashington": {
     "title": "Fort Washmashington",
     "isInterior": false,
     "colour": 0,
@@ -600,5 +600,14 @@
     "x": -1081.1,
     "y": -261.8,
     "z": 37.8
+  },
+  "piggetshuette": {
+    "title": "Piggets Hütte",
+    "isInterior": false,
+    "colour": 0,
+    "blipId": 473,
+    "x": 2208.56,
+    "y": 5612.51,
+    "z": 53.8
   }
 }

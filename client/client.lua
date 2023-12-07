@@ -11,6 +11,8 @@ FRIENDLY_VARIANT = 2
 AGGRESSIVE_VARIANT = 3
 
 IsInvincible = true
+WantsFormationSpawn = true
+CHARACTER_SPAWN_OFFSET_Y = 3.0
 
 Citizen.CreateThread(function()
     local sleepThread = 5
@@ -69,16 +71,30 @@ RegisterNetEvent("CEv_SpawnCharacter", function(variant, name, hasWeapon, vector
 end)
 
 RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeapon, vector4, faction)
+    --print("MOin")
     local shouldVector4Update = nil
     local GroupNetwork = {}
+    local angleStep = 360.0 / #Group
     if vector4 == nil then
         shouldVector4Update = true
     else
         shouldVector4Update = false
     end
-    for _, characterName in ipairs(Group) do
+    if WantsFormationSpawn then
+        FreezeEntityPosition(PlayerPedId(), true)
+    end
+    if faction == "CHAOS" then
+        CHARACTER_SPAWN_OFFSET_Y = 20.0
+    end
+    --print("Es geht los wow!")
+    for _, characterName in pairs(Group) do
         if shouldVector4Update then
-            vector4 = GetPlayerCoordsAndHeading(PlayerId(), 3.0)
+            vector4 = GetPlayerCoordsAndHeading(PlayerId(), CHARACTER_SPAWN_OFFSET_Y)
+            local heading = vector4["heading"]
+            if WantsFormationSpawn then
+                SetEntityHeading(PlayerPedId(), heading + angleStep)
+            end
+            --print("Heading: ", vector4["heading"], "Gruppenanzahl: ", #Group, "Step: ", angleStep)
         end
         local pedHandle = SpawnCharacter(variant, characterName, hasWeapon, vector4)
 
@@ -90,6 +106,17 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
         GroupNetwork[networkID] = characterNetwork
         --print("Mitglied der Gruppe: " ..
         --GroupNetwork[networkID].networkID .. " mit Name " .. GroupNetwork[networkID].name)
+        --print(characterName)
+        if faction == "CHAOS" then
+            Citizen.Wait(500)
+        end
+    end
+    print("Anzahl gespawnter Charaktere: ", #Group)
+    if WantsFormationSpawn then
+        FreezeEntityPosition(PlayerPedId(), false)
+    end
+    if faction == "CHAOS" then
+        CHARACTER_SPAWN_OFFSET_Y = 3.0
     end
     TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction)
 end)
@@ -143,6 +170,7 @@ RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
                 pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
                 pedJson = Looker(character.name, CHARFOLDER)
                 Cosmetics(pedHandle, pedJson, hasWeapon)
+                Citizen.Wait(100)
             end
         end
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)

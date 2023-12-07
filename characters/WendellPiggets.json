@@ -39,6 +39,7 @@
         "_10": "0,0",
         "_11": "0,0"
       },
+      "Weapon": "weapon_pipebomb",
       "RelationshipGroupAltered": "false",
       "RelationshipGroup": "0xcb56605e",
       "ScenarioActive": "false",

@@ -201,3 +201,26 @@ GetVariantFromInput = function(variantInput)
         return NEUTRAL_VARIANT
     end
 end
+
+GetAllCharacterNames = function ()
+    local charactersTable = {}
+    for characterKey, _ in pairs(TableOfAllCharacterSkins) do
+        table.insert(charactersTable, characterKey)
+        print(characterKey)
+        --Citizen.Wait(10)
+    end
+    return charactersTable
+end
+
+PlayersGroupRemaking = function ()
+    local tempPlayers = {}
+    local playerServerID = GetPlayers()
+    for _, serverID in ipairs(playerServerID) do
+        local networkId = GetNetworkIDPlayerFromSource(serverID)
+        if Players[networkId] then
+            tempPlayers[networkId] = Players[networkId]
+        end
+    end
+    Players = nil
+    Players = tempPlayers
+end
