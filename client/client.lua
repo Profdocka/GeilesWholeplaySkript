@@ -216,6 +216,29 @@ RegisterNetEvent("CEv_DropEntity",
         end
     end)
 
+RegisterNetEvent("CEv_DropMultipleEntitys",
+    function(variant, networkIDs, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+        local charsCounter = 0
+        local vehCounter = 0
+        for _, networkID in pairs(networkIDs) do
+            if TryForNetworkIDAvailability(networkID) then
+                local handle = NetworkGetEntityFromNetworkId(networkID)
+                if variant == NEUTRAL_VARIANT then
+                    DeletePed(handle)
+                    charsCounter = charsCounter + 1
+                else
+                    DeleteVehicle(handle)
+                    vehCounter = vehCounter + 1
+                end
+            end
+        end
+        print("Deleted " .. charsCounter .. " Character(s)")
+        print("Deleted " .. vehCounter .. " Vehicle(s)")
+        if variant == NEUTRAL_VARIANT then
+            ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+        end
+    end)
+
 RegisterNetEvent("CEv_DropAllCharacters",
     function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         local handle = nil
@@ -271,6 +294,33 @@ RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
             local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
             ClearPedTasksImmediately(pedHandle)
         end
+    end
+end)
+
+RegisterNetEvent("CEv_RevieveDeadPed", function(character)
+    local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
+    if IsEntityDead(pedHandle) then
+        ResurrectPed(pedHandle)
+        ClearPedTasksImmediately(pedHandle)
+    end
+end)
+
+RegisterNetEvent("CEv_DeadGarbageCleanerCheck", function(Characters, Vehicles)
+    local deadCharacters, deadVehicles = {}, {}
+    for _, character in pairs(Characters) do
+        local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
+        if IsEntityDead(pedHandle) then
+            deadCharacters[character.networkID] = character.networkID
+        end
+    end
+    for _, vehicle in pairs(Vehicles) do
+        local vehHandle = NetworkGetEntityFromNetworkId(vehicle.networkID)
+        if GetVehicleEngineHealth(vehHandle) < 0  then
+            deadVehicles[vehicle.networkID] = vehicle.networkID
+        end
+    end
+    if next(deadCharacters) ~= nil or next(deadVehicles) ~= nil then
+        TriggerServerEvent("SEv_DeadGarbageCleaner", deadCharacters, deadVehicles)
     end
 end)
 

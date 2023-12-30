@@ -10,8 +10,13 @@ RegisterCommand("gwtp", function(source, args, raw)
     end
 end)
 
+RegisterNetEvent("CEv_TeleportThePlayer", function (networkID, Group, coords, heading)
+    TeleportThePlayer(coords, heading)
+    TeleportMultiple(Group, coords, heading)
+end)
+
 Citizen.CreateThread(function()
-    print("dupa")
+    --print("dupa")
     MapMarkers = Looker("blips", "client")
     for key, info in pairs(MapMarkers) do
         if info.isInterior == true then
@@ -35,21 +40,25 @@ Citizen.CreateThread(function()
         Citizen.Wait(10)
         for interiorKey, interiorValue in pairs(Interiors) do
             --print("Der zu drawende Kram: ", interiorValue.title)
-            DrawMarker(1, interiorValue.intCoords.x, interiorValue.intCoords.y, interiorValue.intCoords.z - 1.0, 0.0, 0.0, 0.0,
+            DrawMarker(1, interiorValue.intCoords.x, interiorValue.intCoords.y, interiorValue.intCoords.z - 1.0, 0.0, 0.0,
+                0.0,
                 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, false, false, 2, nil, nil, false)
-            DrawMarker(1, interiorValue.extCoords.x, interiorValue.extCoords.y, interiorValue.extCoords.z - 1.0, 0.0, 0.0, 0.0,
+            DrawMarker(1, interiorValue.extCoords.x, interiorValue.extCoords.y, interiorValue.extCoords.z - 1.0, 0.0, 0.0,
+                0.0,
                 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, false, false, 2, nil, nil, false)
             local vector4 = GetPlayerCoordsAndHeading(PlayerId(), 0.0)
             local isNear, isEntrance = IsPlayerNearMarker(vector4["coords"], interiorValue)
             while isNear do
                 if isEntrance then
-                    DrawMarker(1, interiorValue.extCoords.x, interiorValue.extCoords.y, interiorValue.extCoords.z - 1.0, 0.0,
+                    DrawMarker(1, interiorValue.extCoords.x, interiorValue.extCoords.y, interiorValue.extCoords.z - 1.0,
+                        0.0,
                         0.0, 0.0,
                         0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, true, false, 2, nil, nil, false)
                     ShowHelpNotification("Drücke ~INPUT_PICKUP~ um " .. interiorValue.title .. " zu betreten", -1)
                     TeleportOnKeyPress(interiorValue.intCoords, vector4["heading"])
                 else
-                    DrawMarker(1, interiorValue.intCoords.x, interiorValue.intCoords.y, interiorValue.intCoords.z - 1.0, 0.0,
+                    DrawMarker(1, interiorValue.intCoords.x, interiorValue.intCoords.y, interiorValue.intCoords.z - 1.0,
+                        0.0,
                         0.0, 0.0,
                         0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, true, false, 2, nil, nil, false)
                     ShowHelpNotification("Drücke ~INPUT_PICKUP~ um " .. interiorValue.title .. " zu verlassen", -1)
@@ -75,10 +84,8 @@ end
 
 function TeleportOnKeyPress(tpCoords, heading)
     if IsControlJustPressed(0, 38) then
-        DoScreenFadeOut(FADEOUT_TIME)
-        StartPlayerTeleport(PlayerId(), tpCoords.x, tpCoords.y, tpCoords.z, heading, false, true, true)
-        Citizen.Wait(FADEOUT_TIME + 500)
-        DoScreenFadeIn(FADEOUT_TIME)
+        TriggerServerEvent("SEv_TeleportPlayer", GetPlayerServerId(PlayerId()), tpCoords, heading)
+        Citizen.Wait(3000)
     end
 end
 
@@ -93,20 +100,34 @@ TeleportToLocationByCommand = function(location)
 		end
 	end
     ]]
-       --
+    --
     found_location = MapMarkers[location]
     if (found_location ~= nil) then
         local coords = nil
         if found_location.isInterior then
             coords = found_location.intCoords
         else
-            coords = { x = found_location.x, y = found_location.y, z = found_location.z }
+            coords = { x = found_location.x, y = found_location.y, z = found_location.z}
         end
-        DoScreenFadeOut(FADEOUT_TIME)
-        StartPlayerTeleport(PlayerId(), coords.x, coords.y, coords.z, 0.0, true, true, true)
-        Citizen.Wait(FADEOUT_TIME + 500)
-        DoScreenFadeIn(FADEOUT_TIME)
+        TriggerServerEvent("SEv_TeleportPlayer", GetPlayerServerId(PlayerId()), coords, 0.0)
     else
         ShowNotification("~r~Die Location gibt es nicht")
+    end
+end
+
+TeleportThePlayer = function(tpCoords, heading)
+    DoScreenFadeOut(FADEOUT_TIME)
+    StartPlayerTeleport(PlayerId(), tpCoords.x, tpCoords.y, tpCoords.z, heading, false, true, true)
+    Citizen.Wait(FADEOUT_TIME + 500)
+    DoScreenFadeIn(FADEOUT_TIME)
+end
+
+TeleportMultiple = function (GroupNet, coords, heading)
+    for _, networkID in pairs(GroupNet) do
+        local pedHandle = NetworkGetEntityFromNetworkId(networkID)
+        if not IsPedAPlayer(pedHandle) then
+            SetEntityCoords(pedHandle, coords.x, coords.y, coords.z, false, false, false, false)
+        end
+        Citizen.Wait(10)
     end
 end

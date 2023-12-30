@@ -198,7 +198,7 @@ function sortObjectKeysAlphabetically(obj) {
 function addClickEventHandler(recievingObject, nuiEventName, optionsObject) {
     recievingObject.addEventListener('click', e => {
         e.stopPropagation();
-        console.log(e.target.textContent);
+        //console.log(e.target.textContent);
         closeGWMenu();
         fetchNUI(nuiEventName, optionsObject)
     })
@@ -272,8 +272,8 @@ function optionsContainerButtonHandler(recievingObject, tabVariant) {
             case "MeineFahrzeuge":
                 createSectionLine(contentHolder, tabVariant);
                 let lowerName = playerName.toLowerCase();
-                console.log("Der Owner: ", lowerName);
-                console.log(memory.myVehicles[lowerName]);
+                //console.log("Der Owner: ", lowerName);
+                //console.log(memory.myVehicles[lowerName]);
 
                 if (memory.myVehicles[lowerName] != undefined) {
                     memory.myVehicles[lowerName].forEach(vehicle => {

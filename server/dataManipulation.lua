@@ -95,6 +95,7 @@ CheckIfEntityIsKussKult = function(source, input, variant, hasWeapon, vector4, f
         TriggerClientEvent("CEv_ShowNotificationEvent", source,
             "~r~" .. input .. " existiert nicht im Kuss Kult Universum!")
     end
+    DeadGarbageCleanerCheck(source, false)
 end
 
 CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vector4, exceptionTarget)
@@ -118,6 +119,7 @@ CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vec
             end
         end
         TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
+        DeadGarbageCleanerCheck(source, false)
     else
         TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. input .. " existiert nicht als Fraktion im Kuss Kult Universum!")
     end
@@ -138,6 +140,31 @@ DropSpecificEntityByName = function(name, source)
             TriggerClientEvent("CEv_ShowNotificationEvent", source, "Kein aktiver Charakter/aktives Fahrzeug gefunden!")
         end
     end
+end
+
+DropMultipleCharacters = function (characterGroup)
+    local tempCharacters = {}
+    for _, character in pairs(Characters) do
+        if not characterGroup[character.networkID] then
+            tempCharacters[character.networkID] = Characters[character.networkID]
+        end
+    end
+    Characters = nil
+    Characters = tempCharacters
+    OrganizeTableOfFactions()
+    TriggerClientEvent("CEv_DropMultipleEntitys", -1, NEUTRAL_VARIANT, characterGroup, FactionsAndMembers, FactionLeaders, Players)
+end
+
+DropMultipleVehicles = function (vehicleGroup)
+    local tempVehicles = {}
+    for _, vehicle in pairs(Vehicles) do
+        if not vehicleGroup[vehicle.networkID] then
+            tempVehicles[vehicle.networkID] = Vehicles[vehicle.networkID]
+        end
+    end
+    Vehicles = nil
+    Vehicles = tempVehicles
+    TriggerClientEvent("CEv_DropMultipleEntitys", -1, VEHICLE_VARIANT, vehicleGroup)
 end
 
 DropAllCharacters = function ()
@@ -193,4 +220,25 @@ end
 
 ListAllActiveForClient = function (source)
     TriggerClientEvent("CEv_ListAll", source, Players, Characters, Vehicles)
+end
+
+DeadGarbageCleanerCheck = function (source, skipThresholdCheck)
+    if TableLength(Characters) >= THRESHOLD_SPAWNING or TableLength(Vehicles) >= THRESHOLD_SPAWNING or skipThresholdCheck then
+        TriggerClientEvent("CEv_DeadGarbageCleanerCheck", source, Characters, Vehicles)
+    end
+end
+
+function TableLength(T)
+    local count = 0
+    for _ in pairs(T) do count = count + 1 end
+    return count
+end
+
+DeadGarbageCleanerCleaning = function (deadCharacters, deadVehicles)
+    if next(deadCharacters) ~= nil then
+        DropMultipleCharacters(deadCharacters)
+    end
+    if next(deadVehicles) ~= nil then
+        DropMultipleVehicles(deadVehicles)
+    end
 end

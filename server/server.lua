@@ -8,6 +8,7 @@ FRIENDLY_VARIANT = 2
 AGGRESSIVE_VARIANT = 3
 
 NETWORK_ID_SYNC_DELAY = 1000
+THRESHOLD_SPAWNING = 10
 
 TableOfAllCharacters, TableOfAllCharactersLower = ListAllEntriesInFolder(CHARFOLDER)
 TableOfAllVehicles, TableOfAllVehiclesLower = ListAllEntriesInFolder(VEHFOLDER)
@@ -114,7 +115,7 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
         RegisterEntity(variant, networkID, name, skin, faction)
         FactionLeaders[oldFaction] = nil
         FactionLeaders[faction] = networkID
-        UpdateFaction(oldFaction, faction)
+        UpdateFaction(networkID, oldFaction, faction)
     else
         RegisterEntity(variant, networkID, name, skin, faction)
     end
@@ -170,4 +171,19 @@ RegisterNetEvent("SEv_SpawnMyCar", function(source)
     else
         TriggerClientEvent("CEv_ShowNotificationEvent", source, "Dieser Charakter besitzt kein Fahrzeug!")
     end
+end)
+
+RegisterNetEvent("SEv_TeleportPlayer", function (source, coords, heading)
+    local networkID = GetNetworkIDPlayerFromSource(source)
+    Group = FactionsAndMembers[Players[networkID].faction]
+    TriggerClientEvent("CEv_TeleportThePlayer", source, networkID, Group, coords, heading)
+end)
+
+RegisterNetEvent("SEv_ReapplyFactionRequestedByClient", function (source)
+    OrganizeTableOfFactions()
+    TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
+end)
+
+RegisterNetEvent("SEv_DeadGarbageCleaner", function (deadCharacters, deadVehicles)
+    DeadGarbageCleanerCleaning(deadCharacters, deadVehicles)
 end)

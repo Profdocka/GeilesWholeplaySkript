@@ -17,7 +17,7 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
                 
                 SetPedAsGroupMember(pedHandleLeader, squad)
                 SetPedAsGroupLeader(pedHandleLeader, squad)
-                --print("Gruppe des Anführes: " .. GetPedGroupIndex(pedHandleLeader))
+                --print("Anführer: " .. factionLeader)
             end
         end
         --print("Mitglieder der Gruppe " .. faction .. " (" .. factionHash .. ")" .. ": ")
@@ -35,15 +35,15 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
                     pedBlip = AddBlipForEntity(pedHandle)
                     SetBlipColour(pedBlip, 0)
                 end
-                if squad ~= nil and factionMember ~= factionLeader then
+                if squad ~= nil and factionMember ~= factionLeader and not IsPedAPlayer(pedHandle) then
                     --print("Meine Gruppe! " .. squad)
-                    if factionHash == GetPedRelationshipGroupHash(PlayerPedId()) and PlayersFromServer[factionMember] == nil then
+                    if factionHash == GetPedRelationshipGroupHash(PlayerPedId()) then
                         SetBlipAsFriendly(pedBlip, true)
                         SetBlipColour(GetBlipFromEntity(pedHandle), 57)
                         if NetworkGetNetworkIdFromEntity(PlayerPedId()) == factionLeader then
                             if NetworkGetEntityOwner(pedHandle) ~= PlayerId() then
                                 NetworkRequestControlOfNetworkId(factionMember)
-                               --print("Er wird konvertiert: " .. factionMember)
+                               --print("Das ist das Mitglied der Gruppe: " .. factionMember)
                             end
                         end
                     end

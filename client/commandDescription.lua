@@ -43,8 +43,9 @@ Citizen.CreateThread(function()
 	TriggerEvent("chat:addSuggestion", "/gwdropallpeds", "Löscht alle vom Spieler kreatierten Charaktere", {})
 	TriggerEvent("chat:addSuggestion", "/gwdropallcars", "Löscht alle vom Spieler kreatierten Fahrzeuge", {})
 	TriggerEvent("chat:addSuggestion", "/gwdropeverything", "Löscht halt ... alles.", {})
-	TriggerEvent("chat:addSuggestion", "/gwlistall", "Listet alle aktiven Charaktere und Fahrzeuge in der Konsole auf",
+	TriggerEvent("chat:addSuggestion", "/gwdropdead", "Löscht alle toten Charaktere und kaputte Fahrzeuge",
 		{})
+	TriggerEvent("chat:addSuggestion", "/gwlistall", "Listet alle aktiven Charaktere und Fahrzeuge in der Konsole auf",{})
 	TriggerEvent("chat:addSuggestion", "/gwreskin", "Kleidet alle Charaktere erneut ein. Stichwort, grüne Haare", {})
 	TriggerEvent("chat:addSuggestion", "/gwstopall", "Stop alle aktiven Charaktere", {})
 	TriggerEvent("chat:addSuggestion", "/gwchangeskin",
@@ -55,4 +56,30 @@ Citizen.CreateThread(function()
 		"Teleportiert den Spieler zu der Location anhand des zusammengeschriebenen Namens", {
 			{ name = "LocationName", help = "Der Name der Location. (required)" }
 		})
+	TriggerEvent("chat:addSuggestion", "/gwrevievesingle",
+		"Erweckt einen toten Charakter wieder zum Leben", {
+			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
+		})
+	TriggerEvent("chat:addSuggestion", "/gwsetoption",
+		"Ändere eine persönliche Einstellung bezüglich Aspekten des Skripts", {
+			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
+		})
 end)
+
+RegisterCommand("gwsetoption", function(source, args)
+	if args[1] then
+		EnableOption(string.lower(args[1]))
+	end
+end)
+
+EnableOption = function(option)
+	if option == "unbesiegbar" then
+		IsInvincible = not IsInvincible
+	elseif option == "formation" then
+		WantsFormationSpawn = not WantsFormationSpawn
+	else
+		ShowNotification("~r~Es wurde keine entsprechende Option gefunden!")
+		return
+	end
+	ShowNotification("Option " .. option .. " wurde geändert")
+end

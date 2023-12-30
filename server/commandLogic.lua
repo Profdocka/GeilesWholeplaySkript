@@ -125,6 +125,10 @@ RegisterCommand("gwdropeverything", function(source, args)
 	DropAllCharacters()
 end)
 
+RegisterCommand("gwdropdead", function (source)
+	DeadGarbageCleanerCheck(source, true)
+end)
+
 RegisterCommand("gwlistall", function(source)
 	ListAllActiveForClient(source)
 end)
@@ -179,6 +183,19 @@ RegisterCommand("gwchangeskin", function(source, args)
 		end
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. name .. " hat keine Verkleidungen!")
+	end
+end)
+
+RegisterCommand("gwrevievesingle", function (source, args)
+	if (args[1] ~= nil) then
+		local exists, char = CheckIfCharacterExistsByName(args[1])
+		if exists then
+			TriggerClientEvent("CEv_RevieveDeadPed", source, char)
+		else
+			TriggerClientEvent("CEv_ShowNotificationEvent", source, "Den Namen gibt es nicht!")
+		end
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
 end)
 
