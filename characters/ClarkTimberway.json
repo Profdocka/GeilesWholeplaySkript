@@ -41,6 +41,7 @@
       },
       "RelationshipGroupAltered": "false",
 	  "Weapon": "weapon_combatshotgun",
+    "WalkStyle": "move_characters@orleans@core@",
       "RelationshipGroup": "0x6f0783f5",
       "ScenarioActive": "false",
       "AnimActive": "false"

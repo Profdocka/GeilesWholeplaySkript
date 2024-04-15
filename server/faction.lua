@@ -108,3 +108,16 @@ ReapplyPlayerCharacters = function(message)
         end
     end
 end
+
+TeleportMultiple = function(GroupNet, coords, heading)
+    if GroupNet ~= nil then
+        for _, networkID in pairs(GroupNet) do
+            local pedHandle = NetworkGetEntityFromNetworkId(networkID)
+            --print("NetId ", networkID)
+            if not IsPedAPlayer(pedHandle) then
+                SetEntityCoords(pedHandle, coords.x, coords.y, coords.z, false, false, false, false)
+            end
+            Citizen.Wait(10)
+        end
+    end
+end

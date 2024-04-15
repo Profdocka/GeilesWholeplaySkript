@@ -45,7 +45,8 @@ Citizen.CreateThread(function()
 	TriggerEvent("chat:addSuggestion", "/gwdropeverything", "Löscht halt ... alles.", {})
 	TriggerEvent("chat:addSuggestion", "/gwdropdead", "Löscht alle toten Charaktere und kaputte Fahrzeuge",
 		{})
-	TriggerEvent("chat:addSuggestion", "/gwlistall", "Listet alle aktiven Charaktere und Fahrzeuge in der Konsole auf",{})
+	TriggerEvent("chat:addSuggestion", "/gwlistall", "Listet alle aktiven Charaktere und Fahrzeuge in der Konsole auf",
+		{})
 	TriggerEvent("chat:addSuggestion", "/gwreskin", "Kleidet alle Charaktere erneut ein. Stichwort, grüne Haare", {})
 	TriggerEvent("chat:addSuggestion", "/gwstopall", "Stop alle aktiven Charaktere", {})
 	TriggerEvent("chat:addSuggestion", "/gwchangeskin",
@@ -64,6 +65,7 @@ Citizen.CreateThread(function()
 		"Ändere eine persönliche Einstellung bezüglich Aspekten des Skripts", {
 			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
 		})
+	TriggerEvent("chat:addSuggestion", "/gwr", "Lädt deinen aktuellen Charakter neu. Damit folgen dir wieder Bodyguards", {})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)

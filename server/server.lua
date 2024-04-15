@@ -176,7 +176,8 @@ end)
 RegisterNetEvent("SEv_TeleportPlayer", function (source, coords, heading)
     local networkID = GetNetworkIDPlayerFromSource(source)
     Group = FactionsAndMembers[Players[networkID].faction]
-    TriggerClientEvent("CEv_TeleportThePlayer", source, networkID, Group, coords, heading)
+    TriggerClientEvent("CEv_TeleportThePlayer", source, source, Group, coords, heading)
+    TeleportMultiple(Group, coords, heading)
 end)
 
 RegisterNetEvent("SEv_ReapplyFactionRequestedByClient", function (source)
@@ -186,4 +187,12 @@ end)
 
 RegisterNetEvent("SEv_DeadGarbageCleaner", function (deadCharacters, deadVehicles)
     DeadGarbageCleanerCleaning(deadCharacters, deadVehicles)
+end)
+
+RegisterNetEvent("SEv_SaveEntityInFile", function (fileName, fileData)
+    if TableOfAllCharactersLower[string.lower(fileName)] == nil then
+        SaveResourceFile(GetCurrentResourceName(), "server/" .. fileName .. ".json", json.encode(fileData), -1)
+    else
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~Diesen Charakter gibt es schon!")
+    end
 end)

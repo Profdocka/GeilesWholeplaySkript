@@ -1,5 +1,13 @@
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 
+RegisterCommand("gwsaveentity", function(source)
+	local model = GetEntityModel(GetPlayerPed(source))
+	local netId = GetNetworkIDPlayerFromSource(source)
+	local information = { model = model, name = Players[netId].name, age = 17, coolness = 1000, size = { height = 175, weight = 70 } }
+
+	SaveResourceFile(GetCurrentResourceName(), "server/Super.json", json.encode(information), -1)
+end)
+
 --Befehlerstellung und -definition für den Neutralen
 RegisterCommand("gwspawnneutral", function(source, args, raw)
 	if args[1] ~= nil then
@@ -125,7 +133,7 @@ RegisterCommand("gwdropeverything", function(source, args)
 	DropAllCharacters()
 end)
 
-RegisterCommand("gwdropdead", function (source)
+RegisterCommand("gwdropdead", function(source)
 	DeadGarbageCleanerCheck(source, true)
 end)
 
@@ -135,6 +143,16 @@ end)
 
 RegisterCommand("gwreskin", function(source)
 	TriggerClientEvent("CEv_ReskinAll", source, Players, Characters)
+end)
+
+RegisterCommand("gwr", function(source)
+	local networkID = GetNetworkIDPlayerFromSource(source)
+	local player = Players[networkID]
+	if IsKussKultCharacter(player.name) then
+		TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, player.skin, true, nil, player.faction)
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Charakter wurde neu geladen!")
+		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+	end
 end)
 
 RegisterCommand("gwstopall", function(source)
@@ -161,7 +179,8 @@ RegisterCommand("gwchangeskin", function(source, args)
 					--RegisterEntity(PLAYER_VARIANT, networkID, name, name, Players[networkID].faction)
 					FullModelSwitchOrJustCosmetics(networkID, name, CHARFOLDER, source, Players[networkID].faction)
 				else
-					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source, Players[networkID].faction)
+					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source,
+						Players[networkID].faction)
 				end
 			else
 				offset = GetCurrentSkinIndex(TableOfAllCharacterSkins, name, Players[networkID].skin)
@@ -175,7 +194,8 @@ RegisterCommand("gwchangeskin", function(source, args)
 					FullModelSwitchOrJustCosmetics(networkID, name, CHARFOLDER, source, Players[networkID].faction)
 				else
 					--RegisterEntity(PLAYER_VARIANT, networkID, name, skinTable[offset], Players[networkID].faction)
-					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source, Players[networkID].faction)
+					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source,
+						Players[networkID].faction)
 				end
 			end
 		else
@@ -186,7 +206,7 @@ RegisterCommand("gwchangeskin", function(source, args)
 	end
 end)
 
-RegisterCommand("gwrevievesingle", function (source, args)
+RegisterCommand("gwrevievesingle", function(source, args)
 	if (args[1] ~= nil) then
 		local exists, char = CheckIfCharacterExistsByName(args[1])
 		if exists then

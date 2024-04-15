@@ -2,7 +2,7 @@ RegisterEntity = function(variant, networkID, name, skin, faction)
     print("Es wird etwas registriert: " .. networkID .. ", " .. name .. ", " .. skin)
     if variant == VEHICLE_VARIANT then
         --vehicle
-        local vehicle = { networkID = networkID, name = name, skin = skin}
+        local vehicle = { networkID = networkID, name = name, skin = skin }
         Vehicles[networkID] = vehicle
     elseif variant == PLAYER_VARIANT then
         --player
@@ -98,7 +98,7 @@ CheckIfEntityIsKussKult = function(source, input, variant, hasWeapon, vector4, f
     DeadGarbageCleanerCheck(source, false)
 end
 
-CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vector4, exceptionTarget)
+CheckIfFactionIsKussKult = function(source, input, variantInput, hasWeapon, vector4, exceptionTarget)
     local inputLower = string.lower(input)
     local Group = AllFactions[inputLower]
     if Group ~= nil then
@@ -121,7 +121,8 @@ CheckIfFactionIsKussKult = function (source, input, variantInput, hasWeapon, vec
         TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
         DeadGarbageCleanerCheck(source, false)
     else
-        TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. input .. " existiert nicht als Fraktion im Kuss Kult Universum!")
+        TriggerClientEvent("CEv_ShowNotificationEvent", source,
+            "~r~" .. input .. " existiert nicht als Fraktion im Kuss Kult Universum!")
     end
 end
 
@@ -130,7 +131,8 @@ DropSpecificEntityByName = function(name, source)
     if isFound then
         Characters[entity.networkID] = nil
         OrganizeTableOfFactions()
-        TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, entity.networkID, FactionsAndMembers, FactionLeaders, Players)
+        TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, entity.networkID, FactionsAndMembers, FactionLeaders,
+            Players)
     else
         isFound, entity = CheckIfVehicleExistsByName(name)
         if isFound then
@@ -142,7 +144,7 @@ DropSpecificEntityByName = function(name, source)
     end
 end
 
-DropMultipleCharacters = function (characterGroup)
+DropMultipleCharacters = function(characterGroup)
     local tempCharacters = {}
     for _, character in pairs(Characters) do
         if not characterGroup[character.networkID] then
@@ -152,10 +154,11 @@ DropMultipleCharacters = function (characterGroup)
     Characters = nil
     Characters = tempCharacters
     OrganizeTableOfFactions()
-    TriggerClientEvent("CEv_DropMultipleEntitys", -1, NEUTRAL_VARIANT, characterGroup, FactionsAndMembers, FactionLeaders, Players)
+    TriggerClientEvent("CEv_DropMultipleEntitys", -1, NEUTRAL_VARIANT, characterGroup, FactionsAndMembers, FactionLeaders,
+        Players)
 end
 
-DropMultipleVehicles = function (vehicleGroup)
+DropMultipleVehicles = function(vehicleGroup)
     local tempVehicles = {}
     for _, vehicle in pairs(Vehicles) do
         if not vehicleGroup[vehicle.networkID] then
@@ -167,7 +170,7 @@ DropMultipleVehicles = function (vehicleGroup)
     TriggerClientEvent("CEv_DropMultipleEntitys", -1, VEHICLE_VARIANT, vehicleGroup)
 end
 
-DropAllCharacters = function ()
+DropAllCharacters = function()
     local tempCharacters = Characters
     Characters = nil
     Characters = {}
@@ -182,7 +185,7 @@ DropAllVehicles = function()
     TriggerClientEvent("CEv_DropAllCars", -1, tempVehicles)
 end
 
-CheckIfPlayerExistsByName = function (input)
+CheckIfPlayerExistsByName = function(input)
     if TableOfAllCharactersLower[string.lower(input)] == nil then
         return false
     end
@@ -194,7 +197,7 @@ CheckIfPlayerExistsByName = function (input)
     return false
 end
 
-CheckIfCharacterExistsByName = function (input)
+CheckIfCharacterExistsByName = function(input)
     if TableOfAllCharactersLower[string.lower(input)] == nil then
         return false
     end
@@ -206,7 +209,7 @@ CheckIfCharacterExistsByName = function (input)
     return false
 end
 
-CheckIfVehicleExistsByName = function (input)
+CheckIfVehicleExistsByName = function(input)
     if TableOfAllVehiclesLower[string.lower(input)] == nil then
         return false
     end
@@ -218,11 +221,11 @@ CheckIfVehicleExistsByName = function (input)
     return false
 end
 
-ListAllActiveForClient = function (source)
+ListAllActiveForClient = function(source)
     TriggerClientEvent("CEv_ListAll", source, Players, Characters, Vehicles)
 end
 
-DeadGarbageCleanerCheck = function (source, skipThresholdCheck)
+DeadGarbageCleanerCheck = function(source, skipThresholdCheck)
     if TableLength(Characters) >= THRESHOLD_SPAWNING or TableLength(Vehicles) >= THRESHOLD_SPAWNING or skipThresholdCheck then
         TriggerClientEvent("CEv_DeadGarbageCleanerCheck", source, Characters, Vehicles)
     end
@@ -234,7 +237,7 @@ function TableLength(T)
     return count
 end
 
-DeadGarbageCleanerCleaning = function (deadCharacters, deadVehicles)
+DeadGarbageCleanerCleaning = function(deadCharacters, deadVehicles)
     if next(deadCharacters) ~= nil then
         DropMultipleCharacters(deadCharacters)
     end

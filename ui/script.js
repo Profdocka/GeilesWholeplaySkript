@@ -9,18 +9,22 @@ const NEUTRAL_VARIANT = 1
 const FRIENDLY_VARIANT = 2
 const AGGRESSIVE_VARIANT = 3
 const GROUP_VARIANT = 4
+const LOCATION_VARIANT = 5
 
 window.addEventListener("load", (e) => {
     document.getElementById("gw-menu-screen").hidden = true
-    window.addEventListener("message", e => {
+    window.addEventListener("message", async e => {
         switch (e.data.type) {
             case 'GW_InitialInfos':
-                registerSkinsForCharAndVeh(e.data)
+                await registerSkinsForCharAndVeh(e.data)
                 break;
             case 'GW_OpenMenu':
-                playerName = e.data.playerName;
-                openGWMenu(e.data);
+                if (isGoodToGo) {
+                    playerName = e.data.playerName;
+                    await openGWMenu(e.data);
+                }
                 break;
+
 
         }
     })
@@ -75,10 +79,12 @@ const fetchNUI = async (cbname, data) => {
     return await resp.json();
 };
 
-const registerSkinsForCharAndVeh = (data) => {
+const registerSkinsForCharAndVeh = async (data) => {
     memory.characters = sortObjectKeysAlphabetically(data.characterSkins)
     memory.vehicles = sortObjectKeysAlphabetically(data.vehicleSkins)
     memory.factions = Object.keys(data.allFactions)
+    memory.locations = Object.keys(data.locations).sort();
+    memory.locationsObjects = data.locations
     memory.myVehicles = data.myVehicles
     //console.log(memory.characters)
     //console.log(memory.vehicles)
@@ -92,7 +98,7 @@ const registerActiveData = (gwData) => {
     memory.Avehicles = gwData.vehicles
 }
 
-const openGWMenu = (gwData) => {
+const openGWMenu = async (gwData) => {
     if (isMenuOpen == true) {
         closeGWMenu();
     }
@@ -127,6 +133,9 @@ const addEveryEntity = () => {
         addBlock(domElement, faction, GROUP_VARIANT, "UI_SpawnGroup")
     })
     createSectionLine(domElement, "Locations");
+    memory.locations.forEach(location => {
+        addBlock(domElement, location, LOCATION_VARIANT, "UI_Teleport")
+    })
     document.getElementById("gw-menu-screen").style.display = "flex";
 }
 
@@ -140,10 +149,12 @@ const closeGWMenu = () => {
 const addBlock = (ParentElement, name, variant, gameEvent) => {
     //console.log(name)
     const block = document.createElement('div');
-    const textBlock = document.createElement('div')
+    const textBlock = document.createElement('div');
+    const logospace = document.createElement('div');
     const title = document.createElement('span');
 
     block.classList.add('entity');
+    colorBlocksAccordingly(block, variant);
 
     if (variant === PLAYER_VARIANT || variant === VEHICLE_VARIANT) {
         block.addEventListener('click', e => {
@@ -154,6 +165,19 @@ const addBlock = (ParentElement, name, variant, gameEvent) => {
 
     title.innerHTML = name
     //setText(title, name);
+
+    if (variant === LOCATION_VARIANT) {
+        if (memory.locationsObjects[name].isInterior == true) {
+            logospace.classList.add('material-icons');
+            logospace.style.color = "white";
+            logospace.innerHTML = "home";
+            block.append(logospace);
+        }
+        block.addEventListener('click', (e) => {
+            closeGWMenu();
+            fetchNUI(gameEvent, { name: name })
+        })
+    }
 
     textBlock.append(title);
     block.append(textBlock);
@@ -182,6 +206,8 @@ const addBlock = (ParentElement, name, variant, gameEvent) => {
 
         block.append(variantButtons)
     }
+
+    
 
     ParentElement.appendChild(block);
 }
@@ -268,12 +294,15 @@ function optionsContainerButtonHandler(recievingObject, tabVariant) {
                 break;
             case "Locations":
                 createSectionLine(contentHolder, tabVariant);
+                memory.locations.forEach(location => {
+                    addBlock(contentHolder, location, LOCATION_VARIANT, "UI_Teleport")
+                })
                 break;
             case "MeineFahrzeuge":
                 createSectionLine(contentHolder, tabVariant);
                 let lowerName = playerName.toLowerCase();
-                //console.log("Der Owner: ", lowerName);
-                //console.log(memory.myVehicles[lowerName]);
+                console.log("Der Owner: ", lowerName);
+                console.log(memory.myVehicles[lowerName]);
 
                 if (memory.myVehicles[lowerName] != undefined) {
                     memory.myVehicles[lowerName].forEach(vehicle => {
@@ -286,9 +315,9 @@ function optionsContainerButtonHandler(recievingObject, tabVariant) {
 }
 
 function isMenuDataFunctional() {
-    if (memory.characters != null && isGoodToGo) {
+    if (memory.characters != null && memory.myVehicles != null && isGoodToGo) {
         return true
-    } else if(isGoodToGo == false) {
+    } else if (isGoodToGo == false) {
         return false
     } else {
         isGoodToGo = false;
@@ -298,6 +327,21 @@ function isMenuDataFunctional() {
     }
 }
 
+function colorBlocksAccordingly(block, variant) {
+    switch (variant) {
+        case VEHICLE_VARIANT:
+            block.classList.add('entity-vehicle');
+            break;
+        case GROUP_VARIANT:
+            block.classList.add('entity-group');
+            break;
+        case LOCATION_VARIANT:
+            block.classList.add('entity-location');
+            break;
+        default:
+            break;
+    }
+}
 
 /*
     <div id="players-section">

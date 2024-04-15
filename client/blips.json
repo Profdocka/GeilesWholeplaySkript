@@ -609,5 +609,21 @@
     "x": 2208.56,
     "y": 5612.51,
     "z": 53.8
+  },
+  "mcfredtowerdach": {
+    "title": "McFred Tower Dach",
+    "isInterior": true,
+    "colour": 40,
+    "blipId": 642,
+    "intCoords": {
+      "x": -75.2,
+      "y": -824.8,
+      "z": 321.3
+    },
+    "extCoords": {
+      "x": -78.3,
+      "y": -829.8,
+      "z": 243.4
+    }
   }
 }

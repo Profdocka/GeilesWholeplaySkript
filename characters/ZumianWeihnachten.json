@@ -1,0 +1,1036 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "1885233650",
+	"IsSkinOf": "Zumian",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "1885233650",
+    "InitialHandle": "641794",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "-1569615261",
+      "PedProps": {
+        "_0": "22,0",
+        "_1": "-1,-1",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "38,0",
+        "_3": "1,0",
+        "_4": "10,0",
+        "_5": "0,0",
+        "_6": "18,0",
+        "_7": "0,0",
+        "_8": "35,5",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "30,4"
+      },
+      "HeadFeatures": {
+        "WasInArray": "true",
+        "ShapeAndSkinTone": {
+          "ShapeFatherId": "0",
+          "ShapeMotherId": "0",
+          "ShapeOverrideId": "0",
+          "ToneFatherId": "0",
+          "ToneMotherId": "0",
+          "ToneOverrideId": "1",
+          "ShapeVal": "0",
+          "ToneVal": "0",
+          "OverrideVal": "0",
+          "IsP": "0"
+        },
+        "HairColour": "3",
+        "HairColourStreaks": "0",
+        "EyeColour": "1",
+        "FacialFeatures": {
+          "_0": "0.000000",
+          "_1": "0.000000",
+          "_2": "0.000000",
+          "_3": "0.300000",
+          "_4": "0.000000",
+          "_5": "0.500000",
+          "_6": "-1.000000",
+          "_7": "-1.000000",
+          "_8": "-1.000000",
+          "_9": "-1.000000",
+          "_10": "1.000000",
+          "_11": "-1.000000",
+          "_12": "0.950000",
+          "_13": "-0.700000",
+          "_14": "-1.000000",
+          "_15": "-1.000000",
+          "_16": "-1.000000",
+          "_17": "-1.000000",
+          "_18": "-1.000000",
+          "_19": "0.700000"
+        },
+        "Overlays": {
+          "_0": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_1": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_2": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_3": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_4": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_5": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_6": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_7": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_8": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_9": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_10": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_11": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_12": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          }
+        }
+      },
+      "TattooLogoDecals": {
+        ":anonymous": [
+          {
+            "collection": "-1719270477",
+            "value": "-221624488"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "152801037"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "25158851"
+          },
+          {
+            "collection": "-2086773",
+            "value": "1860213958"
+          },
+          {
+            "collection": "-2086773",
+            "value": "2119318441"
+          },
+          {
+            "collection": "-2086773",
+            "value": "-1953737187"
+          },
+          {
+            "collection": "-2086773",
+            "value": "193320466"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-982924414"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-87213624"
+          },
+          {
+            "collection": "598190139",
+            "value": "-1967196682"
+          },
+          {
+            "collection": "598190139",
+            "value": "241827374"
+          },
+          {
+            "collection": "598190139",
+            "value": "1161856504"
+          },
+          {
+            "collection": "598190139",
+            "value": "-1128139527"
+          },
+          {
+            "collection": "598190139",
+            "value": "-401355876"
+          },
+          {
+            "collection": "598190139",
+            "value": "1984423066"
+          },
+          {
+            "collection": "598190139",
+            "value": "-1352706360"
+          },
+          {
+            "collection": "598190139",
+            "value": "1913052480"
+          },
+          {
+            "collection": "598190139",
+            "value": "1961222910"
+          },
+          {
+            "collection": "598190139",
+            "value": "-1460289971"
+          },
+          {
+            "collection": "598190139",
+            "value": "1873071312"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "1987172386"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "472458130"
+          },
+          {
+            "collection": "-2086773",
+            "value": "1936646403"
+          },
+          {
+            "collection": "-2086773",
+            "value": "-1126042648"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "43105745"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "254662409"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-694786597"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "384168721"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-1004417654"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "1332405298"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "552929095"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-1653801207"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "1285643631"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "523240077"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "1851597906"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-301227387"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-701762906"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "1366782677"
+          },
+          {
+            "collection": "484754152",
+            "value": "-1008363280"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "1697138602"
+          },
+          {
+            "collection": "484754152",
+            "value": "1498524677"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "875367934"
+          },
+          {
+            "collection": "484754152",
+            "value": "2049704410"
+          },
+          {
+            "collection": "484754152",
+            "value": "-588549683"
+          },
+          {
+            "collection": "-2086773",
+            "value": "-2018143375"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "-994150383"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "-869824793"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "555692245"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "665823766"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "427888057"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "651012186"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "422776101"
+          },
+          {
+            "collection": "1529191571",
+            "value": "-859861445"
+          },
+          {
+            "collection": "1529191571",
+            "value": "2048866271"
+          },
+          {
+            "collection": "1529191571",
+            "value": "-676067408"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1925480683"
+          },
+          {
+            "collection": "1026837500",
+            "value": "1448723789"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-488127340"
+          },
+          {
+            "collection": "1026837500",
+            "value": "488078687"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1930562696"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-842699589"
+          },
+          {
+            "collection": "1026837500",
+            "value": "1531050226"
+          },
+          {
+            "collection": "-240234547",
+            "value": "765481743"
+          },
+          {
+            "collection": "-240234547",
+            "value": "872613482"
+          },
+          {
+            "collection": "-240234547",
+            "value": "2054090970"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1593302778"
+          },
+          {
+            "collection": "-240234547",
+            "value": "2066668749"
+          },
+          {
+            "collection": "-240234547",
+            "value": "-173288591"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1779534675"
+          },
+          {
+            "collection": "-975527441",
+            "value": "2056773549"
+          },
+          {
+            "collection": "-975527441",
+            "value": "893288510"
+          },
+          {
+            "collection": "-975527441",
+            "value": "1963590204"
+          },
+          {
+            "collection": "-975527441",
+            "value": "919272855"
+          },
+          {
+            "collection": "1616273011",
+            "value": "-1814153457"
+          },
+          {
+            "collection": "1616273011",
+            "value": "-1521133289"
+          },
+          {
+            "collection": "1926256505",
+            "value": "-791841628"
+          },
+          {
+            "collection": "1926256505",
+            "value": "-2114317157"
+          },
+          {
+            "collection": "1926256505",
+            "value": "-2085191627"
+          },
+          {
+            "collection": "1926256505",
+            "value": "-911004337"
+          },
+          {
+            "collection": "1926256505",
+            "value": "1886796781"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "146774245"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "1942093304"
+          },
+          {
+            "collection": "-363871405",
+            "value": "1152609891"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "-2031558195"
+          },
+          {
+            "collection": "1926256505",
+            "value": "1745422723"
+          },
+          {
+            "collection": "1926256505",
+            "value": "662247816"
+          },
+          {
+            "collection": "1616273011",
+            "value": "-783643150"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1648112645"
+          },
+          {
+            "collection": "598190139",
+            "value": "1369179057"
+          },
+          {
+            "collection": "598190139",
+            "value": "2024821433"
+          },
+          {
+            "collection": "598190139",
+            "value": "1404700877"
+          },
+          {
+            "collection": "598190139",
+            "value": "420522541"
+          },
+          {
+            "collection": "598190139",
+            "value": "-820013196"
+          },
+          {
+            "collection": "598190139",
+            "value": "95192205"
+          },
+          {
+            "collection": "598190139",
+            "value": "701448198"
+          },
+          {
+            "collection": "598190139",
+            "value": "-978683978"
+          },
+          {
+            "collection": "598190139",
+            "value": "1544332704"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "494620709"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "-1801855538"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "-904148779"
+          },
+          {
+            "collection": "-2086773",
+            "value": "827974775"
+          },
+          {
+            "collection": "-2086773",
+            "value": "1595162603"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-270395278"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-1156010272"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "1836261422"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "1395583642"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "524387820"
+          },
+          {
+            "collection": "-1398869298",
+            "value": "-1188251480"
+          },
+          {
+            "collection": "484754152",
+            "value": "907364848"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "1027059614"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "77285961"
+          },
+          {
+            "collection": "484754152",
+            "value": "-938326281"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "711811694"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "-895106351"
+          },
+          {
+            "collection": "484754152",
+            "value": "816551665"
+          },
+          {
+            "collection": "484754152",
+            "value": "-796818724"
+          },
+          {
+            "collection": "1529191571",
+            "value": "-546150284"
+          },
+          {
+            "collection": "1529191571",
+            "value": "-357466888"
+          },
+          {
+            "collection": "1529191571",
+            "value": "-1529401172"
+          },
+          {
+            "collection": "1529191571",
+            "value": "401532197"
+          },
+          {
+            "collection": "1529191571",
+            "value": "826974918"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "-416105443"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "-47978497"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "-358202620"
+          },
+          {
+            "collection": "-1201369729",
+            "value": "1630543134"
+          },
+          {
+            "collection": "-2086773",
+            "value": "-1304369017"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1635180127"
+          },
+          {
+            "collection": "1026837500",
+            "value": "933419071"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1817642831"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1719543542"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-2018029706"
+          },
+          {
+            "collection": "1026837500",
+            "value": "1520437442"
+          },
+          {
+            "collection": "1026837500",
+            "value": "374349467"
+          },
+          {
+            "collection": "1026837500",
+            "value": "130721536"
+          },
+          {
+            "collection": "1026837500",
+            "value": "941227127"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1996796255"
+          },
+          {
+            "collection": "1026837500",
+            "value": "1567227108"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-25727072"
+          },
+          {
+            "collection": "-240234547",
+            "value": "463561930"
+          },
+          {
+            "collection": "-240234547",
+            "value": "2051301469"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1094179010"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1923135102"
+          },
+          {
+            "collection": "-240234547",
+            "value": "-964908188"
+          },
+          {
+            "collection": "-240234547",
+            "value": "-776248682"
+          },
+          {
+            "collection": "-240234547",
+            "value": "-445820043"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1610045630"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1723966869"
+          },
+          {
+            "collection": "-240234547",
+            "value": "-1103127620"
+          },
+          {
+            "collection": "-240234547",
+            "value": "105835401"
+          },
+          {
+            "collection": "-240234547",
+            "value": "874268443"
+          },
+          {
+            "collection": "-240234547",
+            "value": "2088424900"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1878368697"
+          },
+          {
+            "collection": "598190139",
+            "value": "23192638"
+          },
+          {
+            "collection": "-975527441",
+            "value": "-1184732039"
+          },
+          {
+            "collection": "1616273011",
+            "value": "-1795208156"
+          },
+          {
+            "collection": "1926256505",
+            "value": "-1448569917"
+          },
+          {
+            "collection": "1926256505",
+            "value": "19369937"
+          },
+          {
+            "collection": "1926256505",
+            "value": "1896039464"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "-1071879097"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "-1757440846"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "1678423640"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1628166034"
+          },
+          {
+            "collection": "-363871405",
+            "value": "1730799330"
+          },
+          {
+            "collection": "-2086773",
+            "value": "-1125022512"
+          },
+          {
+            "collection": "-1056335443",
+            "value": "810154442"
+          },
+          {
+            "collection": "598190139",
+            "value": "-1542968948"
+          },
+          {
+            "collection": "598190139",
+            "value": "-189671992"
+          },
+          {
+            "collection": "-975527441",
+            "value": "-143503455"
+          },
+          {
+            "collection": "1616273011",
+            "value": "2111374302"
+          },
+          {
+            "collection": "1616273011",
+            "value": "-1841627189"
+          },
+          {
+            "collection": "1616273011",
+            "value": "-46260381"
+          },
+          {
+            "collection": "1616273011",
+            "value": "1082588124"
+          },
+          {
+            "collection": "1185637852",
+            "value": "-1477471726"
+          },
+          {
+            "collection": "1185637852",
+            "value": "-650926235"
+          },
+          {
+            "collection": "1185637852",
+            "value": "1605199232"
+          },
+          {
+            "collection": "1185637852",
+            "value": "113768799"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "-1082736975"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "-754981437"
+          },
+          {
+            "collection": "-1719270477",
+            "value": "164352862"
+          },
+          {
+            "collection": "1026837500",
+            "value": "1570835960"
+          },
+          {
+            "collection": "1026837500",
+            "value": "220143168"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1869054624"
+          },
+          {
+            "collection": "1026837500",
+            "value": "-1850715440"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1906582382"
+          },
+          {
+            "collection": "-240234547",
+            "value": "1785762805"
+          },
+          {
+            "collection": "1616273011",
+            "value": "291473683"
+          },
+          {
+            "collection": "-1016521996",
+            "value": "-247186222"
+          },
+          {
+            "collection": "-363871405",
+            "value": "1048452439"
+          },
+          {
+            "collection": "-363871405",
+            "value": "211084"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1009472289"
+          },
+          {
+            "collection": "-363871405",
+            "value": "156013410"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1462570018"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1873628095"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-770265298"
+          },
+          {
+            "collection": "-363871405",
+            "value": "820753849"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1170154756"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-880824798"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-249693258"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1512326404"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1378330859"
+          },
+          {
+            "collection": "-363871405",
+            "value": "1459074393"
+          },
+          {
+            "collection": "-363871405",
+            "value": "1273491948"
+          },
+          {
+            "collection": "-363871405",
+            "value": "2124190452"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1740822263"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-969884576"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1677889748"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-807993264"
+          },
+          {
+            "collection": "-363871405",
+            "value": "-1732002225"
+          }
+        ]
+      },
+	  "WalkStyle": "move_m@alien",
+      "Weapon": "weapon_flare",
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "-883531682",
+      "ScenarioActive": "false",
+      "AnimActive": "false"
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "240",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "false",
+    "IsBulletProof": "false",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "false",
+    "IsFireProof": "false",
+    "IsMeleeProof": "false",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "1120.15564",
+      "Y": "2277.6145",
+      "Z": "49.3198433",
+      "Pitch": "-0",
+      "Roll": "-0",
+      "Yaw": "-11.7123508"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true"
+    }
+  }
+}

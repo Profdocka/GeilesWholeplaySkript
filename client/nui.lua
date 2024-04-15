@@ -83,3 +83,9 @@ RegisterNUICallback("UI_SpawnMyCar", function (data, cb)
 
     TriggerServerEvent("SEv_SpawnMyCar", GetPlayerServerId(PlayerId()))
 end)
+
+RegisterNUICallback("UI_Teleport", function (data, cb)
+    cb({})
+
+    TeleportToLocationByCommand(data.name)
+end)

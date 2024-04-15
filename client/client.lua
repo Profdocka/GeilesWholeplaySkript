@@ -330,7 +330,8 @@ RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, 
         characterSkins = CharacterSkins,
         vehicleSkins = VehicleSkins,
         allFactions = allFactions,
-        myVehicles = ownersOfVehicles
+        myVehicles = ownersOfVehicles,
+        locations = MapMarkers
     })
 end)
 

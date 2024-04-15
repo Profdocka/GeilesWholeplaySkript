@@ -10,9 +10,11 @@ RegisterCommand("gwtp", function(source, args, raw)
     end
 end)
 
-RegisterNetEvent("CEv_TeleportThePlayer", function (networkID, Group, coords, heading)
-    TeleportThePlayer(coords, heading)
-    TeleportMultiple(Group, coords, heading)
+RegisterNetEvent("CEv_TeleportThePlayer", function(source, Group, coords, heading)
+    if (source == GetPlayerServerId(PlayerId())) then
+        TeleportThePlayer(coords, heading, false)
+    end
+    --TeleportMultiple(Group, coords, heading)
 end)
 
 Citizen.CreateThread(function()
@@ -20,21 +22,20 @@ Citizen.CreateThread(function()
     MapMarkers = Looker("blips", "client")
     for key, info in pairs(MapMarkers) do
         if info.isInterior == true then
-            info.handle = AddBlipForCoord(info.intCoords.x, info.intCoords.y, info.intCoords.z)
+            --info.handle = AddBlipForCoord(info.intCoords.x, info.intCoords.y, info.intCoords.z)
             Interiors[key] = info
-            print(key)
+            --print(key)
         else
             info.handle = AddBlipForCoord(info.x, info.y, info.z)
+            SetBlipSprite(info.handle, info.blipId)
+            SetBlipDisplay(info.handle, 4)
+            SetBlipScale(info.handle, 0.9)
+            SetBlipColour(info.handle, info.colour)
+            SetBlipAsShortRange(info.handle, true)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentString(info.title)
+            EndTextCommandSetBlipName(info.handle)
         end
-
-        SetBlipSprite(info.handle, info.blipId)
-        SetBlipDisplay(info.handle, 4)
-        SetBlipScale(info.handle, 0.9)
-        SetBlipColour(info.handle, info.colour)
-        SetBlipAsShortRange(info.handle, true)
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(info.title)
-        EndTextCommandSetBlipName(info.handle)
     end
     while true do
         Citizen.Wait(10)
@@ -107,7 +108,14 @@ TeleportToLocationByCommand = function(location)
         if found_location.isInterior then
             coords = found_location.intCoords
         else
-            coords = { x = found_location.x, y = found_location.y, z = found_location.z}
+            coords = { x = found_location.x, y = found_location.y, z = found_location.z }
+        end
+        local veh = GetVehiclePedIsIn(PlayerPedId())
+        if veh ~= 0 then
+            if GetVehicleSeatOfPed(veh, PlayerPedId()) == -1 then
+                TeleportThePlayer(coords, 0.0, true)
+                return
+            end
         end
         TriggerServerEvent("SEv_TeleportPlayer", GetPlayerServerId(PlayerId()), coords, 0.0)
     else
@@ -115,19 +123,22 @@ TeleportToLocationByCommand = function(location)
     end
 end
 
-TeleportThePlayer = function(tpCoords, heading)
+TeleportThePlayer = function(tpCoords, heading, withVehicle)
     DoScreenFadeOut(FADEOUT_TIME)
-    StartPlayerTeleport(PlayerId(), tpCoords.x, tpCoords.y, tpCoords.z, heading, false, true, true)
+    StartPlayerTeleport(PlayerId(), tpCoords.x, tpCoords.y, tpCoords.z, heading, withVehicle, true, true)
     Citizen.Wait(FADEOUT_TIME + 500)
     DoScreenFadeIn(FADEOUT_TIME)
 end
-
-TeleportMultiple = function (GroupNet, coords, heading)
+--[[
+TeleportMultiple = function(GroupNet, coords, heading)
     for _, networkID in pairs(GroupNet) do
         local pedHandle = NetworkGetEntityFromNetworkId(networkID)
+        print("NetId ", networkID)
         if not IsPedAPlayer(pedHandle) then
             SetEntityCoords(pedHandle, coords.x, coords.y, coords.z, false, false, false, false)
         end
         Citizen.Wait(10)
     end
 end
+]]
+   --

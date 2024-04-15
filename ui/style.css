@@ -150,6 +150,18 @@
     overflow: hidden;
 }
 
+.entity-location {
+    background-color: #00f7ff6e;
+}
+
+.entity-vehicle {
+    background-color: #188003c0;
+}
+
+.entity-group {
+    background-color: #ff5100b3;
+}
+
 .entity:hover {
     transform: scale(1.025);
     background-color: #007ff0cc;
