@@ -14,6 +14,9 @@ IsInvincible = true
 WantsFormationSpawn = true
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 
+KussBildDic = CreateRuntimeTxd('CHAR_KUSS')
+KussBild = CreateRuntimeTextureFromImage(KussBildDic, 'CHAR_KUSS', "kusskultlogo.png")
+
 Citizen.CreateThread(function()
     local sleepThread = 5
     while true do
@@ -131,6 +134,8 @@ RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
         local networkID = NetworkGetNetworkIdFromEntity(vehHandle)
         SetNetworkIdExistsOnAllMachines(networkID, true)
         SetNetworkIdCanMigrate(networkID, true)
+
+        ShowNotification("Dein gespawntes Fahrzeug: " .. name)
 
         TriggerServerEvent("SEv_RegisterVehicle", name, networkID)
     end

@@ -81,7 +81,7 @@ end
 ShowNotification = function(msg)
     BeginTextCommandThefeedPost('STRING')
     AddTextComponentSubstringPlayerName(msg)
-    EndTextCommandThefeedPostMessagetextTu("CHAR_AMMUNATION", "CHAR_AMMUNATION", false, 8, "Das Geile Wholeplay Skript", "von Profdocka", 1.0)
+    EndTextCommandThefeedPostMessagetextTu("CHAR_KUSS", "CHAR_KUSS", false, 8, "Das Geile Wholeplay Skript", "von Profdocka", 1.0)
     --DrawNotification(false, true)
 end
 
@@ -180,6 +180,14 @@ CreateIndexTable = function(toBeIndexTable)
         index[string.lower(v)] = k
     end
     return index
+end
+
+CreateNumberedTable = function(toBeNumberedTable)
+    local numbered = {}
+    for k, v in pairs(toBeNumberedTable) do
+        table.insert(numbered, k)
+    end
+    return numbered
 end
 
 GetStandardSpellingOfName = function(name, usedTableLower, usedTable, usedTableIndex)

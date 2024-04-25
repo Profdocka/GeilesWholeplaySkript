@@ -66,6 +66,8 @@ Citizen.CreateThread(function()
 			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
 		})
 	TriggerEvent("chat:addSuggestion", "/gwr", "Lädt deinen aktuellen Charakter neu. Damit folgen dir wieder Bodyguards", {})
+	TriggerEvent("chat:addSuggestion", "/gwrandomped", "Gibt dir einen zufälligen Charakter", {})
+	TriggerEvent("chat:addSuggestion", "/gwrandomcar", "Gibt dir ein zufälliges Fahrzeug", {})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)

@@ -28,4 +28,5 @@ files {
 	'ui/script.js',
 	'ui/style.css',
 	'ui/images/*',
+	'kusskultlogo.png'
 }

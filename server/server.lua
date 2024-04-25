@@ -19,6 +19,8 @@ TableOfAllVehicleSkins = CreateTableOfSkins(TableOfAllVehicles, VEHFOLDER)
 
 TableOfAllCharactersIndexes = CreateIndexTable(TableOfAllCharacters)
 TableOfAllVehiclesIndexes = CreateIndexTable(TableOfAllVehicles)
+TableOfAllCharactersNumbered = CreateNumberedTable(TableOfAllCharacters)
+TableOfAllVehiclesNumbered = CreateNumberedTable(TableOfAllVehicles)
 
 Players = {}
 Characters = {}
@@ -64,6 +66,9 @@ RegisterNetEvent("SEv_PlayerSpawned", function(source)
     --ReapplyPlayerCharacters wird VORERST entfernt!!!
     --ReapplyPlayerCharacters("Neuer Spieler betritt das Spiel. Dein Charakter wird neu geladen.")
     TriggerClientEvent("CEvUI_InitialGWInfos", source, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
+    
+    Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+    BecomeRandomKussKultCharacter(source)
     --TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
 end)
 

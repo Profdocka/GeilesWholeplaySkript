@@ -7,6 +7,7 @@ SpawnCharacter = function (variant, name, hasWeapon, vector4)
     if SearchHash(modelHash) then
         local pedHandle = ChooseCharacterSpawnVariant(variant, modelHash, name, hasWeapon, vector4)
         SetModelAsNoLongerNeeded(modelHash)
+        ShowNotification("Dein gespawnter Charakter: " .. name)
         return pedHandle
     end
 end

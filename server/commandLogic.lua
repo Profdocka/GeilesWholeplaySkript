@@ -266,3 +266,28 @@ RegisterCommand("gwjahresabschluss", function(source, args)
 
 	TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
 end)
+
+RegisterCommand("gwrandomped", function (source)
+	BecomeRandomKussKultCharacter(source)
+end)
+
+RegisterCommand("gwrandomcar", function (source)
+	SpawnRandomKussKultVehicle(source)
+end)
+
+BecomeRandomKussKultCharacter = function (source)
+	local randomKey = GetRandomKeyOfTable(TableOfAllCharactersNumbered)
+	local characterName = TableOfAllCharacters[randomKey]
+	TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, characterName, true, nil, characterName)
+end
+
+SpawnRandomKussKultVehicle = function (source)
+	local randomKey = GetRandomKeyOfTable(TableOfAllVehiclesNumbered)
+	local vehicleName = TableOfAllVehicles[randomKey]
+	local networkIDDriver = GetNetworkIDPlayerFromSource(source)
+	TriggerClientEvent("CEv_SpawnVehicle", source, vehicleName, networkIDDriver)
+end
+
+GetRandomKeyOfTable = function(tabelle)
+	return tabelle[math.random(1, #tabelle)]
+end
