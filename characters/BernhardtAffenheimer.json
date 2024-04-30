@@ -1,0 +1,249 @@
+{
+  "OutfitPedData": {
+    "ClearDecalOverlays": "true",
+    "ModelHash": "1885233650",
+    "Type": "1",
+    "Dynamic": "true",
+    "FrozenPos": "false",
+    "HashName": "1885233650",
+    "InitialHandle": "455684",
+    "PedProperties": {
+      "IsStill": "false",
+      "CanRagdoll": "true",
+      "HasShortHeight": "false",
+      "Armour": "0",
+      "CurrentWeapon": "-1569615261",
+      "PedProps": {
+        "_0": "-1,-1",
+        "_1": "4,9",
+        "_2": "-1,-1",
+        "_3": "-1,-1",
+        "_4": "-1,-1",
+        "_5": "-1,-1",
+        "_6": "-1,-1",
+        "_7": "-1,-1",
+        "_8": "-1,-1",
+        "_9": "-1,-1"
+      },
+      "PedComps": {
+        "_0": "0,0",
+        "_1": "0,0",
+        "_2": "45,0",
+        "_3": "66,0",
+        "_4": "28,0",
+        "_5": "0,0",
+        "_6": "21,0",
+        "_7": "23,5",
+        "_8": "10,0",
+        "_9": "0,0",
+        "_10": "0,0",
+        "_11": "142,2"
+      },
+      "HeadFeatures": {
+        "WasInArray": "true",
+        "ShapeAndSkinTone": {
+          "ShapeFatherId": "30",
+          "ShapeMotherId": "13",
+          "ShapeOverrideId": "0",
+          "ToneFatherId": "32",
+          "ToneMotherId": "12",
+          "ToneOverrideId": "0",
+          "ShapeVal": "0.681193709",
+          "ToneVal": "0.493958354",
+          "OverrideVal": "0",
+          "IsP": "1"
+        },
+        "HairColour": "16",
+        "HairColourStreaks": "0",
+        "EyeColour": "4",
+        "FacialFeatures": {
+          "_0": "0.000000",
+          "_1": "-0.150000",
+          "_2": "-0.000000",
+          "_3": "0.000000",
+          "_4": "0.400000",
+          "_5": "-0.050000",
+          "_6": "0.000000",
+          "_7": "0.000000",
+          "_8": "0.000000",
+          "_9": "0.000000",
+          "_10": "0.000000",
+          "_11": "0.050000",
+          "_12": "1.000000",
+          "_13": "0.700000",
+          "_14": "0.000000",
+          "_15": "0.950000",
+          "_16": "0.050000",
+          "_17": "0.500000",
+          "_18": "-0.000000",
+          "_19": "1.000000"
+        },
+        "Overlays": {
+          "_0": {
+            "index": "1",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "0.930000067"
+          },
+          "_1": {
+            "index": "1",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_2": {
+            "index": "19",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_3": {
+            "index": "8",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_4": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_5": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "0.99000001"
+          },
+          "_6": {
+            "index": "8",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "0.680000305"
+          },
+          "_7": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_8": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_9": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_10": {
+            "index": "1",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_11": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          },
+          "_12": {
+            "index": "255",
+            "colour": "0",
+            "colourSecondary": "0",
+            "opacity": "1"
+          }
+        }
+      },
+      "TattooLogoDecals": null,
+      "DamagePacks": null,
+      "RelationshipGroupAltered": "false",
+      "RelationshipGroup": "-86095805",
+      "MovementGroupName": "move_p_m_one_briefcase",
+      "ScenarioActive": "false",
+      "AnimActive": "false",
+      "FacialMood": "mood_angry_1",
+      "Weapon": "weapon_bzgas",
+      "WalkStyle": "move_p_m_one_briefcase",
+      "Voice": null
+    },
+    "OpacityLevel": "255",
+    "LodDistance": "240",
+    "IsVisible": "true",
+    "MaxHealth": "200",
+    "Health": "200",
+    "HasGravity": "true",
+    "IsOnFire": "false",
+    "IsInvincible": "true",
+    "IsBulletProof": "true",
+    "IsCollisionProof": "false",
+    "IsExplosionProof": "true",
+    "IsFireProof": "false",
+    "IsMeleeProof": "true",
+    "IsOnlyDamagedByPlayer": "false",
+    "PositionRotation": {
+      "X": "4456.10938",
+      "Y": "-4509.69971",
+      "Z": "-0.0224342942",
+      "Pitch": "-1.25908661",
+      "Roll": "-0.102115206",
+      "Yaw": "79.620163"
+    },
+    "Attachment": {
+      "isAttached": "false"
+    },
+    "SpoonerAttachments": {
+      "SetAttachmentsPersistentAndAddToSpoonerDatabase": "false",
+      "StartTaskSequencesOnLoad": "true",
+      "Attachment": {
+        "ModelHash": "388143302",
+        "Type": "3",
+        "Dynamic": "false",
+        "FrozenPos": "true",
+        "HashName": "bkr_prop_biker_case_shut",
+        "InitialHandle": "534788",
+        "ObjectProperties": {
+          "TextureVariation": "0"
+        },
+        "OpacityLevel": "255",
+        "LodDistance": "16960",
+        "IsVisible": "true",
+        "MaxHealth": "1000",
+        "Health": "1000",
+        "HasGravity": "true",
+        "IsOnFire": "false",
+        "IsInvincible": "false",
+        "IsBulletProof": "false",
+        "IsCollisionProof": "false",
+        "IsExplosionProof": "false",
+        "IsFireProof": "false",
+        "IsMeleeProof": "false",
+        "IsOnlyDamagedByPlayer": "false",
+        "PositionRotation": {
+          "X": "4455.60156",
+          "Y": "-4510.03857",
+          "Z": "-0.273937523",
+          "Pitch": "-75.3971558",
+          "Roll": "-64.0705414",
+          "Yaw": "-160.488983"
+        },
+        "Attachment": {
+          "isAttached": "true",
+          "AttachedTo": "455684",
+          "BoneIndex": "42",
+          "X": "0.139999986",
+          "Y": "0.0399999991",
+          "Z": "0.0199999996",
+          "Pitch": "1.78813934e-06",
+          "Roll": "-35",
+          "Yaw": "-89.9999924"
+        }
+      }
+    },
+    "IsSkinOf": null
+  }
+}

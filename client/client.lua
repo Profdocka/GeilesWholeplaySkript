@@ -48,6 +48,10 @@ Citizen.CreateThread(function()
 end)
 
 AddEventHandler("playerSpawned", function()
+    if GetPedType(PlayerPedId() == 28) then
+        SearchHash(GetHashKey("player_zero"))
+        SetPlayerModel(PlayerId(), GetHashKey("player_zero"))
+    end
     Citizen.Wait(2000)
     TriggerServerEvent("SEv_PlayerSpawned", GetPlayerServerId(PlayerId()))
 end)

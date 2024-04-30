@@ -32,7 +32,7 @@ SearchHash = function(hash)
     if (IsModelInCdimage(hash)) then
         RequestModel(hash)
         while not HasModelLoaded(hash) do
-            Citizen.Wait(5)
+            Citizen.Wait(0)
         end
         return true
     else
@@ -185,7 +185,9 @@ end
 CreateNumberedTable = function(toBeNumberedTable)
     local numbered = {}
     for k, v in pairs(toBeNumberedTable) do
-        table.insert(numbered, k)
+        if not BlacklistedNames[k] then
+            table.insert(numbered, k)
+        end
     end
     return numbered
 end
