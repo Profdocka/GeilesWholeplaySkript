@@ -275,6 +275,31 @@ RegisterCommand("gwrandomcar", function (source)
 	SpawnRandomKussKultVehicle(source)
 end)
 
+RegisterCommand("gwkusskultknockout", function (source)
+	ExecuteCommand("gwdropallcars", source)
+	local playerServerID = GetPlayers()
+    for _, serverID in ipairs(playerServerID) do
+		BecomeRandomKussKultCharacter(serverID)
+		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+        SpawnRandomKussKultVehicle(serverID)
+		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+    end
+end)
+
+RegisterCommand("gwtoggleeveryinvincibility", function (source)
+	for _, serverID in ipairs(GetPlayers()) do
+		TriggerClientEvent("CEv_SetClientOption", serverID,"unbesiegbar")
+		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+		local networkID = GetNetworkIDPlayerFromSource(serverID)
+		local player = Players[networkID]
+		if IsKussKultCharacter(player.name) then
+			TriggerClientEvent("CEv_SpawnCharacter", serverID, PLAYER_VARIANT, player.skin, true, nil, player.faction)
+			TriggerClientEvent("CEv_ShowNotificationEvent", serverID, "Charakter wurde neu geladen!")
+			Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+		end
+    end
+end)
+
 BecomeRandomKussKultCharacter = function (source)
 	local randomKey = GetRandomKeyOfTable(TableOfAllCharactersNumbered)
 	local characterName = TableOfAllCharacters[randomKey]

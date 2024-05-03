@@ -87,3 +87,7 @@ EnableOption = function(option)
 	end
 	ShowNotification("Option " .. option .. " wurde geändert")
 end
+
+RegisterNetEvent("CEv_SetClientOption",function (option)
+	EnableOption(option)
+end)

@@ -28,8 +28,6 @@ Vehicles = {}
 FactionsAndMembers = {}
 FactionLeaders = {}
 
-BlacklistedNames = {"Projekt45Dave", "BrillanterBuckelwal"}
-
 --SERVER EVENTS
 
 AddEventHandler("onServerResourceStart", function(resourceName)

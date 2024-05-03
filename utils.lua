@@ -1,3 +1,5 @@
+BlacklistedNames = {Projekt45Dave = "Projekt45Dave", BrillanterBuckelwal = "BrillanterBuckelwal"}
+
 GetInputWindowOutput = function(title)
     AddTextEntry("CH_INPUT", title)
     DisplayOnscreenKeyboard(1, "CH_INPUT", "", "", "", "", "", 30)
@@ -185,7 +187,7 @@ end
 CreateNumberedTable = function(toBeNumberedTable)
     local numbered = {}
     for k, v in pairs(toBeNumberedTable) do
-        if not BlacklistedNames[k] then
+        if BlacklistedNames[k] == nil then
             table.insert(numbered, k)
         end
     end
