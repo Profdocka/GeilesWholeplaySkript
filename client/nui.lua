@@ -89,3 +89,46 @@ RegisterNUICallback("UI_Teleport", function (data, cb)
 
     TeleportToLocationByCommand(data.name)
 end)
+
+RegisterNUICallback("UI_DeleteEntity", function (data, cb)
+    cb({})
+    TriggerServerEvent("SEv_DeleteEntity", GetPlayerServerId(PlayerId()), data.name)
+end)
+
+RegisterNUICallback("UI_ChangeAttitude", function (data, cb)
+    cb({})
+    TriggerServerEvent("SEv_ChangeCharacterAttitude", GetPlayerServerId(PlayerId()), data.variant, data.name)
+end)
+
+RegisterNUICallback("UI_RelocateCharacter", function (data, cb)
+    cb({})
+    local Group = {}
+    --print("NetID " .. data.networkID)
+    Group[tonumber(data.networkID)] = tonumber(data.networkID)
+    local coords = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, (0.0), 0.0)
+    local heading = GetEntityHeading(PlayerPedId())
+    TriggerServerEvent("SEv_RelocateCharacter", GetPlayerServerId(PlayerId()), Group, coords, heading)
+end)
+
+RegisterNUICallback("UI_RelocateVehicle", function (data, cb)
+    cb({})
+    local Group = {}
+    Group[tonumber(data.networkID)] = tonumber(data.networkID)
+    local coords = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, (0.0), 0.0)
+    local heading = GetEntityHeading(PlayerPedId())
+    local vehHandle = NetworkGetEntityFromNetworkId(data.networkID)
+    local isEmpty = IsVehicleSeatFree(vehHandle, -1)
+    if isEmpty then
+        if not IsPedInAnyVehicle(PlayerPedId(), false) then
+            TriggerServerEvent("SEv_RelocateCharacter", GetPlayerServerId(PlayerId()), Group, coords, heading)
+            Citizen.Wait(250)
+        end
+        TaskWarpPedIntoVehicle(PlayerPedId(), vehHandle, -1)
+    else
+        for i = -1, GetVehicleMaxNumberOfPassengers(vehHandle), 1 do
+            if IsVehicleSeatFree(vehHandle, i) then
+                TaskWarpPedIntoVehicle(PlayerPedId(), vehHandle, i)
+            end
+        end
+    end
+end)

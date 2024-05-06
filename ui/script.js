@@ -93,9 +93,9 @@ const registerSkinsForCharAndVeh = async (data) => {
 }
 
 const registerActiveData = (gwData) => {
-    memory.players = gwData.players
-    memory.Acharacters = gwData.characters
-    memory.Avehicles = gwData.vehicles
+    memory.players = Object.values(gwData.players);
+    memory.Acharacters = Object.values(gwData.characters);
+    memory.Avehicles = Object.values(gwData.vehicles);
 }
 
 const openGWMenu = async (gwData) => {
@@ -113,6 +113,7 @@ const openGWMenu = async (gwData) => {
 
 const addEveryEntity = () => {
     const domElement = document.getElementById("content-holder");
+    addActiveSection(domElement);
     createSectionLine(domElement, "Charaktere");
     memory.characters.forEach(rootskin => {
         addBlock(domElement, rootskin[0], PLAYER_VARIANT, "UI_SpawnCharacterOrVehicle")
@@ -183,33 +184,63 @@ const addBlock = (ParentElement, name, variant, gameEvent) => {
     block.append(textBlock);
 
     if (variant === PLAYER_VARIANT || variant === GROUP_VARIANT) {
-        const variantButtons = document.createElement('div')
-        const neutralVariantButton = document.createElement('div')
-        neutralVariantButton.textContent = "sentiment_neutral";
-        const friendlyVariantButton = document.createElement('div')
-        friendlyVariantButton.textContent = "sentiment_excited";
-        const aggressiveVariantButton = document.createElement('div')
-        aggressiveVariantButton.textContent = "sentiment_extremely_dissatisfied";
-
-        addClickEventHandler(neutralVariantButton, gameEvent, { name: name, variant: NEUTRAL_VARIANT })
-        addClickEventHandler(friendlyVariantButton, gameEvent, { name: name, variant: FRIENDLY_VARIANT })
-        addClickEventHandler(aggressiveVariantButton, gameEvent, { name: name, variant: AGGRESSIVE_VARIANT })
-
-        variantButtons.classList.add('variants')
-        neutralVariantButton.classList.add('material-symbols-outlined', 'variant-neutral')
-        friendlyVariantButton.classList.add('material-symbols-outlined', 'variant-friendly')
-        aggressiveVariantButton.classList.add('material-symbols-outlined', 'variant-aggressive')
-
-        variantButtons.append(neutralVariantButton);
-        variantButtons.append(friendlyVariantButton);
-        variantButtons.append(aggressiveVariantButton);
-
+        let variantButtons = variantButtonRow(gameEvent, name)
         block.append(variantButtons)
     }
 
-    
+
 
     ParentElement.appendChild(block);
+}
+
+function addActiveBlock(parentElement, options) {
+    const block = document.createElement('div');
+    const textBlock = document.createElement('div');
+    const title = document.createElement('span');
+    const subtitle = document.createElement('span');
+    const footer = document.createElement('span');
+
+    block.classList.add('entity');
+    //textBlock.classList.add('entity');
+    colorBlocksAccordingly(block, options.variant);
+
+    if (options.variant === VEHICLE_VARIANT || options.variant === NEUTRAL_VARIANT) {
+        addClickEventHandler(block, options.gameEvent, options)
+    }
+
+    textBlock.classList.add('active-info-text');
+    title.innerHTML = options.name
+    textBlock.append(title);
+
+    let optionsButtons = document.createElement('div');
+
+    if (options.variant === PLAYER_VARIANT || options.variant === NEUTRAL_VARIANT) {
+        subtitle.innerHTML = "Fraktion: " + options.faction;
+        subtitle.classList.add('active-info-text-faction');
+        textBlock.append(subtitle);
+        if (options.variant === PLAYER_VARIANT) {
+            footer.innerHTML = options.playerName;
+            footer.classList.add('active-info-text', 'active-info-text-player-name');
+            textBlock.append(footer);
+        } else {
+            optionsButtons = variantButtonRow("UI_ChangeAttitude", options.name);
+        }
+    }
+
+    if (options.variant === VEHICLE_VARIANT || options.variant === NEUTRAL_VARIANT) {
+        const trashCanButton = document.createElement('div');
+        trashCanButton.textContent = "delete";
+
+        addClickEventHandler(trashCanButton, "UI_DeleteEntity", options);
+
+        trashCanButton.classList.add('material-symbols-outlined', 'variant-aggressive');
+        optionsButtons.append(trashCanButton);
+
+        optionsButtons.classList.add('variants');
+    }
+    block.append(textBlock);
+    block.append(optionsButtons);
+    parentElement.appendChild(block);
 }
 
 function sortObjectKeysAlphabetically(obj) {
@@ -257,6 +288,31 @@ function optionsContainerButtons() {
     optionsContainerButtonHandler(locationTab, "Locations");
     optionsContainerButtonHandler(myVehiclesTab, "MeineFahrzeuge");
 
+}
+
+function variantButtonRow(gameEvent, name) {
+    const variantButtons = document.createElement('div')
+    const neutralVariantButton = document.createElement('div')
+    neutralVariantButton.textContent = "sentiment_neutral";
+    const friendlyVariantButton = document.createElement('div')
+    friendlyVariantButton.textContent = "sentiment_excited";
+    const aggressiveVariantButton = document.createElement('div')
+    aggressiveVariantButton.textContent = "sentiment_extremely_dissatisfied";
+
+    addClickEventHandler(neutralVariantButton, gameEvent, { name: name, variant: NEUTRAL_VARIANT })
+    addClickEventHandler(friendlyVariantButton, gameEvent, { name: name, variant: FRIENDLY_VARIANT })
+    addClickEventHandler(aggressiveVariantButton, gameEvent, { name: name, variant: AGGRESSIVE_VARIANT })
+
+    variantButtons.classList.add('variants')
+    neutralVariantButton.classList.add('material-symbols-outlined', 'variant-neutral')
+    friendlyVariantButton.classList.add('material-symbols-outlined', 'variant-friendly')
+    aggressiveVariantButton.classList.add('material-symbols-outlined', 'variant-aggressive')
+
+    variantButtons.append(neutralVariantButton);
+    variantButtons.append(friendlyVariantButton);
+    variantButtons.append(aggressiveVariantButton);
+
+    return variantButtons
 }
 
 function optionsContainerButtonHandler(recievingObject, tabVariant) {
@@ -341,6 +397,40 @@ function colorBlocksAccordingly(block, variant) {
         default:
             break;
     }
+}
+
+function addActiveSection(domElement) {
+    const contentHolder = domElement;
+    createSectionLine(contentHolder, "Aktive");
+    memory.players.forEach(player => {
+        //addBlock(contentHolder, , GROUP_VARIANT, "UI_SpawnGroup")
+        if (player != null) {
+            player.networkID = networkIDWasNotFoundReplace(player.networkID)
+            let options = { variant: PLAYER_VARIANT, networkID: player.networkID, name: player.skin, faction: player.faction, playerName: player.playerName, gameEvent: "UI_TeleportToPlayer" }
+            addActiveBlock(contentHolder, options)
+        }
+    })
+    memory.Acharacters.forEach(character => {
+        if (character != null) {
+            character.networkID = networkIDWasNotFoundReplace(character.networkID)
+            let options = { variant: NEUTRAL_VARIANT, networkID: character.networkID, name: character.skin, faction: character.faction, gameEvent: "UI_RelocateCharacter" }
+            addActiveBlock(contentHolder, options)
+        }
+    })
+    memory.Avehicles.forEach(vehicle => {
+        if (vehicle != null) {
+            vehicle.networkID = networkIDWasNotFoundReplace(vehicle.networkID)
+            let options = { variant: VEHICLE_VARIANT, networkID: vehicle.networkID, name: vehicle.skin, gameEvent: "UI_RelocateVehicle" }
+            addActiveBlock(contentHolder, options)
+        }
+    })
+}
+
+function networkIDWasNotFoundReplace(networkID) {
+    if (networkID == null || networkID == undefined) {
+        networkID = 0
+    }
+    return networkID
 }
 
 /*

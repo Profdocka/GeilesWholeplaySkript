@@ -21,8 +21,9 @@ BuildVehicle = function(modelHash, vehicleJson, driver)
 	local coords = GetEntityCoords(driver)
 	local heading = GetEntityHeading(driver)
 	local vehHandle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, true, true)
-	SetVehicleOnGroundProperly(vehHandle);
-	TaskWarpPedIntoVehicle(driver, vehHandle, -1);
+	SetVehicleOnGroundProperly(vehHandle)
+	SetVehicleDirtLevel(vehHandle, 0.0)
+	TaskWarpPedIntoVehicle(driver, vehHandle, -1)
 
 	VehicleAddons(vehHandle, carMis, carColors, carNeon, carExtras, carMods)
 	return vehHandle

@@ -197,15 +197,30 @@
     color: red;
 }
 
-.entity div span:first-of-type {
-    color: #FFFFFF;
-    font-size: 1.4em;
+.entity div span {
+    color: #dddddd;
+    font-size: 0.9em;
     word-break: break-all;
 }
 
-.entity div span:last-of-type {
+.active-info-text {
+    margin-top: 0.5em;
+    display: flex;
+    flex-direction: column;
+}
+
+/*
+Diese beiden folgenden gehen nicht :(
+*/
+.entity div span .active-info-text-player-name {
+    color: #ff0000;
+    font-size: 0.955em;
+    word-break: break-all;
+}
+
+.entity div span .active-info-text-faction {
     color: #C1C1C1;
-    font-size: 0.855em;
+    font-size: 0.755em;
     word-break: break-all;
 }
 

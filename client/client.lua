@@ -345,6 +345,11 @@ RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, 
 end)
 
 RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName)
+    for networkID, player in pairs(Players) do
+        local localPlayerID = GetPlayerFromNetworkID(networkID)
+        local playername = GetPlayerName(localPlayerID)
+        Players[networkID].playerName = playername
+    end
     SendNUIMessage({
         type = "GW_OpenMenu",
         players = Players,
@@ -355,3 +360,9 @@ RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playe
     SetNuiFocus(true, true)
     TriggerScreenblurFadeIn(3000)
 end)
+
+function GetPlayerFromNetworkID(networkID)
+    if TryForNetworkIDAvailability(networkID) then
+        return NetworkGetPlayerIndexFromPed(NetworkGetEntityFromNetworkId(networkID))
+    end
+end

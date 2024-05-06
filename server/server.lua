@@ -190,6 +190,10 @@ RegisterNetEvent("SEv_ReapplyFactionRequestedByClient", function (source)
     TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
 end)
 
+RegisterNetEvent("SEv_DeleteEntity", function (source, entity)
+    DropSpecificEntityByName(entity, source)
+end)
+
 RegisterNetEvent("SEv_DeadGarbageCleaner", function (deadCharacters, deadVehicles)
     DeadGarbageCleanerCleaning(deadCharacters, deadVehicles)
 end)
@@ -200,4 +204,18 @@ RegisterNetEvent("SEv_SaveEntityInFile", function (fileName, fileData)
     else
         TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~Diesen Charakter gibt es schon!")
     end
+end)
+
+RegisterNetEvent("SEv_ChangeCharacterAttitude", function (source, variant, name)
+    if variant == NEUTRAL_VARIANT then
+        TurnVariantToNeutral(name, source)
+    elseif variant == FRIENDLY_VARIANT then
+        TurnVariantToFriendly(name, source)
+    elseif variant == AGGRESSIVE_VARIANT then
+        TurnVariantToAggressive(name, source)
+    end
+end)
+
+RegisterNetEvent("SEv_RelocateCharacter", function (source, Group, coords, heading)
+    TeleportMultiple(Group, coords, heading)
 end)

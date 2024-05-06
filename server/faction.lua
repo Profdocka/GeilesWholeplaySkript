@@ -112,8 +112,8 @@ end
 TeleportMultiple = function(GroupNet, coords, heading)
     if GroupNet ~= nil then
         for _, networkID in pairs(GroupNet) do
-            local pedHandle = NetworkGetEntityFromNetworkId(networkID)
             --print("NetId ", networkID)
+            local pedHandle = NetworkGetEntityFromNetworkId(networkID)
             if not IsPedAPlayer(pedHandle) then
                 SetEntityCoords(pedHandle, coords.x, coords.y, coords.z, false, false, false, false)
             end
