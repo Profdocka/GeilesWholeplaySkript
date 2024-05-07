@@ -27,6 +27,8 @@ SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     local lastVehicle, lastSeat = GetCurrentVehicleAndSeatNumber(previousPlayerPed)
 
     SetPlayerModel(PlayerId(), modelHash)
+    SetPlayerHealthRechargeMultiplier(PlayerId(), 1.0)
+    SetPlayerHealthRechargeLimit(PlayerId(), 1.0)
     local newPlayerPed = GetPlayerPed(PlayerId())
 
     if lastVehicle ~= nil then

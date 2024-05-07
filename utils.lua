@@ -147,6 +147,12 @@ PrintAllMembersOfTable = function (tabl)
 	end
 end
 
+function GetPlayerFromNetworkID(networkID)
+    if TryForNetworkIDAvailability(networkID) then
+        return NetworkGetPlayerIndexFromPed(NetworkGetEntityFromNetworkId(networkID))
+    end
+end
+
 ---SERVER---
 
 IsKussKultCharacter = function(input)

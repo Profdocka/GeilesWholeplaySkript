@@ -15,6 +15,9 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	pedHash = tonumber(pedHash)
 
 	ClearAllPedProps(pedHandle)
+	SetEntityMaxHealth(pedHandle, 200)
+	SetEntityHealth(pedHandle, 200)
+	SetPedArmour(pedHandle, 100)
 	Components(pedHandle, pedComps)
 	Props(pedHandle, pedProps, pedHash)
 
