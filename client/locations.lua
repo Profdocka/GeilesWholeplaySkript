@@ -2,6 +2,8 @@ MapMarkers = {}
 Interiors = {}
 FADEOUT_TIME = 300
 
+RespawnCoords = { x = 0.0, y = 0.0, z = 0.0, heading = 0.0 }
+
 RegisterCommand("gwtp", function(source, args, raw)
     if (args[1] ~= nil) then
         TeleportToLocationByCommand(args[1])
@@ -9,6 +11,28 @@ RegisterCommand("gwtp", function(source, args, raw)
         ShowNotification("Location vergessen")
     end
 end)
+
+RegisterCommand("gwspawnpoint", function(source)
+    local vector4 = GetPlayerCoordsAndHeading(PlayerId(), 0.0)
+    RespawnCoords = nil
+    RespawnCoords = {}
+    RespawnCoords = { x = vector4["coords"].x, y = vector4["coords"].y, z = vector4["coords"].z, heading = (vector4["heading"]) }
+    ShowNotification("Dein Spawnpoint wurde gesetzt!~n~X: " .. vector4["coords"].x .. "~n~Y: " .. vector4["coords"].y .. "~n~Z: " .. vector4["coords"].z)
+end)
+
+RegisterCommand("gwclearspawnpoint", function(source)
+    RespawnCoords = nil
+    RespawnCoords = {}
+    RespawnCoords = { x = 0.0, y = 0.0, z = 0.0, heading = 0.0 }
+    ShowNotification("Dein Spawnpoint wurde entfernt!")
+end)
+
+TeleportToSetSpawnpoint = function()
+    if RespawnCoords.x ~= 0.0 and RespawnCoords.y ~= 0.0 and RespawnCoords.z ~= 0.0 then
+        local coords = { x = RespawnCoords.x, y = RespawnCoords.y, z = RespawnCoords.z }
+        TriggerServerEvent("SEv_TeleportPlayer", GetPlayerServerId(PlayerId()), coords, RespawnCoords.heading)
+    end
+end
 
 RegisterNetEvent("CEv_TeleportThePlayer", function(source, Group, coords, heading)
     if (source == GetPlayerServerId(PlayerId())) then
@@ -22,14 +46,22 @@ Citizen.CreateThread(function()
     MapMarkers = Looker("blips", "client")
     for key, info in pairs(MapMarkers) do
         if info.isInterior == true then
-            --info.handle = AddBlipForCoord(info.intCoords.x, info.intCoords.y, info.intCoords.z)
+            info.handle = AddBlipForCoord(info.extCoords.x, info.extCoords.y, info.extCoords.z)
             Interiors[key] = info
+            SetBlipSprite(info.handle, info.blipId)
+            SetBlipDisplay(info.handle, 4)
+            SetBlipScale(info.handle, 0.8)
+            SetBlipColour(info.handle, info.colour)
+            SetBlipAsShortRange(info.handle, true)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentString(info.title)
+            EndTextCommandSetBlipName(info.handle)
             --print(key)
         else
             info.handle = AddBlipForCoord(info.x, info.y, info.z)
             SetBlipSprite(info.handle, info.blipId)
             SetBlipDisplay(info.handle, 4)
-            SetBlipScale(info.handle, 0.9)
+            SetBlipScale(info.handle, 1.0)
             SetBlipColour(info.handle, info.colour)
             SetBlipAsShortRange(info.handle, true)
             BeginTextCommandSetBlipName("STRING")
@@ -141,4 +173,4 @@ TeleportMultiple = function(GroupNet, coords, heading)
     end
 end
 ]]
-   --
+--

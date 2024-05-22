@@ -106,7 +106,7 @@ RegisterNetEvent("SEv_CheckIfFactionIsKussKult",
         CheckIfFactionIsKussKult(source, factionName, factionVariant, hasWeapon, vector4, exceptionTarget)
     end)
 
-RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID)
+RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasWeapon, faction, networkID, source)
     local skin = GetStandardSpellingOfName(name, TableOfAllCharactersLower, TableOfAllCharacters,
         TableOfAllCharactersIndexes)
     --print("Der Skin richtig geschrieben: " .. skin)
@@ -130,7 +130,7 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
         FactionsAndMembers, FactionLeaders, Players)
 end)
 
-RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function(GroupNetwork, variant, hasWeapon, faction)
+RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function(GroupNetwork, variant, hasWeapon, faction, source)
     local skin = nil
     local name = nil
     for _, character in pairs(GroupNetwork) do

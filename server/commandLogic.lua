@@ -267,28 +267,28 @@ RegisterCommand("gwjahresabschluss", function(source, args)
 	TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
 end)
 
-RegisterCommand("gwrandomped", function (source)
+RegisterCommand("gwrandomped", function(source)
 	BecomeRandomKussKultCharacter(source)
 end)
 
-RegisterCommand("gwrandomcar", function (source)
+RegisterCommand("gwrandomcar", function(source)
 	SpawnRandomKussKultVehicle(source)
 end)
 
-RegisterCommand("gwkusskultknockout", function (source)
+RegisterCommand("gwkusskultknockout", function(source)
 	ExecuteCommand("gwdropallcars", source)
 	local playerServerID = GetPlayers()
-    for _, serverID in ipairs(playerServerID) do
+	for _, serverID in ipairs(playerServerID) do
 		BecomeRandomKussKultCharacter(serverID)
 		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-        SpawnRandomKussKultVehicle(serverID)
+		SpawnRandomKussKultVehicle(serverID)
 		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-    end
+	end
 end)
 
-RegisterCommand("gwtoggleeveryinvincibility", function (source)
+RegisterCommand("gwtoggleeveryinvincibility", function(source)
 	for _, serverID in ipairs(GetPlayers()) do
-		TriggerClientEvent("CEv_SetClientOption", serverID,"unbesiegbar")
+		TriggerClientEvent("CEv_SetClientOption", serverID, "unbesiegbar")
 		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
 		local networkID = GetNetworkIDPlayerFromSource(serverID)
 		local player = Players[networkID]
@@ -297,16 +297,16 @@ RegisterCommand("gwtoggleeveryinvincibility", function (source)
 			TriggerClientEvent("CEv_ShowNotificationEvent", serverID, "Charakter wurde neu geladen!")
 			Citizen.Wait(NETWORK_ID_SYNC_DELAY)
 		end
-    end
+	end
 end)
 
-BecomeRandomKussKultCharacter = function (source)
+BecomeRandomKussKultCharacter = function(source)
 	local randomKey = GetRandomKeyOfTable(TableOfAllCharactersNumbered)
 	local characterName = TableOfAllCharacters[randomKey]
 	TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, characterName, true, nil, characterName)
 end
 
-SpawnRandomKussKultVehicle = function (source)
+SpawnRandomKussKultVehicle = function(source)
 	local randomKey = GetRandomKeyOfTable(TableOfAllVehiclesNumbered)
 	local vehicleName = TableOfAllVehicles[randomKey]
 	local networkIDDriver = GetNetworkIDPlayerFromSource(source)
@@ -316,3 +316,13 @@ end
 GetRandomKeyOfTable = function(tabelle)
 	return tabelle[math.random(1, #tabelle)]
 end
+
+RegisterCommand("gwfreunde", function()
+	TriggerClientEvent("CEv_ChangePlayerToPlayerRelationship", -1, 1, FactionLeaders)
+	TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Alle Spieler sind von nun an Freunde!")
+end)
+
+RegisterCommand("gwfeinde", function()
+	TriggerClientEvent("CEv_ChangePlayerToPlayerRelationship", -1, 5, FactionLeaders)
+	TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Alle Spieler sind von nun an Feinde!")
+end)

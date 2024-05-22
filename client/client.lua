@@ -10,9 +10,11 @@ NEUTRAL_VARIANT = 1
 FRIENDLY_VARIANT = 2
 AGGRESSIVE_VARIANT = 3
 
+HasJustJoined = true
 IsInvincible = true
 WantsFormationSpawn = true
 CHARACTER_SPAWN_OFFSET_Y = 3.0
+PlayerToPlayerRelationship = 1
 
 KussBildDic = CreateRuntimeTxd('CHAR_KUSS')
 KussBild = CreateRuntimeTextureFromImage(KussBildDic, 'CHAR_KUSS', "kusskultlogo.png")
@@ -48,12 +50,22 @@ Citizen.CreateThread(function()
 end)
 
 AddEventHandler("playerSpawned", function()
+    Citizen.Wait(10)
     if GetPedType(PlayerPedId() == 28) then
         SearchHash(GetHashKey("player_zero"))
         SetPlayerModel(PlayerId(), GetHashKey("player_zero"))
     end
     Citizen.Wait(2000)
-    TriggerServerEvent("SEv_PlayerSpawned", GetPlayerServerId(PlayerId()))
+    SetAiWeaponDamageModifier(0.3)
+    SetAiMeleeWeaponDamageModifier(0.3)
+    if HasJustJoined then
+        HasJustJoined = false
+        TriggerServerEvent("SEv_PlayerSpawned", GetPlayerServerId(PlayerId()))
+    else
+        TeleportToSetSpawnpoint()
+        Citizen.Wait(2000)
+        ExecuteCommand("gwr", GetPlayerServerId(PlayerId()))
+    end
 end)
 
 RegisterNetEvent("CEv_ListAll", function(_Players, _Characters, _Vehicles)
@@ -74,7 +86,7 @@ RegisterNetEvent("CEv_SpawnCharacter", function(variant, name, hasWeapon, vector
     SetNetworkIdExistsOnAllMachines(networkID, true)
     SetNetworkIdCanMigrate(networkID, true)
 
-    TriggerServerEvent("SEv_GiveCharacterSkinAndFaction", variant, name, hasWeapon, faction, networkID)
+    TriggerServerEvent("SEv_GiveCharacterSkinAndFaction", variant, name, hasWeapon, faction, networkID, GetPlayerServerId(PlayerId()))
 end)
 
 RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeapon, vector4, faction)
@@ -125,7 +137,7 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
     if faction == "CHAOS" then
         CHARACTER_SPAWN_OFFSET_Y = 3.0
     end
-    TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction)
+    TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction, GetPlayerServerId(PlayerId()))
 end)
 
 RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
@@ -150,6 +162,7 @@ RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
              PlayersFromServer)
         if TryForNetworkIDAvailability(networkID) then
             local pedHandle = NetworkGetEntityFromNetworkId(networkID)
+            local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
             --print("NetworkID: " .. networkID)
             --print("Mein Skin: " .. skin)
             local pedJson = Looker(skin, CHARFOLDER)
@@ -158,8 +171,8 @@ RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
             if variant == PLAYER_VARIANT then
                 --print("Hier wollen Freunde entstehen!")
                 AutomaticlyApplyRelationshipBetweenAllPlayers(FactionLeadersFromServer)
-            elseif variant == AGGRESSIVE_VARIANT then
-                local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
+            elseif variant == AGGRESSIVE_VARIANT and playerHandle == PlayerPedId() then
+                TakeOwnershipOfNetworkID(pedHandle, networkID)
                 TaskCombatPed(pedHandle, playerHandle, 0, 16)
                 if PlayersFromServer[networkID] == nil then
                     SetBlipAsFriendly(GetBlipFromEntity(pedHandle), false)
@@ -174,22 +187,25 @@ RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
              PlayersFromServer)
         local pedHandle = nil
         local pedJson = nil
+        local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
+        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         for _, character in pairs(GroupNetwork) do
             if TryForNetworkIDAvailability(character.networkID) then
                 pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
                 pedJson = Looker(character.name, CHARFOLDER)
                 Cosmetics(pedHandle, pedJson, hasWeapon)
+                if variant == AGGRESSIVE_VARIANT and playerHandle == PlayerPedId() then
+                    TakeOwnershipOfNetworkID(pedHandle, character.networkID)
+                    if not IsPedAPlayer(pedHandle) then
+                        SetBlipAsFriendly(GetBlipFromEntity(pedHandle), false)
+                        SetBlipColour(GetBlipFromEntity(pedHandle), 49)
+                    end
+                end
                 Citizen.Wait(100)
             end
         end
-        ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
-        if variant == AGGRESSIVE_VARIANT then
-            local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
+        if variant == AGGRESSIVE_VARIANT and playerHandle == PlayerPedId() then
             TaskCombatPed(pedHandle, playerHandle, 0, 16)
-            if PlayersFromServer[NetworkGetNetworkIdFromEntity(pedHandle)] == nil then
-                SetBlipAsFriendly(GetBlipFromEntity(pedHandle), false)
-                SetBlipColour(GetBlipFromEntity(pedHandle), 49)
-            end
         end
     end)
 
@@ -197,17 +213,18 @@ RegisterNetEvent("CEv_GiveRoles",
     function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant,
              PlayersFromServer)
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
-        if variant == AGGRESSIVE_VARIANT and TryForNetworkIDAvailability(networkIDEmitter) and TryForNetworkIDAvailability(networkIDReciever) then
-            local recieverHandle = NetworkGetEntityFromNetworkId(networkIDReciever)
-            local emitterHandle = NetworkGetEntityFromNetworkId(networkIDEmitter)
+        local recieverHandle = NetworkGetEntityFromNetworkId(networkIDReciever)
+        local emitterHandle = NetworkGetEntityFromNetworkId(networkIDEmitter)
+        if variant == AGGRESSIVE_VARIANT and emitterHandle == PlayerPedId() and TryForNetworkIDAvailability(networkIDEmitter) and TryForNetworkIDAvailability(networkIDReciever) then
+            TakeOwnershipOfNetworkID(recieverHandle, networkIDReciever)
             --ClearPedTasks(recieverHandle)
             TaskCombatPed(recieverHandle, emitterHandle, 0, 16)
             --print("playerHandle: " .. emitterHandle)
             --print("PlayerPedId: " .. PlayerPedId())
             if PlayersFromServer[networkIDReciever] == nil then
                 --print("Bekommt einen Bösen Blip: " .. networkIDReciever)
-                SetBlipColour(GetBlipFromEntity(recieverHandle), 59)
                 SetBlipAsFriendly(GetBlipFromEntity(recieverHandle), false)
+                SetBlipColour(GetBlipFromEntity(recieverHandle), 49)
             end
         end
     end)
@@ -324,7 +341,7 @@ RegisterNetEvent("CEv_DeadGarbageCleanerCheck", function(Characters, Vehicles)
     end
     for _, vehicle in pairs(Vehicles) do
         local vehHandle = NetworkGetEntityFromNetworkId(vehicle.networkID)
-        if GetVehicleEngineHealth(vehHandle) < 0  then
+        if GetVehicleEngineHealth(vehHandle) < 0 then
             deadVehicles[vehicle.networkID] = vehicle.networkID
         end
     end

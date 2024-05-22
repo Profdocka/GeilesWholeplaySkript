@@ -29,6 +29,8 @@ SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     SetPlayerModel(PlayerId(), modelHash)
     SetPlayerHealthRechargeMultiplier(PlayerId(), 1.0)
     SetPlayerHealthRechargeLimit(PlayerId(), 1.0)
+    --SetPlayerWeaponDamageModifier(PlayerId(), 0.1)
+    --SetPlayerMeleeWeaponDamageModifier(PlayerId(), 0.1)
     local newPlayerPed = GetPlayerPed(PlayerId())
 
     if lastVehicle ~= nil then
@@ -50,4 +52,7 @@ end
 
 ApplyCharacterModifiers = function (pedHandle)
     SetRagdollBlockingFlags(pedHandle, 1)
+    SetPedConfigFlag(pedHandle, 294, true)
+    SetPedCombatAttributes(pedHandle, 5, true)
+    SetPedCombatAttributes(pedHandle, 58, true)
 end

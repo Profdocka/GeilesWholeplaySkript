@@ -108,6 +108,9 @@ const openGWMenu = async (gwData) => {
             isMenuOpen = !isMenuOpen
             addEveryEntity();
         }
+        else {
+            closeGWMenu();
+        }
     }
 }
 

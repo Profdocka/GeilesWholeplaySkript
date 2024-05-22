@@ -1,3 +1,8 @@
+RegisterNetEvent("CEv_ChangePlayerToPlayerRelationship", function(relationshipNumber, FactionLeadersFromServer)
+    PlayerToPlayerRelationship = relationshipNumber
+    AutomaticlyApplyRelationshipBetweenAllPlayers(FactionLeadersFromServer)
+end)
+
 ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     for faction, factionMembers in pairs(FactionsAndMembersFromServer) do
         local u, factionHash = AddRelationshipGroup(faction)
@@ -14,7 +19,7 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
                 if squad == -1 then
                     squad = CreateGroup()
                 end
-                
+
                 SetPedAsGroupMember(pedHandleLeader, squad)
                 SetPedAsGroupLeader(pedHandleLeader, squad)
                 --print("Anführer: " .. factionLeader)
@@ -27,24 +32,20 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
                 local pedHandle = NetworkGetEntityFromNetworkId(factionMember)
                 local pedBlip = GetBlipFromEntity(pedHandle)
                 SetPedRelationshipGroupHash(pedHandle, factionHash)
-                --if IsPedInGroup(pedHandle) then
-                --    RemoveGroup(GetPedGroupIndex(pedHandle))
-                --end
                 if pedBlip and PlayersFromServer[factionMember] == nil then
                     RemoveBlip(pedBlip)
                     pedBlip = AddBlipForEntity(pedHandle)
                     SetBlipColour(pedBlip, 0)
+                    --BeginTextCommandSetBlipName("STRING")
+                    --AddTextComponentString(factionMember.title)
+                    --EndTextCommandSetBlipName(pedBlip)
                 end
                 if squad ~= nil and factionMember ~= factionLeader and not IsPedAPlayer(pedHandle) then
-                    --print("Meine Gruppe! " .. squad)
                     if factionHash == GetPedRelationshipGroupHash(PlayerPedId()) then
                         SetBlipAsFriendly(pedBlip, true)
                         SetBlipColour(GetBlipFromEntity(pedHandle), 57)
                         if NetworkGetNetworkIdFromEntity(PlayerPedId()) == factionLeader then
-                            if NetworkGetEntityOwner(pedHandle) ~= PlayerId() then
-                                NetworkRequestControlOfNetworkId(factionMember)
-                               --print("Das ist das Mitglied der Gruppe: " .. factionMember)
-                            end
+                            TakeOwnershipOfNetworkID(pedHandle, factionMember)
                         end
                     end
                     SetPedAsGroupMember(pedHandle, squad)
@@ -68,11 +69,19 @@ AutomaticlyApplyRelationshipBetweenAllPlayers = function(FactionLeadersFromServe
             for _, otherPnetworkID in pairs(FactionLeadersFromServer) do
                 if networkID ~= otherPnetworkID and TryForNetworkIDAvailability(otherPnetworkID) then
                     local player2Handle = NetworkGetEntityFromNetworkId(otherPnetworkID)
-                    SetRelationshipBetweenGroups(1, GetPedRelationshipGroupHash(player1Handle),
+                    SetRelationshipBetweenGroups(PlayerToPlayerRelationship, GetPedRelationshipGroupHash(player1Handle),
                         GetPedRelationshipGroupHash(player2Handle))
+                    SetRelationshipBetweenGroups(PlayerToPlayerRelationship, GetPedRelationshipGroupHash(player2Handle),
+                        GetPedRelationshipGroupHash(player1Handle))
                     --print(networkID .. " und " .. otherPnetworkID .. " sind jetzt Freunde")
                 end
             end
         end
+    end
+end
+
+TakeOwnershipOfNetworkID = function(pedHandle, networkID)
+    if NetworkGetEntityOwner(pedHandle) ~= PlayerId() then
+        NetworkRequestControlOfNetworkId(networkID)
     end
 end

@@ -63,11 +63,16 @@ Citizen.CreateThread(function()
 		})
 	TriggerEvent("chat:addSuggestion", "/gwsetoption",
 		"Ändere eine persönliche Einstellung bezüglich Aspekten des Skripts", {
-			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
+			{ name = "Option", help = "Den Namen der zu invertierenden Einstellung" },
 		})
 	TriggerEvent("chat:addSuggestion", "/gwr", "Lädt deinen aktuellen Charakter neu. Damit folgen dir wieder Bodyguards", {})
 	TriggerEvent("chat:addSuggestion", "/gwrandomped", "Gibt dir einen zufälligen Charakter", {})
 	TriggerEvent("chat:addSuggestion", "/gwrandomcar", "Gibt dir ein zufälliges Fahrzeug", {})
+	TriggerEvent("chat:addSuggestion", "/gwspawnpoint", "Setzt deinen Respawnpunkt auf deine aktuelle Position", {})
+	TriggerEvent("chat:addSuggestion", "/gwclearspawnpoint", "Entfernt deinen Respawnpunkt", {})
+	TriggerEvent("chat:addSuggestion", "/gwfreunde", "Sorgt dafür das alle Spieler miteinander kooperieren können", {})
+	TriggerEvent("chat:addSuggestion", "/gwfeinde", "Sorgt dafür das alle Spieler sich gegenseitig bekriegen können", {})
+
 end)
 
 RegisterCommand("gwsetoption", function(source, args)

@@ -53,12 +53,12 @@ TurnVariantToNeutral = function(name, source)
     local isFound, character = CheckIfCharacterExistsByName(name)
     if (isFound) then
         local key = character.networkID
-        if character.faction == Players[networkIDSource].faction then
+        --if character.faction == Players[networkIDSource].faction then
             local newCharacter = { networkID = character.networkID, name = character.name, skin = character.skin, faction =
             character.name }
             Characters[key] = newCharacter
             OrganizeTableOfFactions()
-        end
+        --end
         TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, NEUTRAL_VARIANT,
             Players)
     end
@@ -85,12 +85,12 @@ TurnVariantToAggressive = function(name, source)
     local isFound, character = CheckIfCharacterExistsByName(name)
     if (isFound) then
         local key = character.networkID
-        if character.faction == Players[networkIDSource].faction then
+        --if character.faction == Players[networkIDSource].faction then
             local newCharacter = { networkID = character.networkID, name = character.name, skin = character.skin, faction =
             character.name }
             Characters[key] = newCharacter
             OrganizeTableOfFactions()
-        end
+        --end
         --Aggressivität?
         TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key,
             AGGRESSIVE_VARIANT, Players)
