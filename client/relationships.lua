@@ -1,15 +1,34 @@
+---Ändert das Beziehungslevel zwischen allen Spielern
+---@param relationshipNumber integer
+---@param FactionLeadersFromServer table
 RegisterNetEvent("CEv_ChangePlayerToPlayerRelationship", function(relationshipNumber, FactionLeadersFromServer)
     PlayerToPlayerRelationship = relationshipNumber
     AutomaticlyApplyRelationshipBetweenAllPlayers(FactionLeadersFromServer)
 end)
 
+RegisterCommand("gwsetownfaction", function (source, args)
+    if args[1] ~= nil then
+        OwnFaction = args[1]
+        TriggerServerEvent("SEv_UpdatePlayerFaction", GetPlayerServerId(PlayerId()), OwnFaction)
+        ShowNotification("Du bist jetzt Teil der Fraktion " .. OwnFaction)
+    else
+        OwnFaction = ""
+        TriggerServerEvent("SEv_UpdatePlayerFaction", GetPlayerServerId(PlayerId()), "DEFAULT")
+        ShowNotification("Deine Fraktion wurde zurückgesetzt")
+    end
+end, false)
+
+---Setzt die Beziehungen für jeden aktiven Kuss Kult Charakter anhand der Fraktionen.
+---Bildet Bodyguardgruppen, wenn mehrere in der gleichen Fraktion sind und es einen Anführer gibt.
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
 ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     for faction, factionMembers in pairs(FactionsAndMembersFromServer) do
         local u, factionHash = AddRelationshipGroup(faction)
         local factionLeader = FactionLeadersFromServer[faction]
         local squad = nil
         if factionLeader ~= nil then
-            --print("Der Gruppenanführer von " .. faction .. ": " .. FactionLeadersFromServer[faction])
             if TryForNetworkIDAvailability(factionLeader) then
                 local pedHandleLeader = NetworkGetEntityFromNetworkId(factionLeader)
                 if IsPedInGroup(pedHandleLeader) then
@@ -22,18 +41,16 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
 
                 SetPedAsGroupMember(pedHandleLeader, squad)
                 SetPedAsGroupLeader(pedHandleLeader, squad)
-                --print("Anführer: " .. factionLeader)
             end
         end
-        --print("Mitglieder der Gruppe " .. faction .. " (" .. factionHash .. ")" .. ": ")
         for _, factionMember in pairs(factionMembers) do
-            --print("Nummer: " .. factionMember)
             if TryForNetworkIDAvailability(factionMember) then
                 local pedHandle = NetworkGetEntityFromNetworkId(factionMember)
                 local pedBlip = GetBlipFromEntity(pedHandle)
+                RemoveBlip(pedBlip)
+                pedBlip = 0
                 SetPedRelationshipGroupHash(pedHandle, factionHash)
-                if pedBlip and PlayersFromServer[factionMember] == nil then
-                    RemoveBlip(pedBlip)
+                if WantsBlips and PlayersFromServer[factionMember] == nil then
                     pedBlip = AddBlipForEntity(pedHandle)
                     SetBlipColour(pedBlip, 0)
                     --BeginTextCommandSetBlipName("STRING")
@@ -55,6 +72,8 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
     end
 end
 
+---Entfernt alle lokal angelegten Kuss Kult Fraktionen
+---@param FactionsTable table
 RemoveFactions = function(FactionsTable)
     for factionKey, _ in ipairs(FactionsTable) do
         local factionHash = AddRelationshipGroup(factionKey)
@@ -62,6 +81,8 @@ RemoveFactions = function(FactionsTable)
     end
 end
 
+---Setzt die Gesinnung zwischen allen Kuss Kult Spielern, die Fraktionsanführer sind
+---@param FactionLeadersFromServer table
 AutomaticlyApplyRelationshipBetweenAllPlayers = function(FactionLeadersFromServer)
     for _, networkID in pairs(FactionLeadersFromServer) do
         if TryForNetworkIDAvailability(networkID) then
@@ -73,15 +94,29 @@ AutomaticlyApplyRelationshipBetweenAllPlayers = function(FactionLeadersFromServe
                         GetPedRelationshipGroupHash(player2Handle))
                     SetRelationshipBetweenGroups(PlayerToPlayerRelationship, GetPedRelationshipGroupHash(player2Handle),
                         GetPedRelationshipGroupHash(player1Handle))
-                    --print(networkID .. " und " .. otherPnetworkID .. " sind jetzt Freunde")
                 end
             end
         end
     end
 end
 
+---Sorgt dafür, dass der eigene Client die Network-ID des Entities besitzt 
+---@param pedHandle integer
+---@param networkID integer
 TakeOwnershipOfNetworkID = function(pedHandle, networkID)
     if NetworkGetEntityOwner(pedHandle) ~= PlayerId() then
         NetworkRequestControlOfNetworkId(networkID)
+    end
+end
+
+---Liefert entweder eine selbstgesetzte Fraktion zurück
+---oder den Standard, wenn keine festgelegt wurde
+---@param defaultString string
+---@return string faction
+CustomFactionOrDefaultFaction =function (defaultString)
+    if OwnFaction == "" then
+        return defaultString
+    else
+        return OwnFaction
     end
 end

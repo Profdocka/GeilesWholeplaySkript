@@ -116,11 +116,7 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
         faction = name
     end
     if variant == PLAYER_VARIANT then
-        local oldFaction = Players[networkID].faction
-        RegisterEntity(variant, networkID, name, skin, faction)
-        FactionLeaders[oldFaction] = nil
-        FactionLeaders[faction] = networkID
-        UpdateFaction(networkID, oldFaction, faction)
+        ChangePlayerFaction(networkID, variant, name, skin, faction)
     else
         RegisterEntity(variant, networkID, name, skin, faction)
     end
@@ -185,7 +181,14 @@ RegisterNetEvent("SEv_TeleportPlayer", function (source, coords, heading)
     TeleportMultiple(Group, coords, heading)
 end)
 
-RegisterNetEvent("SEv_ReapplyFactionRequestedByClient", function (source)
+RegisterNetEvent("SEv_UpdatePlayerFaction", function (source, newFaction)
+    local networkId = GetNetworkIDPlayerFromSource(source)
+    local name = Players[networkId].name
+    local skin = Players[networkId].skin
+    if newFaction == "DEFAULT" then
+        newFaction = name
+    end
+    ChangePlayerFaction(networkId, PLAYER_VARIANT, name, skin, newFaction)
     OrganizeTableOfFactions()
     TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
 end)

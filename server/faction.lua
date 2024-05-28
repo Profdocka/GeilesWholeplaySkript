@@ -5,7 +5,8 @@ UpdateFaction = function(leader, oldFaction, newFaction)
             player.faction = newFaction
         end
     end
-    ]]-- 
+    ]]
+       --
     Players[leader].faction = newFaction
     for _, character in pairs(Characters) do
         if character.faction == oldFaction then
@@ -28,7 +29,7 @@ OrganizeTableOfFactions = function()
         --[[if FactionLeaders[player.faction] == nil then
             FactionLeaders[player.faction] = player.networkID
         end]]
-              --
+        --
     end
     for _, character in pairs(Characters) do
         if FactionsAndMembers[character.faction] == nil then
@@ -36,6 +37,14 @@ OrganizeTableOfFactions = function()
         end
         table.insert(FactionsAndMembers[character.faction], character.networkID)
     end
+end
+
+ChangePlayerFaction = function(networkID, variant, name, skin, newFaction)
+    local oldFaction = Players[networkID].faction
+    RegisterEntity(variant, networkID, name, skin, newFaction)
+    FactionLeaders[oldFaction] = nil
+    FactionLeaders[newFaction] = networkID
+    UpdateFaction(networkID, oldFaction, newFaction)
 end
 
 TurnVariantToNeutral = function(name, source)
@@ -54,10 +63,15 @@ TurnVariantToNeutral = function(name, source)
     if (isFound) then
         local key = character.networkID
         --if character.faction == Players[networkIDSource].faction then
-            local newCharacter = { networkID = character.networkID, name = character.name, skin = character.skin, faction =
-            character.name }
-            Characters[key] = newCharacter
-            OrganizeTableOfFactions()
+        local newCharacter = {
+            networkID = character.networkID,
+            name = character.name,
+            skin = character.skin,
+            faction =
+                character.name
+        }
+        Characters[key] = newCharacter
+        OrganizeTableOfFactions()
         --end
         TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, NEUTRAL_VARIANT,
             Players)
@@ -70,8 +84,13 @@ TurnVariantToFriendly = function(name, source)
     if (isFound) then
         local key = character.networkID
         if character.faction ~= Players[networkIDSource].faction then
-            local newCharacter = { networkID = character.networkID, name = character.name, skin = character.skin, faction =
-            Players[networkIDSource].faction }
+            local newCharacter = {
+                networkID = character.networkID,
+                name = character.name,
+                skin = character.skin,
+                faction =
+                    Players[networkIDSource].faction
+            }
             Characters[key] = newCharacter
             OrganizeTableOfFactions()
             TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key,
@@ -86,10 +105,15 @@ TurnVariantToAggressive = function(name, source)
     if (isFound) then
         local key = character.networkID
         --if character.faction == Players[networkIDSource].faction then
-            local newCharacter = { networkID = character.networkID, name = character.name, skin = character.skin, faction =
-            character.name }
-            Characters[key] = newCharacter
-            OrganizeTableOfFactions()
+        local newCharacter = {
+            networkID = character.networkID,
+            name = character.name,
+            skin = character.skin,
+            faction =
+                character.name
+        }
+        Characters[key] = newCharacter
+        OrganizeTableOfFactions()
         --end
         --Aggressivität?
         TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key,

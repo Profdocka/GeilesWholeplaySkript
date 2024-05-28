@@ -10,23 +10,25 @@ RegisterCommand("gwtp", function(source, args, raw)
     else
         ShowNotification("Location vergessen")
     end
-end)
+end, false)
 
 RegisterCommand("gwspawnpoint", function(source)
     local vector4 = GetPlayerCoordsAndHeading(PlayerId(), 0.0)
     RespawnCoords = nil
     RespawnCoords = {}
     RespawnCoords = { x = vector4["coords"].x, y = vector4["coords"].y, z = vector4["coords"].z, heading = (vector4["heading"]) }
-    ShowNotification("Dein Spawnpoint wurde gesetzt!~n~X: " .. vector4["coords"].x .. "~n~Y: " .. vector4["coords"].y .. "~n~Z: " .. vector4["coords"].z)
-end)
+    ShowNotification("Dein Spawnpoint wurde gesetzt!~n~X: " ..
+    vector4["coords"].x .. "~n~Y: " .. vector4["coords"].y .. "~n~Z: " .. vector4["coords"].z)
+end, false)
 
 RegisterCommand("gwclearspawnpoint", function(source)
     RespawnCoords = nil
     RespawnCoords = {}
     RespawnCoords = { x = 0.0, y = 0.0, z = 0.0, heading = 0.0 }
     ShowNotification("Dein Spawnpoint wurde entfernt!")
-end)
+end, false)
 
+---Ist ein Spawnpoint vorhanden, wird der Spieler und seine Gruppe dorthin teleportiert
 TeleportToSetSpawnpoint = function()
     if RespawnCoords.x ~= 0.0 and RespawnCoords.y ~= 0.0 and RespawnCoords.z ~= 0.0 then
         local coords = { x = RespawnCoords.x, y = RespawnCoords.y, z = RespawnCoords.z }
@@ -34,15 +36,21 @@ TeleportToSetSpawnpoint = function()
     end
 end
 
+---Teleportiert den Spieler zu den Koordinaten ohne sein Fahrzeug
+---@param source integer Server-ID
+---@param Group table Network-IDs
+---@param coords table
+---@param heading integer
 RegisterNetEvent("CEv_TeleportThePlayer", function(source, Group, coords, heading)
     if (source == GetPlayerServerId(PlayerId())) then
         TeleportThePlayer(coords, heading, false)
     end
-    --TeleportMultiple(Group, coords, heading)
 end)
 
+---Setzt alle Blips von Locations und Interiors mit Farbe, Symbol und Name auf die Karte des Spielers.
+---Für jedes Interior wird ein Ausgang und Eingang in die Ingame-Welt platziert,
+---über welchen man sich in das Interior rein und raus teleportieren kann.
 Citizen.CreateThread(function()
-    --print("dupa")
     MapMarkers = Looker("blips", "client")
     for key, info in pairs(MapMarkers) do
         if info.isInterior == true then
@@ -56,7 +64,6 @@ Citizen.CreateThread(function()
             BeginTextCommandSetBlipName("STRING")
             AddTextComponentString(info.title)
             EndTextCommandSetBlipName(info.handle)
-            --print(key)
         else
             info.handle = AddBlipForCoord(info.x, info.y, info.z)
             SetBlipSprite(info.handle, info.blipId)
@@ -72,13 +79,12 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(10)
         for interiorKey, interiorValue in pairs(Interiors) do
-            --print("Der zu drawende Kram: ", interiorValue.title)
             DrawMarker(1, interiorValue.intCoords.x, interiorValue.intCoords.y, interiorValue.intCoords.z - 1.0, 0.0, 0.0,
                 0.0,
-                0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, false, false, 2, nil, nil, false)
+                0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, false, false, 2, false, nil, nil, false)
             DrawMarker(1, interiorValue.extCoords.x, interiorValue.extCoords.y, interiorValue.extCoords.z - 1.0, 0.0, 0.0,
                 0.0,
-                0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, false, false, 2, nil, nil, false)
+                0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, false, false, 2, false, nil, nil, false)
             local vector4 = GetPlayerCoordsAndHeading(PlayerId(), 0.0)
             local isNear, isEntrance = IsPlayerNearMarker(vector4["coords"], interiorValue)
             while isNear do
@@ -86,14 +92,14 @@ Citizen.CreateThread(function()
                     DrawMarker(1, interiorValue.extCoords.x, interiorValue.extCoords.y, interiorValue.extCoords.z - 1.0,
                         0.0,
                         0.0, 0.0,
-                        0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, true, false, 2, nil, nil, false)
+                        0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, true, false, 2, false, nil, nil, false)
                     ShowHelpNotification("Drücke ~INPUT_PICKUP~ um " .. interiorValue.title .. " zu betreten", -1)
                     TeleportOnKeyPress(interiorValue.intCoords, vector4["heading"])
                 else
                     DrawMarker(1, interiorValue.intCoords.x, interiorValue.intCoords.y, interiorValue.intCoords.z - 1.0,
                         0.0,
                         0.0, 0.0,
-                        0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, true, false, 2, nil, nil, false)
+                        0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0, 0, 255, 50, true, false, 2, false, nil, nil, false)
                     ShowHelpNotification("Drücke ~INPUT_PICKUP~ um " .. interiorValue.title .. " zu verlassen", -1)
                     TeleportOnKeyPress(interiorValue.extCoords, vector4["heading"])
                 end
@@ -105,6 +111,11 @@ Citizen.CreateThread(function()
     end
 end)
 
+---Prüft ob der Spieler sich im Radius eines Interior-Markers befindet.
+---@param pCoords table Weltkoordinaten des Spielers
+---@param interior table Informationen zum Interior
+---@return boolean IstImRadius
+---@return boolean IstDerEingangsMarker
 function IsPlayerNearMarker(pCoords, interior)
     if Vdist2(pCoords.x, pCoords.y, pCoords.z, interior.intCoords.x, interior.intCoords.y, interior.intCoords.z) < 1.0 then
         return true, false
@@ -115,6 +126,9 @@ function IsPlayerNearMarker(pCoords, interior)
     end
 end
 
+---Wenn die Interaktionstaste gedrückt wird, so wird der Spieler zu den Koordinaten teleportiert.
+---@param tpCoords table
+---@param heading integer
 function TeleportOnKeyPress(tpCoords, heading)
     if IsControlJustPressed(0, 38) then
         TriggerServerEvent("SEv_TeleportPlayer", GetPlayerServerId(PlayerId()), tpCoords, heading)
@@ -122,18 +136,10 @@ function TeleportOnKeyPress(tpCoords, heading)
     end
 end
 
+---Sucht die Location und teleportiert den Spieler dorthin. Unter Umständen mit dessen Fahrzeug
+---@param location string
 TeleportToLocationByCommand = function(location)
     local found_location = nil
-    --[[
-	for k, v in pairs(blips) do
-		local leerloses_v = string.gsub(v.title, "%s", "")
-		if string.lower(leerloses_v) == string.lower(location) then
-			found_location = v
-			break
-		end
-	end
-    ]]
-    --
     found_location = MapMarkers[location]
     if (found_location ~= nil) then
         local coords = nil
@@ -142,7 +148,7 @@ TeleportToLocationByCommand = function(location)
         else
             coords = { x = found_location.x, y = found_location.y, z = found_location.z }
         end
-        local veh = GetVehiclePedIsIn(PlayerPedId())
+        local veh = GetVehiclePedIsIn(PlayerPedId(), false)
         if veh ~= 0 then
             if GetVehicleSeatOfPed(veh, PlayerPedId()) == -1 then
                 TeleportThePlayer(coords, 0.0, true)
@@ -155,22 +161,13 @@ TeleportToLocationByCommand = function(location)
     end
 end
 
+---Teleportiert nur den Spieler.
+---@param tpCoords table
+---@param heading integer
+---@param withVehicle boolean
 TeleportThePlayer = function(tpCoords, heading, withVehicle)
     DoScreenFadeOut(FADEOUT_TIME)
     StartPlayerTeleport(PlayerId(), tpCoords.x, tpCoords.y, tpCoords.z, heading, withVehicle, true, true)
     Citizen.Wait(FADEOUT_TIME + 500)
     DoScreenFadeIn(FADEOUT_TIME)
 end
---[[
-TeleportMultiple = function(GroupNet, coords, heading)
-    for _, networkID in pairs(GroupNet) do
-        local pedHandle = NetworkGetEntityFromNetworkId(networkID)
-        print("NetId ", networkID)
-        if not IsPedAPlayer(pedHandle) then
-            SetEntityCoords(pedHandle, coords.x, coords.y, coords.z, false, false, false, false)
-        end
-        Citizen.Wait(10)
-    end
-end
-]]
---

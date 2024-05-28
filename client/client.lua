@@ -13,12 +13,16 @@ AGGRESSIVE_VARIANT = 3
 HasJustJoined = true
 IsInvincible = true
 WantsFormationSpawn = true
+WantsBlips = true
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 PlayerToPlayerRelationship = 1
+OwnFaction = ""
 
 KussBildDic = CreateRuntimeTxd('CHAR_KUSS')
 KussBild = CreateRuntimeTextureFromImage(KussBildDic, 'CHAR_KUSS', "kusskultlogo.png")
 
+---Thread der auf F7 das einfache Kuss Kult Spawn Textfeld für Spieleravatare
+---und Fahrzeuge öffnet
 Citizen.CreateThread(function()
     local sleepThread = 5
     while true do
@@ -27,7 +31,7 @@ Citizen.CreateThread(function()
             if OutputString ~= nil then
                 Citizen.Wait(sleepThread)
                 TriggerServerEvent("SEv_CheckIfEntityIsKussKult", OutputString, PLAYER_VARIANT, true,
-                    GetPlayerCoordsAndHeading(PlayerId(), 0.0), OutputString)
+                    GetPlayerCoordsAndHeading(PlayerId(), 0.0), CustomFactionOrDefaultFaction(OutputString))
                 Citizen.Wait(1000)
             end
         end
@@ -35,7 +39,7 @@ Citizen.CreateThread(function()
     end
 end)
 
----DebugThread
+---DebugThread, der auf `Entf` alle Charaktere sofort zum Stillstand bringt
 Citizen.CreateThread(function()
     while true do
         local sleepThread = 5
@@ -49,15 +53,21 @@ Citizen.CreateThread(function()
     end
 end)
 
+---Was mit dem Spieler passiert, sobald er in der Spielwelt gespawnt ist
+---und sich bewegen kann
 AddEventHandler("playerSpawned", function()
     Citizen.Wait(10)
-    if GetPedType(PlayerPedId() == 28) then
+    --Macht den Spieler nach dem Respawn zu Michael, sollte er ein Tier sein und gestorben sein
+    if GetPedType(PlayerPedId()) == 28 then
         SearchHash(GetHashKey("player_zero"))
         SetPlayerModel(PlayerId(), GetHashKey("player_zero"))
     end
     Citizen.Wait(2000)
+    --Veränderung der Schadensmultiplikatoren für KI Gegner
     SetAiWeaponDamageModifier(0.3)
     SetAiMeleeWeaponDamageModifier(0.3)
+    --Gerade auf den Server gejoint => zufälliger Charakter
+    --Sonst wenn er gestorben ist => eventuell zum Spawnpoint teleportiert und Charakter neugeladen
     if HasJustJoined then
         HasJustJoined = false
         TriggerServerEvent("SEv_PlayerSpawned", GetPlayerServerId(PlayerId()))
@@ -68,29 +78,47 @@ AddEventHandler("playerSpawned", function()
     end
 end)
 
+---Bekommt vom Server die Informationen zu den Fahrzeugen und Charakteren und
+---schreibt sie in die Konsole
+---@param _Players table
+---@param _Characters table
+---@param _Vehicles table
 RegisterNetEvent("CEv_ListAll", function(_Players, _Characters, _Vehicles)
     ListAllOnClient(_Players, _Characters, _Vehicles)
 end)
 
+---Wenn eine Nachricht vom Server auf dem Client angezeigt werden soll
+---@param msg any
 RegisterNetEvent("CEv_ShowNotificationEvent", function(msg)
     ShowNotification(msg)
 end)
 
+---Ereignis um einen Charakter an den Koordinaten zu spawnen
+---@param variant integer
+---@param name string
+---@param hasWeapon boolean
+---@param vector4 table Ist nil dann wird ein Offset vom Spieler als Koordinate genommen
+---@param faction string
 RegisterNetEvent("CEv_SpawnCharacter", function(variant, name, hasWeapon, vector4, faction)
     if vector4 == nil then
-        vector4 = GetPlayerCoordsAndHeading(PlayerId(), 3.0)
+        vector4 = GetPlayerCoordsAndHeading(PlayerId(), CHARACTER_SPAWN_OFFSET_Y)
     end
     local pedHandle = SpawnCharacter(variant, name, hasWeapon, vector4)
-
     local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
     SetNetworkIdExistsOnAllMachines(networkID, true)
     SetNetworkIdCanMigrate(networkID, true)
-
     TriggerServerEvent("SEv_GiveCharacterSkinAndFaction", variant, name, hasWeapon, faction, networkID, GetPlayerServerId(PlayerId()))
 end)
 
+---Ereignis um eine Gruppe von Charakteren an den Koordinaten zu spawnen
+---Sonderfall: Wenn alle Charaktere zum Jahresabschluss "CHAOS" gespawnt werden,
+---werden 
+---@param Group table
+---@param variant integer
+---@param hasWeapon boolean
+---@param vector4 table
+---@param faction string
 RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeapon, vector4, faction)
-    --print("MOin")
     local shouldVector4Update = nil
     local GroupNetwork = {}
     local angleStep = 360.0 / #Group
@@ -105,7 +133,6 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
     if faction == "CHAOS" then
         CHARACTER_SPAWN_OFFSET_Y = 20.0
     end
-    --print("Es geht los wow!")
     for _, characterName in pairs(Group) do
         if shouldVector4Update then
             vector4 = GetPlayerCoordsAndHeading(PlayerId(), CHARACTER_SPAWN_OFFSET_Y)
@@ -113,19 +140,13 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
             if WantsFormationSpawn then
                 SetEntityHeading(PlayerPedId(), heading + angleStep)
             end
-            --print("Heading: ", vector4["heading"], "Gruppenanzahl: ", #Group, "Step: ", angleStep)
         end
         local pedHandle = SpawnCharacter(variant, characterName, hasWeapon, vector4)
-
         local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
         SetNetworkIdExistsOnAllMachines(networkID, true)
         SetNetworkIdCanMigrate(networkID, true)
-
         local characterNetwork = { networkID = networkID, name = characterName }
         GroupNetwork[networkID] = characterNetwork
-        --print("Mitglied der Gruppe: " ..
-        --GroupNetwork[networkID].networkID .. " mit Name " .. GroupNetwork[networkID].name)
-        --print(characterName)
         if faction == "CHAOS" then
             Citizen.Wait(500)
         end
@@ -140,36 +161,39 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
     TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction, GetPlayerServerId(PlayerId()))
 end)
 
+---Ereignis um ein Fahrzeug an den Koordinaten zu spawnen
+---@param name string Name des Fahrzeuges
+---@param networkIDDriver integer
 RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
     if TryForNetworkIDAvailability(networkIDDriver) then
-        --print("Die untersuchte NetworkID: " .. networkIDDriver)
         local driverHandle = NetworkGetEntityFromNetworkId(networkIDDriver)
-        --print("Das Ergebnis " .. driverHandle)
         local vehHandle = SpawnVehicle(name, driverHandle)
-
         local networkID = NetworkGetNetworkIdFromEntity(vehHandle)
         SetNetworkIdExistsOnAllMachines(networkID, true)
         SetNetworkIdCanMigrate(networkID, true)
-
         ShowNotification("Dein gespawntes Fahrzeug: " .. name)
-
         TriggerServerEvent("SEv_RegisterVehicle", name, networkID)
     end
 end)
 
-RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
-    function(networkID, skin, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
+---Ereignis um einen Charakter seine Kleidung und Rolle zu geben
+---@param networkID integer
+---@param skin string
+---@param hasWeapon boolean
+---@param source integer Server-ID
+---@param variant integer
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
+RegisterNetEvent("CEv_GiveCharacterSkinAndRole",function(networkID, skin, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
              PlayersFromServer)
         if TryForNetworkIDAvailability(networkID) then
             local pedHandle = NetworkGetEntityFromNetworkId(networkID)
             local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
-            --print("NetworkID: " .. networkID)
-            --print("Mein Skin: " .. skin)
             local pedJson = Looker(skin, CHARFOLDER)
             Cosmetics(pedHandle, pedJson, hasWeapon)
             ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
             if variant == PLAYER_VARIANT then
-                --print("Hier wollen Freunde entstehen!")
                 AutomaticlyApplyRelationshipBetweenAllPlayers(FactionLeadersFromServer)
             elseif variant == AGGRESSIVE_VARIANT and playerHandle == PlayerPedId() then
                 TakeOwnershipOfNetworkID(pedHandle, networkID)
@@ -182,8 +206,15 @@ RegisterNetEvent("CEv_GiveCharacterSkinAndRole",
         end
     end)
 
-RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
-    function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
+---Ereignis um mehreren Charakteren ihre Kleidung und Rolle zu geben
+---@param GroupNetwork any
+---@param hasWeapon any
+---@param source any
+---@param variant any
+---@param FactionsAndMembersFromServer any
+---@param FactionLeadersFromServer any
+---@param PlayersFromServer any
+RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole", function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
              PlayersFromServer)
         local pedHandle = nil
         local pedJson = nil
@@ -209,28 +240,35 @@ RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole",
         end
     end)
 
-RegisterNetEvent("CEv_GiveRoles",
-    function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant,
+---Ereignis damit der Client die Rollen, nach NPC Rollenänderung, lokal bei sich zuweist
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param networkIDEmitter integer
+---@param networkIDReciever integer
+---@param variant integer
+---@param PlayersFromServer table
+RegisterNetEvent("CEv_GiveRoles", function(FactionsAndMembersFromServer, FactionLeadersFromServer, networkIDEmitter, networkIDReciever, variant,
              PlayersFromServer)
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         local recieverHandle = NetworkGetEntityFromNetworkId(networkIDReciever)
         local emitterHandle = NetworkGetEntityFromNetworkId(networkIDEmitter)
         if variant == AGGRESSIVE_VARIANT and emitterHandle == PlayerPedId() and TryForNetworkIDAvailability(networkIDEmitter) and TryForNetworkIDAvailability(networkIDReciever) then
             TakeOwnershipOfNetworkID(recieverHandle, networkIDReciever)
-            --ClearPedTasks(recieverHandle)
             TaskCombatPed(recieverHandle, emitterHandle, 0, 16)
-            --print("playerHandle: " .. emitterHandle)
-            --print("PlayerPedId: " .. PlayerPedId())
             if PlayersFromServer[networkIDReciever] == nil then
-                --print("Bekommt einen Bösen Blip: " .. networkIDReciever)
                 SetBlipAsFriendly(GetBlipFromEntity(recieverHandle), false)
                 SetBlipColour(GetBlipFromEntity(recieverHandle), 49)
             end
         end
     end)
 
-RegisterNetEvent("CEv_DropEntity",
-    function(variant, networkID, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+---Löscht einen Entity aus der Spielwelt
+---@param variant integer
+---@param networkID integer
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
+RegisterNetEvent("CEv_DropEntity", function(variant, networkID, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         if TryForNetworkIDAvailability(networkID) then
             local handle = NetworkGetEntityFromNetworkId(networkID)
             if variant == NEUTRAL_VARIANT then
@@ -242,8 +280,13 @@ RegisterNetEvent("CEv_DropEntity",
         end
     end)
 
-RegisterNetEvent("CEv_DropMultipleEntitys",
-    function(variant, networkIDs, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+---Löscht mehrere Entities aus der Spielwelt
+---@param variant integer
+---@param networkIDs integer
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
+RegisterNetEvent("CEv_DropMultipleEntitys", function(variant, networkIDs, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         local charsCounter = 0
         local vehCounter = 0
         for _, networkID in pairs(networkIDs) do
@@ -265,8 +308,12 @@ RegisterNetEvent("CEv_DropMultipleEntitys",
         end
     end)
 
-RegisterNetEvent("CEv_DropAllCharacters",
-    function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
+---Löscht alle aktiven Kuss Kult Charaktere
+---@param Characters table
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
+RegisterNetEvent("CEv_DropAllCharacters", function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         local handle = nil
         local counter = 0
         for _, character in pairs(Characters) do
@@ -280,6 +327,8 @@ RegisterNetEvent("CEv_DropAllCharacters",
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     end)
 
+---Löscht alle aktiven Fahrzeuge
+---@param Vehicles table
 RegisterNetEvent("CEv_DropAllCars", function(Vehicles)
     local handle = nil
     local counter = 0
@@ -293,10 +342,17 @@ RegisterNetEvent("CEv_DropAllCars", function(Vehicles)
     print("Deleted " .. counter .. " Vehicle(s)")
 end)
 
+---Wendet alle Rollen clientseitig wieder an nach Spielerrollenänderung
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
 RegisterNetEvent("CEv_Regroup", function(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
     ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
 end)
 
+---Wendet alle Verkleidungen der Charaktere und Spieler erneut. FÜR DIE GRÜNEN WILLIHAM HAARE
+---@param PlayersFromServer table
+---@param Characters table
 RegisterNetEvent("CEv_ReskinAll", function(PlayersFromServer, Characters)
     for _, player in pairs(PlayersFromServer) do
         if TryForNetworkIDAvailability(player.networkID) then
@@ -314,6 +370,8 @@ RegisterNetEvent("CEv_ReskinAll", function(PlayersFromServer, Characters)
     end
 end)
 
+---Ereignis um alle Charaktere sofort zum Stillstand zu bringen
+---@param Characters table
 RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
     for _, character in pairs(Characters) do
         if TryForNetworkIDAvailability(character.networkID) then
@@ -323,6 +381,8 @@ RegisterNetEvent("CEv_StopAllCharacters", function(Characters)
     end
 end)
 
+---Ereignis um einen toten Charakter wieder zum Leben zu erwecken
+---@param character table
 RegisterNetEvent("CEv_RevieveDeadPed", function(character)
     local pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
     if IsEntityDead(pedHandle) then
@@ -331,6 +391,10 @@ RegisterNetEvent("CEv_RevieveDeadPed", function(character)
     end
 end)
 
+---Prüft alle Fahrzeuge und Charaktere durch, ob sie kaputt oder tot sind
+---und sendet die Liste an den Server, damit dieser die löschen kann
+---@param Characters table
+---@param Vehicles table
 RegisterNetEvent("CEv_DeadGarbageCleanerCheck", function(Characters, Vehicles)
     local deadCharacters, deadVehicles = {}, {}
     for _, character in pairs(Characters) do
@@ -350,6 +414,11 @@ RegisterNetEvent("CEv_DeadGarbageCleanerCheck", function(Characters, Vehicles)
     end
 end)
 
+---Sendet alle statischen Informationen an die UI
+---@param CharacterSkins table
+---@param VehicleSkins table
+---@param allFactions table
+---@param ownersOfVehicles table
 RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, allFactions, ownersOfVehicles)
     SendNUIMessage({
         type = "GW_InitialInfos",
@@ -361,6 +430,11 @@ RegisterNetEvent("CEvUI_InitialGWInfos", function(CharacterSkins, VehicleSkins, 
     })
 end)
 
+---Öffnet das Geile Wholeplay Menü und schickt die dynamischen Informationen an die UI
+---@param Players table
+---@param Characters table
+---@param Vehicles table
+---@param playerName string
 RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName)
     for _, playerid in pairs(GetActivePlayers()) do
         local networkid = GetNetworkIDPlayerFromSource(playerid)

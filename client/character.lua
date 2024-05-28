@@ -1,3 +1,11 @@
+---Sucht anhand von `name` den Kuss Kult Charakter
+---und spawnt das Charaktermodell in der Spielwelt
+--- 
+---@param variant integer Konstante die für das Charakterverhalten steht
+---@param name string Name für die entsprechende Charakter Datei
+---@param hasWeapon boolean Soll die eigene Waffe bekommen?
+---@param vector4 table Koordinaten X, Y, Z und die Blickrichtung
+---@return integer pedHandle Ingame-Handle des Peds
 SpawnCharacter = function (variant, name, hasWeapon, vector4)
     local characterJson = Looker(name, CHARFOLDER)
 
@@ -12,6 +20,14 @@ SpawnCharacter = function (variant, name, hasWeapon, vector4)
     end
 end
 
+---Wählt anhand von `variant` aus, ob das Charaktermodell des Spielers geändert wird 
+---oder ein NPC in die Welt gespawnt wird.
+---@param variant integer
+---@param modelHash integer
+---@param name string
+---@param hasWeapon boolean
+---@param vector4 table
+---@return integer pedHandle
 ChooseCharacterSpawnVariant = function (variant, modelHash, name, hasWeapon, vector4)
     if variant == PLAYER_VARIANT then
         return SpawnCharacterAsPlayer(modelHash, name, hasWeapon, vector4)
@@ -22,6 +38,13 @@ ChooseCharacterSpawnVariant = function (variant, modelHash, name, hasWeapon, vec
     end
 end
 
+---Ändert das Charaktermodell des eigenen Spielers.
+---Setzt es bei Bedarf in das letzte Fahrzeug und macht es unsterblich
+---@param modelHash integer
+---@param name string
+---@param hasWeapon boolean
+---@param vector4 table
+---@return integer pedHandle
 SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     local previousPlayerPed = GetPlayerPed(PlayerId())
     local lastVehicle, lastSeat = GetCurrentVehicleAndSeatNumber(previousPlayerPed)
@@ -44,15 +67,25 @@ SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     return newPlayerPed
 end
 
+---Ein NPC mit dem `modelHash` wird an den gegebenen Koordinaten gespawnt 
+---@param modelHash integer
+---@param vector4 table
+---@return integer pedHandle
 SpawnCharacterAsNPC = function (modelHash, vector4)
     local pedHandle = CreatePed(26, modelHash, vector4["coords"].x, vector4["coords"].y, vector4["coords"].z, (vector4["heading"] - 180.0), true, true)
 	ApplyCharacterModifiers(pedHandle)
     return pedHandle
 end
 
+---Eigenschaften und Flags des Charakters werden geändert
+---@param pedHandle integer
 ApplyCharacterModifiers = function (pedHandle)
     SetRagdollBlockingFlags(pedHandle, 1)
     SetPedConfigFlag(pedHandle, 294, true)
+    SetPedFleeAttributes(pedHandle, 0, false)
     SetPedCombatAttributes(pedHandle, 5, true)
+    SetPedCombatAttributes(pedHandle, 17, false)
+    SetPedCombatAttributes(pedHandle, 46, true)
     SetPedCombatAttributes(pedHandle, 58, true)
+    SetPedDiesInWater(pedHandle, false)
 end

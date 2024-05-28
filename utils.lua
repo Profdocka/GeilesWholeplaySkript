@@ -1,5 +1,10 @@
+---Namen die für die zufällige Charakterwahl ausgeschlossen sind
 BlacklistedNames = {Projekt45Dave = "Projekt45Dave", BrillanterBuckelwal = "BrillanterBuckelwal"}
 
+---Ruft das Eingabefeld von GTA mit einem eigenem Titel auf
+---und gibt dem Spieler die Möglichkeit einen Text einzugeben
+---@param title string
+---@return string OutputString
 GetInputWindowOutput = function(title)
     AddTextEntry("CH_INPUT", title)
     DisplayOnscreenKeyboard(1, "CH_INPUT", "", "", "", "", "", 30)
@@ -14,12 +19,14 @@ GetInputWindowOutput = function(title)
     end
 end
 
---Sucht den Entity aus den Resourcen und gibt die JSON zurück, findet er ihn nicht,
--- gibt er nil zurück
+---Sucht den Entity aus den Resourcen und gibt die JSON zurück, findet er ihn nicht,
+---gibt er nil zurück
+---@param input string
+---@param folder string
+---@return table json
 Looker = function(input, folder)
     if (input ~= nil) then
         local path = folder .. "/" .. input .. ".json"
-        --print(path)
         local file = LoadResourceFile(GetCurrentResourceName(), path)
         local content = {}
         content = json.decode(file)
@@ -29,7 +36,9 @@ Looker = function(input, folder)
     end
 end
 
---Lädt den gewünschten Hash aus dem Spielverzeichnis
+---Lädt den gewünschten Hash aus dem Spielverzeichnis
+---@param hash integer
+---@return boolean
 SearchHash = function(hash)
     if (IsModelInCdimage(hash)) then
         RequestModel(hash)
@@ -42,6 +51,10 @@ SearchHash = function(hash)
     end
 end
 
+---Gibt einem das aktuelle Fahrzeug und den Sitz des Charakters
+---@param pedHandle integer
+---@return integer vehHandle
+---@return integer seatIndex
 GetCurrentVehicleAndSeatNumber = function(pedHandle)
     local vehHandle = GetVehiclePedIsIn(pedHandle, false)
     if vehHandle ~= 0 then
@@ -51,6 +64,10 @@ GetCurrentVehicleAndSeatNumber = function(pedHandle)
     return nil
 end
 
+---Gibt einem das aktuelle Fahrzeug und den Sitz des Charakters
+---@param vehicleHandle integer
+---@param pedHandle integer
+---@return integer seatIndex
 GetVehicleSeatOfPed = function (vehicleHandle, pedHandle)
 	local passengerAmount = GetVehicleModelNumberOfSeats(GetEntityModel(vehicleHandle))
 	for i = -1, passengerAmount, 1 do
@@ -61,16 +78,16 @@ GetVehicleSeatOfPed = function (vehicleHandle, pedHandle)
 	end
 end
 
+---Prüft ob für die Network-ID auf dem Client ein Handle vorhanden ist
+---@param networkID integer
+---@return boolean networkIDIsAvailable
 TryForNetworkIDAvailability = function(networkID)
     local tries = 5
     for i = 1, tries, 1 do
         if NetworkDoesNetworkIdExist(networkID) then
-            --print("Die Network ID die geprüft wird: " .. networkID)
             if NetworkDoesEntityExistWithNetworkId(networkID) then
-              --print("gefunden!")
                 return true
             else
-                --print("Ich warte...")
                 Wait(1000)
             end
         else
@@ -80,11 +97,12 @@ TryForNetworkIDAvailability = function(networkID)
     return false
 end
 
+---Erzeugt eine Nachricht mit Kuss Kult Logo im GTA Message Feed
+---@param msg string
 ShowNotification = function(msg)
     BeginTextCommandThefeedPost('STRING')
     AddTextComponentSubstringPlayerName(msg)
     EndTextCommandThefeedPostMessagetextTu("CHAR_KUSS", "CHAR_KUSS", false, 8, "Das Geile Wholeplay Skript", "von Profdocka", 1.0)
-    --DrawNotification(false, true)
 end
 
 ShowHelpNotification = function (msg, duration)
@@ -93,18 +111,24 @@ ShowHelpNotification = function (msg, duration)
     EndTextCommandDisplayHelp(0, false, true, duration)
 end
 
+---Gibt einem die Koordinaten und die Blickrichtung des Spielers
+---@param serverID integer
+---@param offset integer
+---@return table vector4 Vector3 und heading
 GetPlayerCoordsAndHeading = function(serverID, offset)
     local playerPed = GetPlayerPed(serverID)
     local positionData = {}
     local coords = GetOffsetFromEntityInWorldCoords(playerPed, 0.0, (0.0 + offset), 0.0)
     local heading = GetEntityHeading(playerPed)
-    --table.insert(positionData, coords)
     positionData["coords"] = coords
-    --table.insert(positionData, heading)
     positionData["heading"] = heading
     return positionData
 end
 
+---Schreibt alle aktiven Kuss Kult Entities in die Konsole
+---@param _Players table
+---@param _Characters table
+---@param _Vehicles table
 ListAllOnClient = function(_Players, _Characters, _Vehicles)
     print("-------------------------")
     print("SPIELER: ")
@@ -118,6 +142,9 @@ ListAllOnClient = function(_Players, _Characters, _Vehicles)
     print("-------------------------")
 end
 
+---Schreibt jeden einzelnen Eintrag der Kuss Kult Entity
+---Gruppen in die Konsole
+---@param set table
 PrintEveryMemberOfSet = function(set)
     for i, member in pairs(set) do
         local handle = 0
@@ -135,8 +162,10 @@ PrintEveryMemberOfSet = function(set)
     end
 end
 
+---Rekursive Methode um alle Inhalte eines Tables
+---in die Konsole zu schreiben
+---@param tabl table
 PrintAllMembersOfTable = function (tabl)
-	--print(tabl)
 	for key, value in pairs(tabl) do
 		print("Key: ", key)
 		print("Value: ", value)
@@ -147,9 +176,23 @@ PrintAllMembersOfTable = function (tabl)
 	end
 end
 
+---Gibt einem die ID des Spielers anhand der NetworkID
+---@param networkID integer
+---@return integer PlayerId
 function GetPlayerFromNetworkID(networkID)
     if TryForNetworkIDAvailability(networkID) then
         return NetworkGetPlayerIndexFromPed(NetworkGetEntityFromNetworkId(networkID))
+    end
+end
+
+---Wandelt eine boolische Eingabe in einen String um
+---@param bool boolean
+---@return string
+BoolToString = function (bool)
+    if bool == true then
+        return "true"
+    else
+        return "false"
     end
 end
 

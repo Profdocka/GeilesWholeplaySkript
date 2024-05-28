@@ -1,5 +1,4 @@
 --UNTERTITEL DER COMMANDS---
-
 Citizen.CreateThread(function()
 	TriggerEvent("chat:addSuggestion", "/gwspawnneutral",
 		"Spawnt den jeweiligen Charakter neutral gegenüber des Spielers", {
@@ -72,27 +71,38 @@ Citizen.CreateThread(function()
 	TriggerEvent("chat:addSuggestion", "/gwclearspawnpoint", "Entfernt deinen Respawnpunkt", {})
 	TriggerEvent("chat:addSuggestion", "/gwfreunde", "Sorgt dafür das alle Spieler miteinander kooperieren können", {})
 	TriggerEvent("chat:addSuggestion", "/gwfeinde", "Sorgt dafür das alle Spieler sich gegenseitig bekriegen können", {})
-
+	TriggerEvent("chat:addSuggestion", "/gwsetownfaction",
+	"Ändert die Fraktionszugehörigkeit des eigenen Spielers", {
+		{ name = "Fraktionsname", help = "Die Fraktion zu der du wechseln willst. Weglassen zum zurücksetzen" },
+	})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)
 	if args[1] then
 		EnableOption(string.lower(args[1]))
 	end
-end)
+end, false)
 
+---Clientseitige Einstellungen können hier ein oder ausgeschaltet werden 
+---@param option string
 EnableOption = function(option)
 	if option == "unbesiegbar" then
 		IsInvincible = not IsInvincible
+		ShowNotification("Option " .. option .. " wurde geändert auf: " .. BoolToString(IsInvincible))
 	elseif option == "formation" then
 		WantsFormationSpawn = not WantsFormationSpawn
+		ShowNotification("Option " .. option .. " wurde geändert auf: " .. BoolToString(WantsFormationSpawn))
+	elseif option == "blips" then
+		WantsBlips = not WantsBlips
+		ShowNotification("Option " .. option .. " wurde geändert auf: " .. BoolToString(WantsBlips))
 	else
 		ShowNotification("~r~Es wurde keine entsprechende Option gefunden!")
 		return
 	end
-	ShowNotification("Option " .. option .. " wurde geändert")
 end
 
+---Ereignis um vom Server aus Client Einstellungen zu ändern
+---@param option any
 RegisterNetEvent("CEv_SetClientOption",function (option)
 	EnableOption(option)
 end)
