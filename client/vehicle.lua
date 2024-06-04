@@ -28,12 +28,12 @@ BuildVehicle = function(modelHash, vehicleJson, driver)
 	local carMods = vehicleJson.Vehicle.VehicleProperties.Mods
 	local coords = GetEntityCoords(driver)
 	local heading = GetEntityHeading(driver)
-	local vehHandle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, true, true)
-	Citizen.Wait(800)
+	local vehHandle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, true, false)
+	SetEntityAsMissionEntity(vehHandle, true, true)
 	SetVehicleOnGroundProperly(vehHandle)
 	SetVehicleDirtLevel(vehHandle, 0.0)
-	TaskWarpPedIntoVehicle(driver, vehHandle, -1)
 	VehicleAddons(vehHandle, carMis, carColors, carNeon, carExtras, carMods)
+	TaskWarpPedIntoVehicle(driver, vehHandle, -1)
 	return vehHandle
 end
 
@@ -50,5 +50,5 @@ VehicleAddons = function(vehHandle, carMis, carColors, carNeon, carExtras, carMo
 	Neons(vehHandle, carNeon)
 	Extras(vehHandle, carExtras)
 	Mods(vehHandle, carMods)
-	Speed(vehHandle, carMis)
+	--Speed(vehHandle, carMis)
 end

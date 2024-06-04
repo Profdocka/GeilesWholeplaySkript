@@ -17,6 +17,7 @@ WantsBlips = true
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 PlayerToPlayerRelationship = 1
 OwnFaction = ""
+DoCountDown = true
 
 KussBildDic = CreateRuntimeTxd('CHAR_KUSS')
 KussBild = CreateRuntimeTextureFromImage(KussBildDic, 'CHAR_KUSS', "kusskultlogo.png")
@@ -412,6 +413,18 @@ RegisterNetEvent("CEv_DeadGarbageCleanerCheck", function(Characters, Vehicles)
     if next(deadCharacters) ~= nil or next(deadVehicles) ~= nil then
         TriggerServerEvent("SEv_DeadGarbageCleaner", deadCharacters, deadVehicles)
     end
+end)
+
+---Event um einen Countdown zu starten
+---@param duration integer Dauer in Millisekunden
+RegisterNetEvent("CEv_ShowCountdown", function (duration)
+    CancelCountdown()
+    ShowTimeMessage(duration)
+end)
+
+---Event um den aktuellen Countdown zu beenden
+RegisterNetEvent("CEv_CancelCountdown", function ()
+    CancelCountdown()
 end)
 
 ---Sendet alle statischen Informationen an die UI

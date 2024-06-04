@@ -75,6 +75,11 @@ Citizen.CreateThread(function()
 	"Ändert die Fraktionszugehörigkeit des eigenen Spielers", {
 		{ name = "Fraktionsname", help = "Die Fraktion zu der du wechseln willst. Weglassen zum zurücksetzen" },
 	})
+	TriggerEvent("chat:addSuggestion", "/gwcountdown",
+	"Startet einen Countdown für alle Spieler", {
+		{ name = "Dauer", help = "Dauer in Millisekunden. Weglassen für Standard von 5 Minuten" },
+	})
+	TriggerEvent("chat:addSuggestion", "/gwcancelcountdown", "Bricht den aktuellen Countdown für alle Spieler ab", {})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)

@@ -326,3 +326,11 @@ RegisterCommand("gwfeinde", function()
 	TriggerClientEvent("CEv_ChangePlayerToPlayerRelationship", -1, 5, FactionLeaders)
 	TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Alle Spieler sind von nun an Feinde!")
 end)
+
+RegisterCommand("gwcountdown", function(soure, args)
+	TriggerClientEvent("CEv_ShowCountdown", -1, args[1] or 300000)
+end, false)
+
+RegisterCommand("gwcancelcountdown", function()
+	TriggerClientEvent("CEv_CancelCountdown", -1)
+end, false)

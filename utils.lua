@@ -1,5 +1,5 @@
 ---Namen die für die zufällige Charakterwahl ausgeschlossen sind
-BlacklistedNames = {Projekt45Dave = "Projekt45Dave", BrillanterBuckelwal = "BrillanterBuckelwal"}
+BlacklistedNames = { Projekt45Dave = "Projekt45Dave", BrillanterBuckelwal = "BrillanterBuckelwal" }
 
 ---Ruft das Eingabefeld von GTA mit einem eigenem Titel auf
 ---und gibt dem Spieler die Möglichkeit einen Text einzugeben
@@ -68,14 +68,14 @@ end
 ---@param vehicleHandle integer
 ---@param pedHandle integer
 ---@return integer seatIndex
-GetVehicleSeatOfPed = function (vehicleHandle, pedHandle)
-	local passengerAmount = GetVehicleModelNumberOfSeats(GetEntityModel(vehicleHandle))
-	for i = -1, passengerAmount, 1 do
-		local occupantOfSeat = GetPedInVehicleSeat(vehicleHandle, i)
-		if occupantOfSeat == pedHandle then
-			return i
-		end
-	end
+GetVehicleSeatOfPed = function(vehicleHandle, pedHandle)
+    local passengerAmount = GetVehicleModelNumberOfSeats(GetEntityModel(vehicleHandle))
+    for i = -1, passengerAmount, 1 do
+        local occupantOfSeat = GetPedInVehicleSeat(vehicleHandle, i)
+        if occupantOfSeat == pedHandle then
+            return i
+        end
+    end
 end
 
 ---Prüft ob für die Network-ID auf dem Client ein Handle vorhanden ist
@@ -102,10 +102,11 @@ end
 ShowNotification = function(msg)
     BeginTextCommandThefeedPost('STRING')
     AddTextComponentSubstringPlayerName(msg)
-    EndTextCommandThefeedPostMessagetextTu("CHAR_KUSS", "CHAR_KUSS", false, 8, "Das Geile Wholeplay Skript", "von Profdocka", 1.0)
+    EndTextCommandThefeedPostMessagetextTu("CHAR_KUSS", "CHAR_KUSS", false, 8, "Das Geile Wholeplay Skript",
+        "von Profdocka", 1.0)
 end
 
-ShowHelpNotification = function (msg, duration)
+ShowHelpNotification = function(msg, duration)
     AddTextEntry("ALERT", msg)
     BeginTextCommandDisplayHelp("ALERT")
     EndTextCommandDisplayHelp(0, false, true, duration)
@@ -165,15 +166,15 @@ end
 ---Rekursive Methode um alle Inhalte eines Tables
 ---in die Konsole zu schreiben
 ---@param tabl table
-PrintAllMembersOfTable = function (tabl)
-	for key, value in pairs(tabl) do
-		print("Key: ", key)
-		print("Value: ", value)
-		if type(value) == "table" then
-			PrintAllMembersOfTable(value)
-		end
+PrintAllMembersOfTable = function(tabl)
+    for key, value in pairs(tabl) do
+        print("Key: ", key)
+        print("Value: ", value)
+        if type(value) == "table" then
+            PrintAllMembersOfTable(value)
+        end
         print("\t")
-	end
+    end
 end
 
 ---Gibt einem die ID des Spielers anhand der NetworkID
@@ -188,12 +189,41 @@ end
 ---Wandelt eine boolische Eingabe in einen String um
 ---@param bool boolean
 ---@return string
-BoolToString = function (bool)
+BoolToString = function(bool)
     if bool == true then
         return "true"
     else
         return "false"
     end
+end
+
+--- Funktion zum Anzeigen einer Nachricht mit einer Zeitangabe
+---@param duration integer Dauer in Millisekunden
+function ShowTimeMessage(duration)
+    local endTime = GetGameTimer() + duration
+
+    while GetGameTimer() < endTime and DoCountDown do
+        local remainingTime = endTime - GetGameTimer()
+        --BeginTextCommandDisplayText("STRING")
+        BeginTextCommandPrint("STRING")
+
+        -- Füge die Zeitkomponente hinzu
+        AddTextComponentSubstringTime(remainingTime, 6) -- '6' steht für 'HH:MM:SS'
+
+        -- Ende die Textkomponente und zeige die Nachricht an
+        --EndTextCommandDisplayText(0.5, 0.5)  -- Positioniere den Text in der Mitte des Bildschirms
+        EndTextCommandPrint(1000, true)
+        Citizen.Wait(1000)
+    end
+    ShowNotification("Zeit ist abgelaufen")
+    PlaySoundFrontend(-1, "3_2_1", "HUD_MINI_GAME_SOUNDSET", true);
+end
+
+---Funktion um den akutellen Countdown zu beenden
+function CancelCountdown()
+    DoCountDown = false
+    Citizen.Wait(1000)
+    DoCountDown = true
 end
 
 ---SERVER---
@@ -263,7 +293,7 @@ GetVariantFromInput = function(variantInput)
     end
 end
 
-GetAllCharacterNames = function ()
+GetAllCharacterNames = function()
     local charactersTable = {}
     for characterKey, _ in pairs(TableOfAllCharacterSkins) do
         table.insert(charactersTable, characterKey)
@@ -273,7 +303,7 @@ GetAllCharacterNames = function ()
     return charactersTable
 end
 
-PlayersGroupRemaking = function ()
+PlayersGroupRemaking = function()
     local tempPlayers = {}
     local playerServerID = GetPlayers()
     for _, serverID in ipairs(playerServerID) do
