@@ -87,5 +87,6 @@ ApplyCharacterModifiers = function (pedHandle)
     SetPedCombatAttributes(pedHandle, 17, false)
     SetPedCombatAttributes(pedHandle, 46, true)
     SetPedCombatAttributes(pedHandle, 58, true)
+    SetPedFiringPattern(pedHandle, -957453492)
     SetPedDiesInWater(pedHandle, false)
 end

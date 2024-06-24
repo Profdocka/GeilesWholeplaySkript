@@ -1,0 +1,67 @@
+{
+    "characters": [
+        {
+            "weapon": true,
+            "vector4": {
+                "coords": {
+                    "x": 482.1626281738281,
+                    "y": -1325.024169921875,
+                    "z": 29.195556640625
+                },
+                "heading": 15.59054565429687
+            },
+            "faction": "omaroswita",
+            "name": "ViktorRaswinova"
+        },
+        {
+            "weapon": true,
+            "vector4": {
+                "coords": {
+                    "x": 477.91650390625,
+                    "y": -1319.4857177734376,
+                    "z": 29.1787109375
+                },
+                "heading": 114.80316162109375
+            },
+            "faction": "omaroswita",
+            "name": "Hawlett"
+        },
+        {
+            "weapon": true,
+            "vector4": {
+                "coords": {
+                    "x": 471.91650390625,
+                    "y": -1309.6483154296876,
+                    "z": 29.21240234375
+                },
+                "heading": 35.43309020996094
+            },
+            "faction": "omaroswita",
+            "name": "OmaRoswita"
+        }
+    ],
+    "vehicles": [
+        {
+            "vector4": {
+                "coords": {
+                    "x": 491.6703186035156,
+                    "y": -1328.2945556640626,
+                    "z": 29.2630615234375
+                },
+                "heading": 347.5760803222656
+            },
+            "name": "OmaRoswitasBus"
+        },
+        {
+            "vector4": {
+                "coords": {
+                    "x": 477.96923828125,
+                    "y": -1308.1845703125,
+                    "z": 28.7237548828125
+                },
+                "heading": 26.96744346618652
+            },
+            "name": "PRIUS"
+        }
+    ]
+}

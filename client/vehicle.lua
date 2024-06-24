@@ -1,14 +1,14 @@
 ---Sucht anhand von `name` das Kuss Kult Fahrzeug
 ---und spawnt das Fahrzeugmodell in der Spielwelt
 ---@param name string Name des Kuss Kult Fahrzeuges
----@param driver integer
+---@param vector4 table
 ---@return integer vehHandle
-SpawnVehicle = function(name, driver)
+SpawnVehicle = function(name, vector4)
 	local vehicleJson = Looker(name, VEHFOLDER)
 	local modelHash = vehicleJson.Vehicle.ModelHash
 	modelHash = tonumber(modelHash)
 	if SearchHash(modelHash) then
-		local vehHandle = BuildVehicle(modelHash, vehicleJson, driver)
+		local vehHandle = BuildVehicle(modelHash, vehicleJson, vector4)
 		SetModelAsNoLongerNeeded(modelHash)
 		return vehHandle
 	end
@@ -18,22 +18,21 @@ end
 ---an den Koordinaten des Fahrers gespawnt
 ---@param modelHash integer
 ---@param vehicleJson table
----@param driver integer
+---@param vector4 table
 ---@return integer vehHandle
-BuildVehicle = function(modelHash, vehicleJson, driver)
+BuildVehicle = function(modelHash, vehicleJson, vector4)
 	local carMis = vehicleJson.Vehicle.VehicleProperties
 	local carColors = vehicleJson.Vehicle.VehicleProperties.Colours
 	local carNeon = vehicleJson.Vehicle.VehicleProperties.Neons
 	local carExtras = vehicleJson.Vehicle.VehicleProperties.ModExtras
 	local carMods = vehicleJson.Vehicle.VehicleProperties.Mods
-	local coords = GetEntityCoords(driver)
-	local heading = GetEntityHeading(driver)
+	local coords = vector4["coords"]
+	local heading = vector4["heading"]
 	local vehHandle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, true, false)
 	SetEntityAsMissionEntity(vehHandle, true, true)
 	SetVehicleOnGroundProperly(vehHandle)
 	SetVehicleDirtLevel(vehHandle, 0.0)
 	VehicleAddons(vehHandle, carMis, carColors, carNeon, carExtras, carMods)
-	TaskWarpPedIntoVehicle(driver, vehHandle, -1)
 	return vehHandle
 end
 

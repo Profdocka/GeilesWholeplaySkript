@@ -1,0 +1,139 @@
+{
+    "characters": [
+        {
+            "name": "Cleveland",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": 1389.81103515625,
+                    "y": 1131.4022216796876,
+                    "z": 114.3209228515625
+                },
+                "heading": -103.46456909179688
+            }
+        },
+        {
+            "name": "LudmillaLeuvenia",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": 1396.20654296875,
+                    "y": 1147.6483154296876,
+                    "z": 114.3209228515625
+                },
+                "heading": -165.82677173614503
+            }
+        },
+        {
+            "name": "DouglessDunes",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": 1393.3714599609376,
+                    "y": 1132.734130859375,
+                    "z": 114.3209228515625
+                },
+                "heading": 63.77952575683594
+            }
+        },
+        {
+            "name": "Projekt45Dave",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": 1423.160400390625,
+                    "y": 1152.936279296875,
+                    "z": 112.6527099609375
+                },
+                "heading": -4.25196838378906
+            }
+        },
+        {
+            "name": "Burghardt",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": 1390.839599609375,
+                    "y": 1140.14501953125,
+                    "z": 114.4219970703125
+                },
+                "heading": -92.12598419189453
+            }
+        },
+        {
+            "name": "HaroldHarrington",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": 1397.037353515625,
+                    "y": 1132.12744140625,
+                    "z": 114.3209228515625
+                },
+                "heading": -86.45669555664063
+            }
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "DunesEmperor",
+            "vector4": {
+                "coords": {
+                    "x": 1371.164794921875,
+                    "y": 1147.5164794921876,
+                    "z": 113.2593994140625
+                },
+                "heading": 357.34765625
+            }
+        },
+        {
+            "name": "HarringtonsPatriot",
+            "vector4": {
+                "coords": {
+                    "x": 1363.041748046875,
+                    "y": 1162.971435546875,
+                    "z": 113.3941650390625
+                },
+                "heading": 180.03598022460938
+            }
+        },
+        {
+            "name": "DunesZType",
+            "vector4": {
+                "coords": {
+                    "x": 1414.1142578125,
+                    "y": 1116.4879150390626,
+                    "z": 114.2535400390625
+                },
+                "heading": 267.01556396484377
+            }
+        },
+        {
+            "name": "LeuveniasSurano",
+            "vector4": {
+                "coords": {
+                    "x": 1400.1494140625,
+                    "y": 1120.747314453125,
+                    "z": 114.4556884765625
+                },
+                "heading": 88.77493286132813
+            }
+        },
+        {
+            "name": "DunesBuzzard",
+            "vector4": {
+                "coords": {
+                    "x": 1459.3187255859376,
+                    "y": 1111.6219482421876,
+                    "z": 114.2197265625
+                },
+                "heading": 89.88805389404297
+            }
+        }
+    ]
+}

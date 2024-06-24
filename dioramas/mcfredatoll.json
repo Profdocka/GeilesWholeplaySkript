@@ -1,0 +1,147 @@
+{
+    "vehicles": [
+        {
+            "vector4": {
+                "heading": 72.65833282470703,
+                "coords": {
+                    "x": -2042.914306640625,
+                    "y": -1031.80224609375,
+                    "z": 11.8740234375
+                }
+            },
+            "name": "McFredsHelikopter"
+        }
+    ],
+    "characters": [
+        {
+            "vector4": {
+                "heading": 66.61416625976563,
+                "coords": {
+                    "x": -2036.3341064453126,
+                    "y": -1034.017578125,
+                    "z": 8.958984375
+                }
+            },
+            "name": "WilliamMcFredUrlaub",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": -106.29920959472656,
+                "coords": {
+                    "x": -2022.5142822265626,
+                    "y": -1038.6329345703126,
+                    "z": 5.5721435546875
+                }
+            },
+            "name": "TimmyTimeltonUrlaub",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": -29.76377868652343,
+                "coords": {
+                    "x": -2023.4505615234376,
+                    "y": -1039.912109375,
+                    "z": 2.5728759765625
+                }
+            },
+            "name": "NestorNewton",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": -111.968505859375,
+                "coords": {
+                    "x": -2092.734130859375,
+                    "y": -1015.5560302734375,
+                    "z": 8.975830078125
+                }
+            },
+            "name": "RalphHopkinsUrlaub",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": -15.59054565429687,
+                "coords": {
+                    "x": -2042.980224609375,
+                    "y": -1027.859375,
+                    "z": 11.97509765625
+                }
+            },
+            "name": "AlanceMerwing",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": 52.44094848632812,
+                "coords": {
+                    "x": -2033.8681640625,
+                    "y": -1032.923095703125,
+                    "z": 5.87548828125
+                }
+            },
+            "name": "KarlKarlsonUrlaub",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": -117.6377944946289,
+                "coords": {
+                    "x": -2042.5582275390626,
+                    "y": -1028.6636962890626,
+                    "z": 11.958251953125
+                }
+            },
+            "name": "ElwoodErwing",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": 89.29135131835938,
+                "coords": {
+                    "x": -2037.6395263671876,
+                    "y": -1034.901123046875,
+                    "z": 8.958984375
+                }
+            },
+            "name": "IgorScrubsUrlaub",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": 66.61416625976563,
+                "coords": {
+                    "x": -2083.186767578125,
+                    "y": -1018.1406860351563,
+                    "z": 12.76708984375
+                }
+            },
+            "name": "ArnoldPinbin",
+            "weapon": true,
+            "faction": "mcfredag"
+        },
+        {
+            "vector4": {
+                "heading": -106.29920959472656,
+                "coords": {
+                    "x": -2085.560546875,
+                    "y": -1017.7977905273438,
+                    "z": 12.76708984375
+                }
+            },
+            "name": "OttoKöder",
+            "weapon": true,
+            "faction": "mcfredag"
+        }
+    ]
+}

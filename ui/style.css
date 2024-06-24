@@ -150,6 +150,10 @@
     overflow: hidden;
 }
 
+.entity-diorama {
+    background-color: #ffae0079;
+}
+
 .entity-location {
     background-color: #00f7ff6e;
 }

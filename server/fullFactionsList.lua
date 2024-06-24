@@ -1,4 +1,4 @@
-
+---Festdefinierte Sammlung an Charakteren, die als Fraktion gemeinsam gespawnt werden können
 AllFactions = {
 	mcfredag = {
 		"WilliamMcFred",
@@ -108,7 +108,7 @@ AllFactions = {
 		"Hawlett",
 		"ViktorRaswinova"
 	},
-	fickjulian = {
+	schumian = {
 		"Zumian",
 		"WillihamMcFett",
 		"TanteEsmeralda",

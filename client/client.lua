@@ -121,12 +121,20 @@ end)
 ---@param faction string
 RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeapon, vector4, faction)
     local shouldVector4Update = nil
+    local includesMultipleVector4s = false
+    local vector4List = nil
+    local vector4offset = 1
     local GroupNetwork = {}
     local angleStep = 360.0 / #Group
     if vector4 == nil then
         shouldVector4Update = true
     else
         shouldVector4Update = false
+        if vector4[2] ~= nil then
+            includesMultipleVector4s = true
+            vector4List = vector4
+            vector4 = nil
+        end
     end
     if WantsFormationSpawn then
         FreezeEntityPosition(PlayerPedId(), true)
@@ -141,6 +149,9 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
             if WantsFormationSpawn then
                 SetEntityHeading(PlayerPedId(), heading + angleStep)
             end
+        elseif includesMultipleVector4s then
+            vector4 = vector4List[vector4offset]
+            vector4offset = vector4offset + 1
         end
         local pedHandle = SpawnCharacter(variant, characterName, hasWeapon, vector4)
         local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
@@ -162,19 +173,73 @@ RegisterNetEvent("CEv_SpawnMultipleCharacters", function(Group, variant, hasWeap
     TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFaction", GroupNetwork, variant, hasWeapon, faction, GetPlayerServerId(PlayerId()))
 end)
 
+RegisterNetEvent("CEv_SpawnMultipleCharactersDiorama", function (Group, variant, hasWeapon, vector4, faction)
+    local tableOffset = 1
+    local vector4List = vector4
+    vector4 = nil
+    local GroupNetwork = {}
+    for _, characterName in pairs(Group) do
+        vector4 = vector4List[tableOffset]
+        local pedHandle = SpawnCharacter(variant, characterName, hasWeapon, vector4)
+        local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
+        SetNetworkIdExistsOnAllMachines(networkID, true)
+        SetNetworkIdCanMigrate(networkID, true)
+        local characterNetwork = { networkID = networkID, name = characterName }
+        GroupNetwork[networkID] = characterNetwork
+        tableOffset = tableOffset + 1
+    end
+    print("Anzahl gespawnter Charaktere: ", #Group)
+    TriggerServerEvent("SEv_GiveMultipleCharactersSkinAndFactionDiorama", GroupNetwork, variant, hasWeapon, faction, GetPlayerServerId(PlayerId()))
+end)
+
 ---Ereignis um ein Fahrzeug an den Koordinaten zu spawnen
 ---@param name string Name des Fahrzeuges
+---@param vector4 table
+RegisterNetEvent("CEv_SpawnVehicle", function(name, vector4)
+        local vehHandle = SpawnVehicle(name, vector4)
+        local networkID = NetworkGetNetworkIdFromEntity(vehHandle)
+        SetNetworkIdExistsOnAllMachines(networkID, true)
+        SetNetworkIdCanMigrate(networkID, true)
+        ShowNotification("Dein gespawntes Fahrzeug: " .. name)
+        TriggerServerEvent("SEv_RegisterVehicle", name, networkID)
+end)
+
+---Ereignis um ein Fahrzeug an den Koordinaten eines Fahrers zu spawnen
+---@param name string Name des Fahrzeuges
 ---@param networkIDDriver integer
-RegisterNetEvent("CEv_SpawnVehicle", function(name, networkIDDriver)
+RegisterNetEvent("CEv_SpawnVehicleForDriver", function(name, networkIDDriver)
     if TryForNetworkIDAvailability(networkIDDriver) then
         local driverHandle = NetworkGetEntityFromNetworkId(networkIDDriver)
-        local vehHandle = SpawnVehicle(name, driverHandle)
+        local coords = GetEntityCoords(driverHandle)
+        local heading = GetEntityHeading(driverHandle)
+        local vector4 = {coords = coords, heading = heading}
+        local vehHandle = SpawnVehicle(name, vector4)
+        TaskWarpPedIntoVehicle(driverHandle, vehHandle, -1)
         local networkID = NetworkGetNetworkIdFromEntity(vehHandle)
         SetNetworkIdExistsOnAllMachines(networkID, true)
         SetNetworkIdCanMigrate(networkID, true)
         ShowNotification("Dein gespawntes Fahrzeug: " .. name)
         TriggerServerEvent("SEv_RegisterVehicle", name, networkID)
     end
+end)
+
+RegisterNetEvent("CEv_SpawnMultipleVehicles", function (Group, vector4)
+    local tableOffset = 1
+    local vector4List = vector4
+    vector4 = nil
+    local GroupNetwork = {}
+    for _, vehicleName in pairs(Group) do
+        vector4 = vector4List[tableOffset]
+        local vehHandle = SpawnVehicle(vehicleName, vector4)
+        local networkID = NetworkGetNetworkIdFromEntity(vehHandle)
+        SetNetworkIdExistsOnAllMachines(networkID, true)
+        SetNetworkIdCanMigrate(networkID, true)
+        local vehicleNetwork = { networkID = networkID, name = vehicleName }
+        GroupNetwork[networkID] = vehicleNetwork
+        ShowNotification("Dein gespawntes Fahrzeug: " .. vehicleName)
+        tableOffset = tableOffset + 1
+    end
+    TriggerServerEvent("SEv_RegisterMultipleVehicles", GroupNetwork, networkID)
 end)
 
 ---Ereignis um einen Charakter seine Kleidung und Rolle zu geben
@@ -208,24 +273,29 @@ RegisterNetEvent("CEv_GiveCharacterSkinAndRole",function(networkID, skin, hasWea
     end)
 
 ---Ereignis um mehreren Charakteren ihre Kleidung und Rolle zu geben
----@param GroupNetwork any
----@param hasWeapon any
----@param source any
----@param variant any
----@param FactionsAndMembersFromServer any
----@param FactionLeadersFromServer any
----@param PlayersFromServer any
+---@param GroupNetwork table
+---@param hasWeapon boolean|table 
+---@param source integer
+---@param variant integer
+---@param FactionsAndMembersFromServer table
+---@param FactionLeadersFromServer table
+---@param PlayersFromServer table
 RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole", function(GroupNetwork, hasWeapon, source, variant, FactionsAndMembersFromServer, FactionLeadersFromServer,
              PlayersFromServer)
         local pedHandle = nil
         local pedJson = nil
         local playerHandle = GetPlayerPed(GetPlayerFromServerId(source))
+        local tableOffset = 1
         ApplyFactions(FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer)
         for _, character in pairs(GroupNetwork) do
             if TryForNetworkIDAvailability(character.networkID) then
                 pedHandle = NetworkGetEntityFromNetworkId(character.networkID)
                 pedJson = Looker(character.name, CHARFOLDER)
-                Cosmetics(pedHandle, pedJson, hasWeapon)
+                if hasWeapon == true or hasWeapon == false then
+                    Cosmetics(pedHandle, pedJson, hasWeapon)
+                else
+                    Cosmetics(pedHandle, pedJson, hasWeapon[tableOffset])
+                end
                 if variant == AGGRESSIVE_VARIANT and playerHandle == PlayerPedId() then
                     TakeOwnershipOfNetworkID(pedHandle, character.networkID)
                     if not IsPedAPlayer(pedHandle) then
@@ -233,6 +303,7 @@ RegisterNetEvent("CEv_GiveMultipleCharactersSkinAndRole", function(GroupNetwork,
                         SetBlipColour(GetBlipFromEntity(pedHandle), 49)
                     end
                 end
+                tableOffset = tableOffset + 1
                 Citizen.Wait(100)
             end
         end
@@ -448,7 +519,7 @@ end)
 ---@param Characters table
 ---@param Vehicles table
 ---@param playerName string
-RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName)
+RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName, dioramas)
     for _, playerid in pairs(GetActivePlayers()) do
         local networkid = GetNetworkIDPlayerFromSource(playerid)
         local playername = GetPlayerName(playerid)
@@ -459,7 +530,8 @@ RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playe
         players = Players,
         characters = Characters,
         vehicles = Vehicles,
-        playerName = playerName
+        playerName = playerName,
+        dioramas = dioramas
     })
     SetNuiFocus(true, true)
     TriggerScreenblurFadeIn(3000)

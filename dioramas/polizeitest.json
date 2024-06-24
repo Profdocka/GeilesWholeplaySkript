@@ -1,0 +1,89 @@
+{
+    "vehicles": [
+        {
+            "name": "DunbysCruiser",
+            "vector4": {
+                "heading": 226.5111083984375,
+                "coords": {
+                    "x": 408.3955993652344,
+                    "y": -979.5823974609375,
+                    "z": 28.858642578125
+                }
+            }
+        }
+    ],
+    "characters": [
+        {
+            "name": "MarionDunby",
+            "faction": "polizei",
+            "vector4": {
+                "heading": -9.9212646484375,
+                "coords": {
+                    "x": 450.0263671875,
+                    "y": -974.3340454101563,
+                    "z": 30.6783447265625
+                }
+            }
+        },
+        {
+            "name": "PatPaddington",
+            "faction": "polizei",
+            "vector4": {
+                "heading": -77.95275115966797,
+                "coords": {
+                    "x": 454.23297119140627,
+                    "y": -979.8329467773438,
+                    "z": 30.6783447265625
+                }
+            }
+        },
+        {
+            "name": "HudsonHudson",
+            "faction": "polizei",
+            "vector4": {
+                "heading": -174.3307089805603,
+                "coords": {
+                    "x": 443.98681640625,
+                    "y": -975.2703247070313,
+                    "z": 30.6783447265625
+                }
+            }
+        },
+        {
+            "name": "CorneliusCopperfield",
+            "faction": "polizei",
+            "vector4": {
+                "heading": 168.66140747070313,
+                "coords": {
+                    "x": 449.80218505859377,
+                    "y": -975.8505249023438,
+                    "z": 30.6783447265625
+                }
+            }
+        },
+        {
+            "name": "MelanieParkers",
+            "faction": "polizei",
+            "vector4": {
+                "heading": 1.41732788085937,
+                "coords": {
+                    "x": 440.8879089355469,
+                    "y": -978.8307495117188,
+                    "z": 30.6614990234375
+                }
+            }
+        },
+        {
+            "name": "FloydFlemming",
+            "faction": "polizei",
+            "vector4": {
+                "heading": -75.11811065673828,
+                "coords": {
+                    "x": 436.3252868652344,
+                    "y": -986.6769409179688,
+                    "z": 30.6783447265625
+                }
+            }
+        }
+    ]
+}

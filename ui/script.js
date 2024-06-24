@@ -10,6 +10,7 @@ const FRIENDLY_VARIANT = 2
 const AGGRESSIVE_VARIANT = 3
 const GROUP_VARIANT = 4
 const LOCATION_VARIANT = 5
+const DIORAMA_VARIANT = 6
 
 window.addEventListener("load", (e) => {
     document.getElementById("gw-menu-screen").hidden = true
@@ -82,7 +83,7 @@ const fetchNUI = async (cbname, data) => {
 const registerSkinsForCharAndVeh = async (data) => {
     memory.characters = sortObjectKeysAlphabetically(data.characterSkins)
     memory.vehicles = sortObjectKeysAlphabetically(data.vehicleSkins)
-    memory.factions = Object.keys(data.allFactions)
+    memory.factions = Object.keys(data.allFactions).sort();
     memory.locations = Object.keys(data.locations).sort();
     memory.locationsObjects = data.locations
     memory.myVehicles = data.myVehicles
@@ -96,6 +97,7 @@ const registerActiveData = (gwData) => {
     memory.players = Object.values(gwData.players);
     memory.Acharacters = Object.values(gwData.characters);
     memory.Avehicles = Object.values(gwData.vehicles);
+    memory.dioramas = Object.values(gwData.dioramas).sort();
 }
 
 const openGWMenu = async (gwData) => {
@@ -140,6 +142,10 @@ const addEveryEntity = () => {
     memory.locations.forEach(location => {
         addBlock(domElement, location, LOCATION_VARIANT, "UI_Teleport")
     })
+    createSectionLine(domElement, "Dioramen");
+    memory.dioramas.forEach(diorama => {
+        addBlock(domElement, diorama, DIORAMA_VARIANT, "UI_Diorama")
+    })
     document.getElementById("gw-menu-screen").style.display = "flex";
 }
 
@@ -177,6 +183,13 @@ const addBlock = (ParentElement, name, variant, gameEvent) => {
             logospace.innerHTML = "home";
             block.append(logospace);
         }
+        block.addEventListener('click', (e) => {
+            closeGWMenu();
+            fetchNUI(gameEvent, { name: name })
+        })
+    }
+
+    if (variant === DIORAMA_VARIANT) {
         block.addEventListener('click', (e) => {
             closeGWMenu();
             fetchNUI(gameEvent, { name: name })
@@ -282,6 +295,7 @@ function optionsContainerButtons() {
     const vehicleTab = document.getElementById("vehicleTab");
     const factionTab = document.getElementById("factionTab");
     const locationTab = document.getElementById("locationTab");
+    const dioramaTab = document.getElementById("dioramaTab")
     const myVehiclesTab = document.getElementById("myVehiclesTab");
 
     optionsContainerButtonHandler(homeTab, "Everything");
@@ -289,6 +303,7 @@ function optionsContainerButtons() {
     optionsContainerButtonHandler(vehicleTab, "Fahrzeuge");
     optionsContainerButtonHandler(factionTab, "Fraktionen");
     optionsContainerButtonHandler(locationTab, "Locations");
+    optionsContainerButtonHandler(dioramaTab, "Dioramen")
     optionsContainerButtonHandler(myVehiclesTab, "MeineFahrzeuge");
 
 }
@@ -357,6 +372,12 @@ function optionsContainerButtonHandler(recievingObject, tabVariant) {
                     addBlock(contentHolder, location, LOCATION_VARIANT, "UI_Teleport")
                 })
                 break;
+            case "Dioramen":
+                createSectionLine(contentHolder, tabVariant);
+                memory.dioramas.forEach(diorama => {
+                    addBlock(contentHolder, diorama, DIORAMA_VARIANT, "UI_Diorama")
+                })
+                break;
             case "MeineFahrzeuge":
                 createSectionLine(contentHolder, tabVariant);
                 let lowerName = playerName.toLowerCase();
@@ -396,6 +417,9 @@ function colorBlocksAccordingly(block, variant) {
             break;
         case LOCATION_VARIANT:
             block.classList.add('entity-location');
+            break;
+        case DIORAMA_VARIANT:
+            block.classList.add("entity-diorama");
             break;
         default:
             break;

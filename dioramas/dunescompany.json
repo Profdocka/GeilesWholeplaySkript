@@ -1,0 +1,93 @@
+{
+    "characters": [
+        {
+            "name": "Cleveland",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": -115.81977844238281,
+                    "y": -601.7142944335938,
+                    "z": 36.2557373046875
+                },
+                "heading": 69.44882202148438
+            }
+        },
+        {
+            "name": "Burghardt",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": -116.83515930175781,
+                    "y": -604.4967041015625,
+                    "z": 36.2557373046875
+                },
+                "heading": 75.11810302734375
+            }
+        },
+        {
+            "name": "DouglessDunes",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": -125.98680877685547,
+                    "y": -641.1956176757813,
+                    "z": 168.813232421875
+                },
+                "heading": -83.62205505371094
+            }
+        },
+        {
+            "name": "LudmillaLeuvenia",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": -139.09449768066407,
+                    "y": -633.982421875,
+                    "z": 168.813232421875
+                },
+                "heading": -157.3228359222412
+            }
+        },
+        {
+            "name": "HaroldHarrington",
+            "weapon": true,
+            "faction": "dunescompany",
+            "vector4": {
+                "coords": {
+                    "x": -128.16262817382813,
+                    "y": -638.8351440429688,
+                    "z": 168.813232421875
+                },
+                "heading": 9.9212646484375
+            }
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "DunesVolatus",
+            "vector4": {
+                "coords": {
+                    "x": -145.6879119873047,
+                    "y": -593.103271484375,
+                    "z": 212.4205322265625
+                },
+                "heading": 231.29469299316407
+            }
+        },
+        {
+            "name": "DunesEmperor",
+            "vector4": {
+                "coords": {
+                    "x": -106.52307891845703,
+                    "y": -608.2681274414063,
+                    "z": 35.5648193359375
+                },
+                "heading": 159.9069366455078
+            }
+        }
+    ]
+}

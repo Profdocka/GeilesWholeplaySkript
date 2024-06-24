@@ -64,22 +64,34 @@ Citizen.CreateThread(function()
 		"Ändere eine persönliche Einstellung bezüglich Aspekten des Skripts", {
 			{ name = "Option", help = "Den Namen der zu invertierenden Einstellung" },
 		})
-	TriggerEvent("chat:addSuggestion", "/gwr", "Lädt deinen aktuellen Charakter neu. Damit folgen dir wieder Bodyguards", {})
+	TriggerEvent("chat:addSuggestion", "/gwr", "Lädt deinen aktuellen Charakter neu. Damit folgen dir wieder Bodyguards",
+		{})
 	TriggerEvent("chat:addSuggestion", "/gwrandomped", "Gibt dir einen zufälligen Charakter", {})
 	TriggerEvent("chat:addSuggestion", "/gwrandomcar", "Gibt dir ein zufälliges Fahrzeug", {})
+	TriggerEvent("chat:addSuggestion", "/gwkusskultknockout", "Startet eine Runde Kuss Kult Knockout für alle Spieler",
+		{})
 	TriggerEvent("chat:addSuggestion", "/gwspawnpoint", "Setzt deinen Respawnpunkt auf deine aktuelle Position", {})
 	TriggerEvent("chat:addSuggestion", "/gwclearspawnpoint", "Entfernt deinen Respawnpunkt", {})
 	TriggerEvent("chat:addSuggestion", "/gwfreunde", "Sorgt dafür das alle Spieler miteinander kooperieren können", {})
 	TriggerEvent("chat:addSuggestion", "/gwfeinde", "Sorgt dafür das alle Spieler sich gegenseitig bekriegen können", {})
 	TriggerEvent("chat:addSuggestion", "/gwsetownfaction",
-	"Ändert die Fraktionszugehörigkeit des eigenen Spielers", {
-		{ name = "Fraktionsname", help = "Die Fraktion zu der du wechseln willst. Weglassen zum zurücksetzen" },
-	})
+		"Ändert die Fraktionszugehörigkeit des eigenen Spielers", {
+			{ name = "Fraktionsname", help = "Die Fraktion zu der du wechseln willst. Weglassen zum zurücksetzen" },
+		})
 	TriggerEvent("chat:addSuggestion", "/gwcountdown",
-	"Startet einen Countdown für alle Spieler", {
-		{ name = "Dauer", help = "Dauer in Millisekunden. Weglassen für Standard von 5 Minuten" },
-	})
+		"Startet einen Countdown für alle Spieler", {
+			{ name = "Dauer", help = "Dauer in Millisekunden. Weglassen für Standard von 5 Minuten" },
+		})
 	TriggerEvent("chat:addSuggestion", "/gwcancelcountdown", "Bricht den aktuellen Countdown für alle Spieler ab", {})
+	TriggerEvent("chat:addSuggestion", "/gwsavediorama",
+		"Speichert alle Aktiven Fahrzeuge und Charaktere mit ihren Positionen in einem Diorama ab", {
+			{ name = "name", help = "Name des Diorama" },
+		})
+	TriggerEvent("chat:addSuggestion", "/gwplacediorama",
+		"Platziert alle Fahrzeuge und Charaktere eines Diorama in der Spielwelt", {
+			{ name = "name", help = "Name des Diorama" },
+			{ name = "?Gesinnung", help = "Freund oder Feind? [buddy]/[gegner]" },
+		})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)
@@ -88,7 +100,7 @@ RegisterCommand("gwsetoption", function(source, args)
 	end
 end, false)
 
----Clientseitige Einstellungen können hier ein oder ausgeschaltet werden 
+---Clientseitige Einstellungen können hier ein oder ausgeschaltet werden
 ---@param option string
 EnableOption = function(option)
 	if option == "unbesiegbar" then
@@ -108,6 +120,6 @@ end
 
 ---Ereignis um vom Server aus Client Einstellungen zu ändern
 ---@param option any
-RegisterNetEvent("CEv_SetClientOption",function (option)
+RegisterNetEvent("CEv_SetClientOption", function(option)
 	EnableOption(option)
 end)

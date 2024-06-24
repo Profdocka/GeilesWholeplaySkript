@@ -1,3 +1,4 @@
+---Zeig zu jedem Charakter auf, welche Fahrzeuge dieser besitzt
 Owners = {
 	williammcfred = {
 		"McFredsTornado",
@@ -118,7 +119,9 @@ Owners.williwagner = { "McFredsSupersportwagen", "PRIUS" }
 Owners.wolfgangwuergenknecht = { "TVTotalEgalVan" }
 Owners.zumian = { "Zumianmobile", "ZumiansVelum" }
 
-
+---Ersetzt Umlaute durch Kombinationen aus regulären Buchstaben
+---@param str string
+---@return string normalized_string
 ReplaceUmlaute = function(str)
 	local tableAccents = {}
 	tableAccents["À"] = "A"

@@ -1,0 +1,54 @@
+{
+    "characters": [
+        {
+            "name": "DimitriSmirnov",
+            "weapon": true,
+            "faction": "smirnov",
+            "vector4": {
+                "coords": {
+                    "x": 1049.74951171875,
+                    "y": -3102.25048828125,
+                    "z": -39.012451171875
+                },
+                "heading": -177.16535449028016
+            }
+        },
+        {
+            "name": "VladimirSmirnov",
+            "weapon": true,
+            "faction": "smirnov",
+            "vector4": {
+                "coords": {
+                    "x": 1049.156005859375,
+                    "y": -3100.404296875,
+                    "z": -39.012451171875
+                },
+                "heading": 97.7952880859375
+            }
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "SmirnovsAbschleppwagen",
+            "vector4": {
+                "coords": {
+                    "x": 752.2681274414063,
+                    "y": -876.4747314453125,
+                    "z": 25.016845703125
+                },
+                "heading": 270.5561828613281
+            }
+        },
+        {
+            "name": "SmirnovsVan",
+            "vector4": {
+                "coords": {
+                    "x": 752.914306640625,
+                    "y": -880.7604370117188,
+                    "z": 24.5113525390625
+                },
+                "heading": 269.776611328125
+            }
+        }
+    ]
+}

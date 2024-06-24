@@ -1,0 +1,152 @@
+{
+    "vehicles": [
+        {
+            "vector4": {
+                "heading": 180.0395965576172,
+                "coords": {
+                    "x": 18.80439758300781,
+                    "y": -1734.01318359375,
+                    "z": 28.757568359375
+                }
+            },
+            "name": "Delorean"
+        },
+        {
+            "vector4": {
+                "heading": 48.24029922485351,
+                "coords": {
+                    "x": 62.29450607299805,
+                    "y": -1709.7890625,
+                    "z": 28.94287109375
+                }
+            },
+            "name": "PaddingtonsRiot"
+        },
+        {
+            "vector4": {
+                "heading": 176.71409606933595,
+                "coords": {
+                    "x": 13.85934162139892,
+                    "y": -1749.6131591796876,
+                    "z": 29.2630615234375
+                }
+            },
+            "name": "LestersTruck"
+        },
+        {
+            "vector4": {
+                "heading": 16.72415161132812,
+                "coords": {
+                    "x": 31.09450721740722,
+                    "y": -1705.5692138671876,
+                    "z": 28.926025390625
+                }
+            },
+            "name": "MichaelsTailgater"
+        },
+        {
+            "vector4": {
+                "heading": 253.6439208984375,
+                "coords": {
+                    "x": -9.49450302124023,
+                    "y": -1721.8681640625,
+                    "z": 28.9091796875
+                }
+            },
+            "name": "DunbysCruiser"
+        }
+    ],
+    "characters": [
+        {
+            "vector4": {
+                "heading": -148.81889724731446,
+                "coords": {
+                    "x": 23.84176063537597,
+                    "y": -1739.5648193359376,
+                    "z": 29.2967529296875
+                }
+            },
+            "name": "LesterCrest",
+            "weapon": true,
+            "faction": "michael"
+        },
+        {
+            "vector4": {
+                "heading": 137.48031616210938,
+                "coords": {
+                    "x": 21.98241996765136,
+                    "y": -1739.3406982421876,
+                    "z": 29.2967529296875
+                }
+            },
+            "name": "MichaelDeSantaMarty",
+            "weapon": true,
+            "faction": "michael"
+        },
+        {
+            "vector4": {
+                "heading": -55.27558898925781,
+                "coords": {
+                    "x": 62.22857284545898,
+                    "y": -1713.82421875,
+                    "z": 29.3135986328125
+                }
+            },
+            "name": "MelanieParkers",
+            "weapon": true,
+            "faction": "polizei"
+        },
+        {
+            "vector4": {
+                "heading": 49.60629272460937,
+                "coords": {
+                    "x": -9.12527084350586,
+                    "y": -1724.017578125,
+                    "z": 29.2967529296875
+                }
+            },
+            "name": "HudsonHudson",
+            "weapon": true,
+            "faction": "polizei"
+        },
+        {
+            "vector4": {
+                "heading": -52.44094848632812,
+                "coords": {
+                    "x": 58.28571319580078,
+                    "y": -1711.5032958984376,
+                    "z": 29.3135986328125
+                }
+            },
+            "name": "PatPaddington",
+            "weapon": true,
+            "faction": "polizei"
+        },
+        {
+            "vector4": {
+                "heading": -41.10237121582031,
+                "coords": {
+                    "x": 24.0131893157959,
+                    "y": -1738.1142578125,
+                    "z": 29.2967529296875
+                }
+            },
+            "name": "AmandaDeSanta",
+            "weapon": true,
+            "faction": "michael"
+        },
+        {
+            "vector4": {
+                "heading": 43.93701171875,
+                "coords": {
+                    "x": -7.29230499267578,
+                    "y": -1720.5230712890626,
+                    "z": 29.2967529296875
+                }
+            },
+            "name": "MarionDunby",
+            "weapon": true,
+            "faction": "polizei"
+        }
+    ]
+}

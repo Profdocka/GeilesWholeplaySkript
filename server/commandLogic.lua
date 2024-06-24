@@ -1,12 +1,13 @@
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 
+---Speichert den Charakter des Spielers als Datei ab (WIP)
 RegisterCommand("gwsaveentity", function(source)
 	local model = GetEntityModel(GetPlayerPed(source))
 	local netId = GetNetworkIDPlayerFromSource(source)
 	local information = { model = model, name = Players[netId].name, age = 17, coolness = 1000, size = { height = 175, weight = 70 } }
 
 	SaveResourceFile(GetCurrentResourceName(), "server/Super.json", json.encode(information), -1)
-end)
+end, false)
 
 --Befehlerstellung und -definition für den Neutralen
 RegisterCommand("gwspawnneutral", function(source, args, raw)
@@ -22,7 +23,7 @@ RegisterCommand("gwspawnneutral", function(source, args, raw)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
 --Befehlerstellung und -definition für den Bodyguard
 RegisterCommand("gwspawnbuddy", function(source, args, raw)
@@ -38,7 +39,7 @@ RegisterCommand("gwspawnbuddy", function(source, args, raw)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
 --Befehlerstellung und -definition für den Gegner
 RegisterCommand("gwspawngegner", function(source, args, raw)
@@ -54,8 +55,9 @@ RegisterCommand("gwspawngegner", function(source, args, raw)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
+---Befehlerstellung und -definition für eine Fraktion
 RegisterCommand("gwspawngruppe", function(source, args)
 	local index = NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
 	local exceptionTarget = Players[index].name
@@ -71,8 +73,9 @@ RegisterCommand("gwspawngruppe", function(source, args)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Die Gesinnung der Gruppe fehlt!")
 	end
-end)
+end, false)
 
+---Spawnt das eigene Fahrzeug vom Kuss Kult Charakters des Spielers
 RegisterCommand("gwspawnmycar", function(source, args)
 	local index = NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
 	local characterName = Players[index].name
@@ -82,69 +85,80 @@ RegisterCommand("gwspawnmycar", function(source, args)
 	if ownerString ~= nil then
 		local vehicleString = ownerString[1]
 		--print("Das gewünschte Fahrzeug: " .. vehicleString)
-		TriggerClientEvent("CEv_SpawnVehicle", source, vehicleString, index);
+		TriggerClientEvent("CEv_SpawnVehicleForDriver", source, vehicleString, index);
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Dieser Charakter besitzt kein Fahrzeug!")
 	end
-end)
+end, false)
 
+---Ändert die Gesinnung eines Charakters zu neutral
 RegisterCommand("gwgesinnungneutral", function(source, args)
 	if args[1] ~= nil then
 		TurnVariantToNeutral(args[1], source)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
+---Ändert die Gesinnung eines Charakters zu buddy und er tritt der Gruppe des Spielers bei
 RegisterCommand("gwgesinnungbuddy", function(source, args)
 	if args[1] ~= nil then
 		TurnVariantToFriendly(args[1], source)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
+---Ändert die Gesinnung eines Charakters zu gegner
 RegisterCommand("gwgesinnunggegner", function(source, args)
 	if args[1] ~= nil then
 		TurnVariantToAggressive(args[1], source)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
+---Löscht einen einzelnen aktiven Entity anhand des Namens
 RegisterCommand("gwdropsingle", function(source, args)
 	if (args[1] ~= nil) then
 		DropSpecificEntityByName(args[1], source)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
+---Löscht alle aktiven Charaktere
 RegisterCommand("gwdropallpeds", function(source, args)
 	DropAllCharacters()
-end)
+end, false)
 
+---Löscht alle aktiven Fahrzeuge
 RegisterCommand("gwdropallcars", function(source, args)
 	DropAllVehicles()
-end)
+end, false)
 
+---Löscht alle Aktives
 RegisterCommand("gwdropeverything", function(source, args)
 	DropAllVehicles()
 	DropAllCharacters()
-end)
+end, false)
 
+---Löscht alle Charaktere die tot sind und alle Fahrzeuge, die kaputt sind
 RegisterCommand("gwdropdead", function(source)
 	DeadGarbageCleanerCheck(source, true)
-end)
+end, false)
 
+---Listet alle Aktiven in der Konsole des Spielers auf
 RegisterCommand("gwlistall", function(source)
 	ListAllActiveForClient(source)
-end)
+end, false)
 
+---Lässt alle aktiven Charakteren ihren Skin neuladen
 RegisterCommand("gwreskin", function(source)
 	TriggerClientEvent("CEv_ReskinAll", source, Players, Characters)
-end)
+end, false)
 
+---Der Spieler lädt seinen aktuellen Kuss Kult Charakter neu
 RegisterCommand("gwr", function(source)
 	local networkID = GetNetworkIDPlayerFromSource(source)
 	local player = Players[networkID]
@@ -153,16 +167,14 @@ RegisterCommand("gwr", function(source)
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Charakter wurde neu geladen!")
 		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
 	end
-end)
+end, false)
 
+---Alle Charaktere werden sofort zum Stillstand gebracht
 RegisterCommand("gwstopall", function(source)
 	StopAllCharacters(source)
-end)
+end, false)
 
-StopAllCharacters = function(source)
-	TriggerClientEvent("CEv_StopAllCharacters", source, Characters)
-end
-
+---Wechselt durch die Kostüme des Spieler Charakters durch
 RegisterCommand("gwchangeskin", function(source, args)
 	local networkID = GetNetworkIDPlayerFromSource(source)
 	local name = Players[networkID].name
@@ -176,7 +188,6 @@ RegisterCommand("gwchangeskin", function(source, args)
 					offset = 1
 				end
 				if offset > length then
-					--RegisterEntity(PLAYER_VARIANT, networkID, name, name, Players[networkID].faction)
 					FullModelSwitchOrJustCosmetics(networkID, name, CHARFOLDER, source, Players[networkID].faction)
 				else
 					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source,
@@ -190,10 +201,8 @@ RegisterCommand("gwchangeskin", function(source, args)
 					offset = offset + 1
 				end
 				if offset > length then
-					--RegisterEntity(PLAYER_VARIANT, networkID, name, name, Players[networkID].faction)
 					FullModelSwitchOrJustCosmetics(networkID, name, CHARFOLDER, source, Players[networkID].faction)
 				else
-					--RegisterEntity(PLAYER_VARIANT, networkID, name, skinTable[offset], Players[networkID].faction)
 					FullModelSwitchOrJustCosmetics(networkID, skinTable[offset], CHARFOLDER, source,
 						Players[networkID].faction)
 				end
@@ -204,8 +213,9 @@ RegisterCommand("gwchangeskin", function(source, args)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~" .. name .. " hat keine Verkleidungen!")
 	end
-end)
+end, false)
 
+---Belebt einen Charakter wieder (WIP)
 RegisterCommand("gwrevievesingle", function(source, args)
 	if (args[1] ~= nil) then
 		local exists, char = CheckIfCharacterExistsByName(args[1])
@@ -217,40 +227,9 @@ RegisterCommand("gwrevievesingle", function(source, args)
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
 	end
-end)
+end, false)
 
-GetCurrentSkinIndex = function(tabl, name, skin)
-	if skin == name then
-		return -1
-	end
-	for index, value in ipairs(tabl[name]) do
-		if value == skin then
-			return index
-		end
-	end
-end
-
-FullModelSwitchOrJustCosmetics = function(networkID, skin, folder, source, faction)
-	local pedHandle = NetworkGetEntityFromNetworkId(networkID)
-	local hash = GetEntityModel(pedHandle)
-	local pedJson = Looker(skin, folder)
-	--print(skin)
-	local newModelHash = pedJson.OutfitPedData.ModelHash
-	newModelHash = tonumber(newModelHash)
-	if hash == newModelHash then
-		--JustCosmetics
-		TriggerEvent("SEv_GiveCharacterSkinAndFaction", PLAYER_VARIANT, skin, true, faction, networkID)
-		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Deine neue Verkleidung: " .. skin)
-	else
-		--FullModelSwitch
-		local vector4 = {}
-		vector4["coords"] = GetEntityCoords(pedHandle)
-		vector4["heading"] = GetEntityHeading(pedHandle)
-		TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, skin, true, vector4, faction)
-		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Deine neue Verkleidung: " .. skin)
-	end
-end
-
+---Spawnt alle Kuss Kult Charaktere in einem großen Kreis um den Spieler herum für den Jahresabschluss
 RegisterCommand("gwjahresabschluss", function(source, args)
 	local variant = NEUTRAL_VARIANT
 	local hasWeapon = true
@@ -262,19 +241,20 @@ RegisterCommand("gwjahresabschluss", function(source, args)
 		variant = GetVariantFromInput(args[1])
 	end
 
-	print("Alle Namen sind fertig")
-
 	TriggerClientEvent("CEv_SpawnMultipleCharacters", source, Group, variant, hasWeapon, vector4, factionName)
-end)
+end, false)
 
+---Spawnt einen zufälligen Kuss Kult Charakter
 RegisterCommand("gwrandomped", function(source)
 	BecomeRandomKussKultCharacter(source)
-end)
+end, false)
 
+---Spawnt ein zufälliges Kuss Kult Fahrzeug
 RegisterCommand("gwrandomcar", function(source)
 	SpawnRandomKussKultVehicle(source)
-end)
+end, false)
 
+---Bereitet eine Runde Kuss Kult Knockout vor
 RegisterCommand("gwkusskultknockout", function(source)
 	ExecuteCommand("gwdropallcars", source)
 	local playerServerID = GetPlayers()
@@ -284,8 +264,9 @@ RegisterCommand("gwkusskultknockout", function(source)
 		SpawnRandomKussKultVehicle(serverID)
 		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
 	end
-end)
+end, false)
 
+---Schaltet bei jedem Spieler die Unbesiegbarkeit um
 RegisterCommand("gwtoggleeveryinvincibility", function(source)
 	for _, serverID in ipairs(GetPlayers()) do
 		TriggerClientEvent("CEv_SetClientOption", serverID, "unbesiegbar")
@@ -298,39 +279,76 @@ RegisterCommand("gwtoggleeveryinvincibility", function(source)
 			Citizen.Wait(NETWORK_ID_SYNC_DELAY)
 		end
 	end
-end)
+end, false)
 
-BecomeRandomKussKultCharacter = function(source)
-	local randomKey = GetRandomKeyOfTable(TableOfAllCharactersNumbered)
-	local characterName = TableOfAllCharacters[randomKey]
-	TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, characterName, true, nil, characterName)
-end
-
-SpawnRandomKussKultVehicle = function(source)
-	local randomKey = GetRandomKeyOfTable(TableOfAllVehiclesNumbered)
-	local vehicleName = TableOfAllVehicles[randomKey]
-	local networkIDDriver = GetNetworkIDPlayerFromSource(source)
-	TriggerClientEvent("CEv_SpawnVehicle", source, vehicleName, networkIDDriver)
-end
-
-GetRandomKeyOfTable = function(tabelle)
-	return tabelle[math.random(1, #tabelle)]
-end
-
+---Macht alle Spieler untereinander zu Freunden
 RegisterCommand("gwfreunde", function()
 	TriggerClientEvent("CEv_ChangePlayerToPlayerRelationship", -1, 1, FactionLeaders)
 	TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Alle Spieler sind von nun an Freunde!")
-end)
+end, false)
 
+---Macht alle Spieler untereinander zu Feinden
 RegisterCommand("gwfeinde", function()
 	TriggerClientEvent("CEv_ChangePlayerToPlayerRelationship", -1, 5, FactionLeaders)
 	TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Alle Spieler sind von nun an Feinde!")
-end)
+end, false)
 
+---Startet bei allen Spielern einen Countdown
 RegisterCommand("gwcountdown", function(soure, args)
 	TriggerClientEvent("CEv_ShowCountdown", -1, args[1] or 300000)
 end, false)
 
+---Beendet bei allen Spielern einen aktuellen Countdown
 RegisterCommand("gwcancelcountdown", function()
 	TriggerClientEvent("CEv_CancelCountdown", -1)
+end, false)
+
+---Speichert alle aktiven Charaktere und Fahrzeuge mit ihren Koordinaten in einem Diorama-File ab
+RegisterCommand("gwsavediorama", function(source, args)
+	if args[1] ~= nil then
+		local characters = {}
+		local vehicles = {}
+		for networkid, character in pairs(Characters) do
+			local handle = NetworkGetEntityFromNetworkId(networkid)
+			local vector4 = { coords = GetEntityCoords(handle), heading = GetEntityHeading(handle) - 180.0 }
+			local entity = { name = character.skin, faction = character.faction, vector4 = vector4, weapon = true }
+			table.insert(characters, entity)
+		end
+		for networkid, vehicle in pairs(Vehicles) do
+			local handle = NetworkGetEntityFromNetworkId(networkid)
+			local vector4 = { coords = GetEntityCoords(handle), heading = GetEntityHeading(handle) }
+			local entity = { name = vehicle.skin, vector4 = vector4 }
+			table.insert(vehicles, entity)
+		end
+		local session = { characters = characters, vehicles = vehicles }
+		SaveResourceFile(GetCurrentResourceName(), "dioramas/" .. args[1] .. ".json", json.encode(session), -1)
+		Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+		TableOfAllDioramas = ListAllEntriesInFolder("dioramas")
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama " .. args[1] .. " wurde gespeichert")
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama wurde nicht gespeichert")
+	end
+end, false)
+
+---Plaziert alle Charaktere und Fahrzeuge eines Diorama-Files in der Spielwelt
+RegisterCommand("gwplacediorama", function(source, args)
+	if args[1] ~= nil then
+		local diorama = Looker(args[1], "dioramas")
+		if diorama ~= nil then
+			local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession = ExtractTablesOfDiorama(diorama)
+			if args[2] ~= nil then
+				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup, GetVariantFromInput(args[2]),
+				weaponPossession,
+				charactervectors, faction)
+			else
+				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup, NEUTRAL_VARIANT,
+				weaponPossession,
+				charactervectors, faction)
+			end
+			TriggerClientEvent("CEv_SpawnMultipleVehicles", source, vehiclegroup, vehiclevectors)
+			TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama " .. args[1] .. " erfolgreich platziert")
+		else
+			TriggerClientEvent("CEv_ShowNotificationEvent", source, args[1] .. " ist kein Diorama!")
+		end
+	end
 end, false)

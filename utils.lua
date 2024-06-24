@@ -201,17 +201,10 @@ end
 ---@param duration integer Dauer in Millisekunden
 function ShowTimeMessage(duration)
     local endTime = GetGameTimer() + duration
-
     while GetGameTimer() < endTime and DoCountDown do
         local remainingTime = endTime - GetGameTimer()
-        --BeginTextCommandDisplayText("STRING")
         BeginTextCommandPrint("STRING")
-
-        -- Füge die Zeitkomponente hinzu
-        AddTextComponentSubstringTime(remainingTime, 6) -- '6' steht für 'HH:MM:SS'
-
-        -- Ende die Textkomponente und zeige die Nachricht an
-        --EndTextCommandDisplayText(0.5, 0.5)  -- Positioniere den Text in der Mitte des Bildschirms
+        AddTextComponentSubstringTime(remainingTime, 6)
         EndTextCommandPrint(1000, true)
         Citizen.Wait(1000)
     end
@@ -228,6 +221,9 @@ end
 
 ---SERVER---
 
+---Prüft, ob eine Texteingabe dem Namen eines Kuss Kult Charakters entspricht
+---@param input string
+---@return boolean
 IsKussKultCharacter = function(input)
     input = string.lower(input)
     if TableOfAllCharactersLower[input] ~= nil then
@@ -237,6 +233,9 @@ IsKussKultCharacter = function(input)
     end
 end
 
+---Prüft, ob eine Texteingabe dem Namen eines Kuss Kult Fahrzeuges entspricht
+---@param input string
+---@return boolean
 IsKussKultVehicle = function(input)
     input = string.lower(input)
     if TableOfAllVehiclesLower[input] ~= nil then
@@ -246,15 +245,24 @@ IsKussKultVehicle = function(input)
     end
 end
 
+---Gibt einem die Fraktion des Spieleres anhand der Server-ID
+---@param source integer
+---@return string faction
 GetPlayerFactionFromSource = function(source)
     local networkID = GetNetworkIDPlayerFromSource(source)
     return Players[networkID].faction
 end
 
+---Gibt einem die Network-ID eines Spielers anhand der Server-ID
+---@param source integer
+---@return integer networkID
 GetNetworkIDPlayerFromSource = function(source)
     return NetworkGetNetworkIdFromEntity(GetPlayerPed(source))
 end
 
+---Erstellt einen Table, wo die Values des Eingabetables nun die Schlüssel für die Key-Values ist
+---@param toBeIndexTable table
+---@return table indexedTable
 CreateIndexTable = function(toBeIndexTable)
     local index = {}
     for k, v in pairs(toBeIndexTable) do
@@ -263,6 +271,9 @@ CreateIndexTable = function(toBeIndexTable)
     return index
 end
 
+---Erstellt einen Table mit Nummerierung als Keys. Achtet auf BlacklistedNames Einträge
+---@param toBeNumberedTable table
+---@return table numberedTable
 CreateNumberedTable = function(toBeNumberedTable)
     local numbered = {}
     for k, v in pairs(toBeNumberedTable) do
@@ -273,16 +284,21 @@ CreateNumberedTable = function(toBeNumberedTable)
     return numbered
 end
 
+---Gibt einem die Standschreibweise eines Kuss Kult Namens
+---@param name string
+---@param usedTableLower table
+---@param usedTable table
+---@param usedTableIndex table
+---@return string formattedString
 GetStandardSpellingOfName = function(name, usedTableLower, usedTable, usedTableIndex)
     local tempName = string.lower(name)
-
     local index = usedTableIndex[usedTableLower[tempName]]
-    --print("usedTableLower: " .. usedTableLower[tempName])
-    --print("usedTableIndex: " .. index)
-    --print("usedTable: " .. usedTable[index])
     return usedTable[index]
 end
 
+---Gibt einem zu einem String Input die entsprechende Variant Nummer
+---@param variantInput string
+---@return integer variant
 GetVariantFromInput = function(variantInput)
     if (variantInput == "buddy") then
         return FRIENDLY_VARIANT
@@ -293,16 +309,34 @@ GetVariantFromInput = function(variantInput)
     end
 end
 
+---Gibt zur entsprechenden Variant Number den passenden String zurück
+---@param variant integer
+---@return string variantString
+VariantNumberToString = function (variant)
+    if variant == PLAYER_VARIANT then
+        return "player"
+    elseif variant == VEHICLE_VARIANT then
+        return "vehicle"
+    elseif variant == NEUTRAL_VARIANT then
+        return "neutral"
+    elseif variant == FRIENDLY_VARIANT then
+        return "buddy"
+    elseif variant == AGGRESSIVE_VARIANT then
+        return "gegner"
+    end
+end
+
+---Gibt einem eine Liste von allen Charakternamen (Kostüme nicht mitaufgeführt)
+---@return table allCharacterNames
 GetAllCharacterNames = function()
     local charactersTable = {}
     for characterKey, _ in pairs(TableOfAllCharacterSkins) do
         table.insert(charactersTable, characterKey)
-        print(characterKey)
-        --Citizen.Wait(10)
     end
     return charactersTable
 end
 
+---Bildet die Spieler Gruppe neu anhand der aktiven Spieler
 PlayersGroupRemaking = function()
     local tempPlayers = {}
     local playerServerID = GetPlayers()
@@ -314,4 +348,33 @@ PlayersGroupRemaking = function()
     end
     Players = nil
     Players = tempPlayers
+end
+
+---Gibt einen zufälligen Eintrag des Tables zurück
+---@param tabelle table
+---@return any randomValue
+GetRandomKeyOfTable = function(tabelle)
+	return tabelle[math.random(1, #tabelle)]
+end
+
+---Gibt einem dem Index des Kostümes zu einem Kuss Kult Entity
+---@param tabl table
+---@param name string
+---@param skin string
+---@return integer
+GetCurrentSkinIndex = function(tabl, name, skin)
+	if skin == name then
+		return -1
+	end
+	for index, value in ipairs(tabl[name]) do
+		if value == skin then
+			return index
+		end
+	end
+end
+
+---Alle Charaktere werden sofort zum Stillstand gebracht
+---@param source integer
+StopAllCharacters = function(source)
+	TriggerClientEvent("CEv_StopAllCharacters", source, Characters)
 end
