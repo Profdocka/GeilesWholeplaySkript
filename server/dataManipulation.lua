@@ -206,6 +206,17 @@ DropMultipleVehicles = function(vehicleGroup)
     TriggerClientEvent("CEv_DropMultipleEntitys", -1, VEHICLE_VARIANT, vehicleGroup)
 end
 
+DropCharacterThroughFaction = function (factionName)
+    local faction = FactionsAndMembers[factionName]
+    local filteredFaction = {}
+    for _, networkid in pairs(faction) do
+        if Players[networkid] == nil then
+            filteredFaction[networkid] = networkid
+        end
+    end
+    DropMultipleCharacters(filteredFaction)
+end
+
 ---Löscht alle aktiven Charaktere
 DropAllCharacters = function()
     local tempCharacters = Characters
@@ -396,4 +407,126 @@ FullModelSwitchOrJustCosmetics = function(networkID, skin, folder, source, facti
         TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, skin, true, vector4, faction)
         TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Deine neue Verkleidung: " .. skin)
     end
+end
+
+---Nimmt die Koordinaten eines Dioramas und spawnt an diesen zufällige NPCs
+---@param source integer
+---@param dioramaName string
+---@param factionName string
+SpawnRandomGroupDiorama = function(source, dioramaName, factionName)
+	local diorama = Looker(dioramaName, "dioramas")
+	if diorama ~= nil then
+		local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
+			ExtractTablesOfDiorama(diorama)
+		local randomGroup = {}
+		local index = 1
+		for _, _ in pairs(charactervectors) do
+			local randomName = GetRandomKeyOfTable(TableOfAllCharacters)
+			randomGroup[index] = randomName
+			faction[randomName] = factionName
+			index = index + 1
+		end
+		TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, randomGroup, variant, true, charactervectors,
+			faction)
+	end
+end
+
+---Spawnt an den Koordinaten des Dioramas eine Kuss Kult Fraktion
+---@param source integer
+---@param dioramaName string
+---@param factionName string
+SpawnFactionGroupDiorama = function(source, dioramaName, factionName)
+	local diorama = Looker(dioramaName, "dioramas")
+	if diorama ~= nil then
+		local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
+			ExtractTablesOfDiorama(diorama)
+		local FactionGroup = AllFactions[factionName]
+		local finalGroup = {}
+		local index = 1
+		for _, _ in pairs(charactervectors) do
+			if FactionGroup[index] then
+				local characterName = FactionGroup[index]
+				finalGroup[index] = characterName
+				faction[characterName] = factionName
+				index = index + 1
+			else
+				break
+			end
+		end
+		TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, finalGroup, variant, true, charactervectors,
+			faction)
+	end
+end
+
+---Startet eine Runde Twouble in Kuss Kult. Weist allen Spielern die Rollen zu, informiert diese, gibt ihnen die entsprechenden Waffen und richtet die Handler ein
+---@param terroristCount integer
+StartTwoubleInKussKult = function(terroristCount)
+	RunningKussKultGame = KUSS_KULT_GAMES.TWOUBLE_IN_KUSS_KULT
+	local onlinePlayers = GetPlayers()
+	local playercount = #onlinePlayers
+	local terrorists = {}
+	local dectectiveID
+	local playersWithoutDetective
+	local innocents = {}
+	dectectiveID = GetRandomKeyOfTable(onlinePlayers)
+	playersWithoutDetective = RenumberTable(ExcludeEntryOfTable(onlinePlayers, dectectiveID))
+	for i = 1, terroristCount, 1 do
+		terrorists[i] = GetRandomKeyOfTable(playersWithoutDetective)
+		playersWithoutDetective = RenumberTable(ExcludeEntryOfTable(playersWithoutDetective, terrorists[i]))
+	end
+	innocents = playersWithoutDetective
+	for _, serverid in pairs(terrorists) do
+		TriggerClientEvent("CEv_EquipLoadout", serverid, "terrorist", true)
+		TriggerClientEvent("CEv_EquipLoadout", serverid, "innocent", false)
+		TriggerClientEvent("CEv_ShowNotificationEvent", serverid, "~r~Du bist Widerkussler")
+	end
+	if dectectiveID then
+		TriggerClientEvent("CEv_ShowNotificationEvent", dectectiveID, "~b~Du bist Kussleiter")
+		TriggerClientEvent("CEv_EquipLoadout", dectectiveID, "detective", true)
+		TriggerClientEvent("CEv_EquipLoadout", dectectiveID, "innocent", false)	
+	end
+	for _, serverid in pairs(innocents) do
+		TriggerClientEvent("CEv_EquipLoadout", serverid, "innocent", true)
+		TriggerClientEvent("CEv_ShowNotificationEvent", serverid, "~g~Du bist Kuss Kultler")
+	end
+	local actors = { dectective = dectectiveID, terrorists = terrorists, innocents = innocents }
+	TwoubleManager = nil
+	local twoubleCallback = function(source)
+		local isTerrorist = function(id)
+			for key, terrorist in pairs(terrorists) do
+				if tonumber(terrorist) == (id) then
+					terrorists[key] = nil
+					RenumberTable(terrorists)
+					return true
+				end
+			end
+			return false
+		end
+		if isTerrorist(source) then
+			if #terrorists == 0 then
+				TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~g~Die Kuss Kultler haben gewonnen")
+				TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
+				RemoveEventHandler(TwoubleManager)
+			end
+		else
+			if tonumber(source) == tonumber(dectectiveID) then
+				dectectiveID = nil
+			else
+				for key, innocent in pairs(innocents) do
+					if tonumber(innocent) == tonumber(source) then
+						innocents[key] = nil
+					end
+				end
+			end
+			if dectectiveID == nil and #innocents == 0 then
+				TriggerClientEvent("CEv_ShowNotificationEvent", -1,"~r~Der Kuss Kult wurde vernichtet")
+				TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
+				RemoveEventHandler(TwoubleManager)
+			end
+		end
+	end
+	TwoubleManager = AddEventHandler("SEv_TwoubleDeathHandler", function(source)
+		twoubleCallback(source)
+	end)
+	TriggerLatentClientEvent("CEv_SetUpTwoubleHandler", -1, BPS, actors)
 end

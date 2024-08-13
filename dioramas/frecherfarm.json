@@ -1,0 +1,93 @@
+{
+    "characters": [
+        {
+            "faction": "frecher",
+            "name": "JoesephFrecher",
+            "vector4": {
+                "coords": {
+                    "x": 2456.94067382813,
+                    "y": 4972.49658203125,
+                    "z": 51.5552978515625
+                },
+                "heading": 58.1102294921875
+            },
+            "weapon": true
+        },
+        {
+            "faction": "frecher",
+            "name": "BetziFrecher",
+            "vector4": {
+                "coords": {
+                    "x": 2378.0703125,
+                    "y": 5053.10791015625,
+                    "z": 46.4329833984375
+                },
+                "heading": 77.9527587890625
+            },
+            "weapon": true
+        },
+        {
+            "faction": "frecher",
+            "name": "FredellineFrecher",
+            "vector4": {
+                "coords": {
+                    "x": 2443.04174804688,
+                    "y": 4974.94921875,
+                    "z": 46.8037109375
+                },
+                "heading": 128.976379394531
+            },
+            "weapon": true
+        },
+        {
+            "faction": "frecher",
+            "name": "MaryAnnFrecher",
+            "vector4": {
+                "coords": {
+                    "x": 2456.228515625,
+                    "y": 4972.193359375,
+                    "z": 51.5552978515625
+                },
+                "heading": 55.2755889892578
+            },
+            "weapon": true
+        },
+        {
+            "faction": "frecher",
+            "name": "FredFrecher",
+            "vector4": {
+                "coords": {
+                    "x": 2444.0703125,
+                    "y": 4975.4638671875,
+                    "z": 46.786865234375
+                },
+                "heading": -72.2834625244141
+            },
+            "weapon": true
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "FrechersBobcat",
+            "vector4": {
+                "coords": {
+                    "x": 2484.51440429688,
+                    "y": 4957.96484375,
+                    "z": 44.6468505859375
+                },
+                "heading": 135.122375488281
+            }
+        },
+        {
+            "name": "FrechersFieldmaster",
+            "vector4": {
+                "coords": {
+                    "x": 2414.4130859375,
+                    "y": 4991.208984375,
+                    "z": 46.3319091796875
+                },
+                "heading": 132.45588684082
+            }
+        }
+    ]
+}

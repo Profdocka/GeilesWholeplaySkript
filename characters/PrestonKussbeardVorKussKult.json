@@ -45,7 +45,7 @@
       "ScenarioActive": "false",
       "AnimActive": "false",
       "Weapon": "weapon_gadgetpistol",
-      "WalkStyle": null,
+      "WalkStyle": "move_m@casual@d",
       "Voice": null
     },
     "OpacityLevel": "255",

@@ -1,0 +1,172 @@
+{
+    "characters": [
+        {
+            "faction": "polizei",
+            "name": "MarionDunby",
+            "vector4": {
+                "coords": {
+                    "x": 462.316497802734,
+                    "y": -1007.74945068359,
+                    "z": 35.90185546875
+                },
+                "heading": -174.33070898056
+            },
+            "weapon": true
+        },
+        {
+            "faction": "polizei",
+            "name": "CorneliusCopperfield",
+            "vector4": {
+                "coords": {
+                    "x": 431.459350585938,
+                    "y": -998.202209472656,
+                    "z": 35.7332763671875
+                },
+                "heading": -86.4566955566406
+            },
+            "weapon": true
+        },
+        {
+            "faction": "polizei",
+            "name": "FloydFlemming",
+            "vector4": {
+                "coords": {
+                    "x": 459.9296875,
+                    "y": -989.142822265625,
+                    "z": 30.6783447265625
+                },
+                "heading": 94.9606323242188
+            },
+            "weapon": true
+        },
+        {
+            "faction": "polizei",
+            "name": "HudsonHudson",
+            "vector4": {
+                "coords": {
+                    "x": 448.470336914063,
+                    "y": -973.186828613281,
+                    "z": 30.6783447265625
+                },
+                "heading": -9.9212646484375
+            },
+            "weapon": true
+        },
+        {
+            "faction": "polizei",
+            "name": "MelanieParkers",
+            "vector4": {
+                "coords": {
+                    "x": 440.887908935547,
+                    "y": -978.830749511719,
+                    "z": 30.6783447265625
+                },
+                "heading": 4.25196838378906
+            },
+            "weapon": true
+        },
+        {
+            "faction": "polizei",
+            "name": "PatPaddington",
+            "vector4": {
+                "coords": {
+                    "x": 459.573638916016,
+                    "y": -989.828552246094,
+                    "z": 24.89892578125
+                },
+                "heading": 126.141723632813
+            },
+            "weapon": true
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "CopperfieldsStirling",
+            "vector4": {
+                "coords": {
+                    "x": 438.830780029297,
+                    "y": -1026.48791503906,
+                    "z": 27.965576171875
+                },
+                "heading": 358.300476074219
+            }
+        },
+        {
+            "name": "DunbysCruiser",
+            "vector4": {
+                "coords": {
+                    "x": 407.920867919922,
+                    "y": -979.97802734375,
+                    "z": 28.858642578125
+                },
+                "heading": 229.631820678711
+            }
+        },
+        {
+            "name": "HudsonsCruiser",
+            "vector4": {
+                "coords": {
+                    "x": 407.93408203125,
+                    "y": -984.14501953125,
+                    "z": 28.87548828125
+                },
+                "heading": 228.066741943359
+            }
+        },
+        {
+            "name": "HudsonsWarrener",
+            "vector4": {
+                "coords": {
+                    "x": 463.529663085938,
+                    "y": -1019.32745361328,
+                    "z": 27.2747802734375
+                },
+                "heading": 90.5578308105469
+            }
+        },
+        {
+            "name": "ParkersSurge",
+            "vector4": {
+                "coords": {
+                    "x": 463.068145751953,
+                    "y": -1015.22637939453,
+                    "z": 27.763427734375
+                },
+                "heading": 88.9970397949219
+            }
+        },
+        {
+            "name": "PaddingtonsRiot",
+            "vector4": {
+                "coords": {
+                    "x": 476.215393066406,
+                    "y": -1022.16265869141,
+                    "z": 27.7127685546875
+                },
+                "heading": 270.879333496094
+            }
+        },
+        {
+            "name": "ParkersPolicebike",
+            "vector4": {
+                "coords": {
+                    "x": 408.672515869141,
+                    "y": -1004.50549316406,
+                    "z": 28.7406005859375
+                },
+                "heading": 299.072387695313
+            }
+        },
+        {
+            "name": "FlemmingsMaverick",
+            "vector4": {
+                "coords": {
+                    "x": 449.076934814453,
+                    "y": -981.468139648438,
+                    "z": 44.073974609375
+                },
+                "heading": 87.8925933837891
+            }
+        }
+    ]
+}

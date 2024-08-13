@@ -1,0 +1,43 @@
+{
+    "characters": [
+        {
+            "faction": "tvtotalegal",
+            "name": "RainerRechtsruck",
+            "vector4": {
+                "coords": {
+                    "x": -1050.2373046875,
+                    "y": -240.316482543945,
+                    "z": 44.006591796875
+                },
+                "heading": -131.811027526855
+            },
+            "weapon": true
+        },
+        {
+            "faction": "tvtotalegal",
+            "name": "WolfgangWürgenknecht",
+            "vector4": {
+                "coords": {
+                    "x": -1050.44836425781,
+                    "y": -242.531860351563,
+                    "z": 44.006591796875
+                },
+                "heading": -75.1181106567383
+            },
+            "weapon": true
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "TVTotalEgalVan",
+            "vector4": {
+                "coords": {
+                    "x": -1099.70104980469,
+                    "y": -263.024169921875,
+                    "z": 37.6710205078125
+                },
+                "heading": 170.696105957031
+            }
+        }
+    ]
+}

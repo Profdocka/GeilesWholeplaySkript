@@ -18,6 +18,10 @@ CHARACTER_SPAWN_OFFSET_Y = 3.0
 PlayerToPlayerRelationship = 1
 OwnFaction = ""
 DoCountDown = true
+LastWeaponsAndAmmoOfPlayer = {}
+LastHealthAndArmorOfPlayer = {}
+
+ActiveKussKultGamesHandler = {}
 
 KussBildDic = CreateRuntimeTxd('CHAR_KUSS')
 KussBild = CreateRuntimeTextureFromImage(KussBildDic, 'CHAR_KUSS', "kusskultlogo.png")
@@ -496,6 +500,47 @@ end)
 ---Event um den aktuellen Countdown zu beenden
 RegisterNetEvent("CEv_CancelCountdown", function ()
     CancelCountdown()
+end)
+
+---Event um einen Loadout beim Spieler auszurüsten
+---@param loadoutname string
+---@param removeWeapons boolean
+RegisterNetEvent("CEv_EquipLoadout", function (loadoutname, removeWeapons)
+    EquipWeaponLoadout(loadoutname, removeWeapons)
+end)
+
+---Event das geworfen wird, wenn ein Kuss Kult Charakter mit den Cosmetics fertig ist
+RegisterNetEvent("CEv_SetKussKultCosmeticsFinished")
+
+---Event um die Event-Handler für Twouble in Kuss Kult anzubringen
+---@param actors table serverIds der Spieler sortiert nach Rollen
+RegisterNetEvent("CEv_SetUpTwoubleHandler", function (actors)
+    IsInvincible = false
+    local playerRole = GetTwoubleRoleOfPlayer(actors)
+    ActiveKussKultGamesHandler.TwoubleHandlerDeath = AddEventHandler("baseevents:onPlayerDied", function ()
+        TriggerServerEvent("SEv_TwoubleDeathHandler", GetPlayerServerId(PlayerId()))
+    end)
+    ActiveKussKultGamesHandler.TwoubleLoadOutHandler = AddEventHandler("CEv_SetKussKultCosmeticsFinished", function (pedHandle)
+        if IsPedAPlayer(pedHandle) and GetPlayerPed(-1) == pedHandle then
+            SetEntityHealth(GetPlayerPed(-1), LastHealthAndArmorOfPlayer.health)
+            SetPedArmour(GetPlayerPed(-1), LastHealthAndArmorOfPlayer.armor)
+            RemoveAllPedWeapons(GetPlayerPed(-1), false)
+            for _, weapon in pairs(LastWeaponsAndAmmoOfPlayer) do
+                GiveDelayedWeaponToPed(pedHandle, weapon.weapon, weapon.ammo, false)
+                Citizen.Wait(5)
+            end
+        end
+    end)
+    SetPlayerInvincibleKeepRagdollEnabled(PlayerId(), IsInvincible)
+end)
+
+---Event um alle Client-Event-Handler eines Kuss Kult Spiels zu entfernen
+RegisterNetEvent("CEv_RemoveKussKultGamesHandler", function ()
+    for _, handler in pairs(ActiveKussKultGamesHandler) do
+        RemoveEventHandler(handler)
+    end
+    IsInvincible = true
+    SetPlayerInvincibleKeepRagdollEnabled(PlayerId(), IsInvincible)
 end)
 
 ---Sendet alle statischen Informationen an die UI

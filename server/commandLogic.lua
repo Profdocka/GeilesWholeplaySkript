@@ -1,5 +1,6 @@
 CHARACTER_SPAWN_OFFSET_Y = 3.0
 
+
 ---Speichert den Charakter des Spielers als Datei ab (WIP)
 RegisterCommand("gwsaveentity", function(source)
 	local model = GetEntityModel(GetPlayerPed(source))
@@ -335,20 +336,55 @@ RegisterCommand("gwplacediorama", function(source, args)
 	if args[1] ~= nil then
 		local diorama = Looker(args[1], "dioramas")
 		if diorama ~= nil then
-			local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession = ExtractTablesOfDiorama(diorama)
+			local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
+				ExtractTablesOfDiorama(diorama)
 			if args[2] ~= nil then
-				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup, GetVariantFromInput(args[2]),
-				weaponPossession,
-				charactervectors, faction)
+				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup,
+					GetVariantFromInput(args[2]),
+					weaponPossession,
+					charactervectors, faction)
 			else
 				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup, NEUTRAL_VARIANT,
-				weaponPossession,
-				charactervectors, faction)
+					weaponPossession,
+					charactervectors, faction)
 			end
 			TriggerClientEvent("CEv_SpawnMultipleVehicles", source, vehiclegroup, vehiclevectors)
 			TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama " .. args[1] .. " erfolgreich platziert")
 		else
 			TriggerClientEvent("CEv_ShowNotificationEvent", source, args[1] .. " ist kein Diorama!")
 		end
+	end
+end, false)
+
+---Startet eine Runde Twouble in Kuss Kult
+RegisterCommand("gwtwoubleinkusskult", function(source)
+	local playercount = #GetPlayers()
+	local terroristCount = 1
+	if playercount > 1 then
+		if terroristCount < playercount then
+			StartTwoubleInKussKult(terroristCount)
+		else
+			TriggerClientEvent("CEv_ShowNotificationEvent", source, "Zu viele Widerkussler angegeben!")
+		end
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source,
+			"Für Twouble In Kuss Kult sind mindestens 2 Spieler notwendig")
+	end
+end, false)
+
+---Stoppt das aktive Kuss Kult Spiel und entfernt die Event-Handler davon
+RegisterCommand("gwstopkusskultgame", function()
+	StopCallback = {
+		[KUSS_KULT_GAMES.TWOUBLE_IN_KUSS_KULT] = function()
+			TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~g~Twouble in Kuss Kult wurde vorzeitig beendet")
+			TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
+			RemoveEventHandler(TwoubleManager)
+		end
+	}
+	if RunningKussKultGame then
+		StopCallback[RunningKussKultGame]()
+		RunningKussKultGame = nil
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~r~Kein aktives Spiel gefunden")
 	end
 end, false)

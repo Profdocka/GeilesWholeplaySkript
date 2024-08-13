@@ -13,11 +13,12 @@ const LOCATION_VARIANT = 5
 const DIORAMA_VARIANT = 6
 
 window.addEventListener("load", (e) => {
-    document.getElementById("gw-menu-screen").hidden = true
+    document.getElementById("gw-menu-screen").hidden = false
     window.addEventListener("message", async e => {
         switch (e.data.type) {
             case 'GW_InitialInfos':
                 await registerSkinsForCharAndVeh(e.data)
+                console.log("Die statischen Eingaben sind fertig")
                 break;
             case 'GW_OpenMenu':
                 if (isGoodToGo) {
@@ -108,6 +109,7 @@ const openGWMenu = async (gwData) => {
         if (isMenuDataFunctional()) {
             registerActiveData(gwData)
             isMenuOpen = !isMenuOpen
+            console.log("Starte Entities!")
             addEveryEntity();
         }
         else {
@@ -146,6 +148,7 @@ const addEveryEntity = () => {
     memory.dioramas.forEach(diorama => {
         addBlock(domElement, diorama, DIORAMA_VARIANT, "UI_Diorama")
     })
+    console.log("Bin fertig mit den Entities!")
     document.getElementById("gw-menu-screen").style.display = "flex";
 }
 
@@ -398,6 +401,7 @@ function isMenuDataFunctional() {
     if (memory.characters != null && memory.myVehicles != null && isGoodToGo) {
         return true
     } else if (isGoodToGo == false) {
+        console.log("GoodToGo is false")
         return false
     } else {
         isGoodToGo = false;

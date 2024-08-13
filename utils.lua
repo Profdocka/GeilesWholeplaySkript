@@ -1,6 +1,33 @@
 ---Namen die für die zufällige Charakterwahl ausgeschlossen sind
 BlacklistedNames = { Projekt45Dave = "Projekt45Dave", BrillanterBuckelwal = "BrillanterBuckelwal" }
 
+---Vordefinierte Waffen-Loadouts für den Spieler
+WeaponLoadouts = {
+    innocent = {
+        "weapon_pistol",
+        "weapon_tacticalrifle",
+        "weapon_microsmg",
+        "weapon_pumpshotgun",
+        "weapon_marksmanrifle",
+        "weapon_snowball",
+        "weapon_crowbar"
+    },
+    terrorist = {
+        "weapon_marksmanpistol",
+        "weapon_doubleaction",
+        "weapon_raypistol",
+        "weapon_stickybomb",
+        "weapon_machete"
+    },
+    detective = {
+        "weapon_revolver",
+        "weapon_gadgetpistol",
+        "weapon_stungun",
+        "weapon_firework",
+        "weapon_dagger"
+    }
+}
+
 ---Ruft das Eingabefeld von GTA mit einem eigenem Titel auf
 ---und gibt dem Spieler die Möglichkeit einen Text einzugeben
 ---@param title string
@@ -219,6 +246,17 @@ function CancelCountdown()
     DoCountDown = true
 end
 
+function GetTwoubleRoleOfPlayer(actors)
+    local playerServerID = GetPlayerServerId(PlayerId())
+    if actors.dectective == playerServerID then
+        return "detective"
+    elseif actors.terrorists[playerServerID] then
+        return "terrorist"
+    else
+        return "innocent"
+    end
+end
+
 ---SERVER---
 
 ---Prüft, ob eine Texteingabe dem Namen eines Kuss Kult Charakters entspricht
@@ -378,3 +416,44 @@ end
 StopAllCharacters = function(source)
 	TriggerClientEvent("CEv_StopAllCharacters", source, Characters)
 end
+
+---Gibt bis auf die Ausnahme eine neue Tabelle zurück mit allen alten Einträgen
+---@param table table
+---@param exceptionTarget any
+---@return table
+ExcludeEntryOfTable = function(table, exceptionTarget)
+	local tempTemble = {}
+	for key, value in pairs(table) do
+		if value ~= exceptionTarget then
+			tempTemble[key] = value
+		end
+	end
+	return tempTemble
+end
+
+---Erstellt einen nummerisch gekeyten Table anhand eines Ursprungstables
+---@param t table
+---@return table
+RenumberTable = function(t)
+	local numberedTable = {}
+	local i = 1
+	for _, value in pairs(t) do
+		numberedTable[i] = value
+		i = i + 1
+	end
+	return numberedTable
+end
+
+---Erzeugt einen Event Handler, der nach seinem Auslösen direkt zerstört wird
+---@param hostElement table
+---@param eventName string
+---@param functionCallback function
+AddSelfDestructingEventHandler = function(hostElement, eventName, functionCallback, data)
+	local handler = function(source)
+		functionCallback(source)
+		RemoveEventHandler(hostElement)
+	end
+	hostElement = AddEventHandler(eventName, handler)
+end
+
+

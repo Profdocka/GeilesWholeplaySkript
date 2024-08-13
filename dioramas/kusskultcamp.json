@@ -1,0 +1,141 @@
+{
+    "characters": [
+        {
+            "faction": "kusskult",
+            "name": "PrestonKussbeard",
+            "vector4": {
+                "coords": {
+                    "x": -1141.97802734375,
+                    "y": 4936.0087890625,
+                    "z": 222.260864257813
+                },
+                "heading": -18.4252014160156
+            },
+            "weapon": true
+        },
+        {
+            "faction": "kusskult",
+            "name": "RhodiKlil",
+            "vector4": {
+                "coords": {
+                    "x": -1143.07250976563,
+                    "y": 4913.72314453125,
+                    "z": 219.885009765625
+                },
+                "heading": -134.645671844482
+            },
+            "weapon": true
+        },
+        {
+            "faction": "kusskult",
+            "name": "EricGuinabonn",
+            "vector4": {
+                "coords": {
+                    "x": -1182.81762695313,
+                    "y": 4923.3759765625,
+                    "z": 222.8505859375
+                },
+                "heading": -92.1259841918945
+            },
+            "weapon": true
+        },
+        {
+            "faction": "kusskult",
+            "name": "WendellPiggets",
+            "vector4": {
+                "coords": {
+                    "x": -1074.052734375,
+                    "y": 4897.23974609375,
+                    "z": 214.223388671875
+                },
+                "heading": -160.157480239868
+            },
+            "weapon": true
+        },
+        {
+            "faction": "kusskult",
+            "name": "UdoWarndt",
+            "vector4": {
+                "coords": {
+                    "x": -1143.9296875,
+                    "y": 4913.51220703125,
+                    "z": 219.918701171875
+                },
+                "heading": 165.826782226563
+            },
+            "weapon": true
+        },
+        {
+            "faction": "kusskult",
+            "name": "DustinAustin",
+            "vector4": {
+                "coords": {
+                    "x": -1139.20874023438,
+                    "y": 4938.25048828125,
+                    "z": 222.260864257813
+                },
+                "heading": -9.9212646484375
+            },
+            "weapon": true
+        },
+        {
+            "faction": "kusskult",
+            "name": "UweStröhbäcker",
+            "vector4": {
+                "coords": {
+                    "x": -1084.0615234375,
+                    "y": 4933.5166015625,
+                    "z": 229.253540039063
+                },
+                "heading": -15.5905456542969
+            },
+            "weapon": true
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "KlilsVoltic",
+            "vector4": {
+                "coords": {
+                    "x": -1101.37585449219,
+                    "y": 4909.4111328125,
+                    "z": 215.605102539063
+                },
+                "heading": 48.2805595397949
+            }
+        },
+        {
+            "name": "Peddobil",
+            "vector4": {
+                "coords": {
+                    "x": -1105.84619140625,
+                    "y": 4946.42626953125,
+                    "z": 218.301147460938
+                },
+                "heading": 340.710784912109
+            }
+        },
+        {
+            "name": "KussbeardsVoodoo",
+            "vector4": {
+                "coords": {
+                    "x": -1125.15161132813,
+                    "y": 4945.37158203125,
+                    "z": 219.413208007813
+                },
+                "heading": 178.169509887695
+            }
+        },
+        {
+            "name": "WarndtsGolf",
+            "vector4": {
+                "coords": {
+                    "x": -1134.14501953125,
+                    "y": 4913.38037109375,
+                    "z": 219.24462890625
+                },
+                "heading": 176.126327514648
+            }
+        }
+    ]
+}

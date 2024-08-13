@@ -41,6 +41,7 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	if pedVoice ~= nil then
 		Voice(pedHandle, pedVoice)
 	end
+	TriggerEvent("CEv_SetKussKultCosmeticsFinished", pedHandle)
 end
 
 ---Körpergruppen des Charakters wie Kopf, Oberteil und Hosen

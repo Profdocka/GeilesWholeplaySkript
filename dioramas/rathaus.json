@@ -1,0 +1,54 @@
+{
+    "characters": [
+        {
+            "faction": "regierung",
+            "name": "WernerWrack",
+            "vector4": {
+                "coords": {
+                    "x": -545.947265625,
+                    "y": -202.483520507813,
+                    "z": 47.4102783203125
+                },
+                "heading": -151.65354347229
+            },
+            "weapon": true
+        },
+        {
+            "faction": "regierung",
+            "name": "PammelaDummigton",
+            "vector4": {
+                "coords": {
+                    "x": -550.681335449219,
+                    "y": -190.153839111328,
+                    "z": 38.210205078125
+                },
+                "heading": 18.4252014160156
+            },
+            "weapon": true
+        }
+    ],
+    "vehicles": [
+        {
+            "name": "WracksStafford",
+            "vector4": {
+                "coords": {
+                    "x": -510.276916503906,
+                    "y": -261.164825439453,
+                    "z": 34.94140625
+                },
+                "heading": 111.893859863281
+            }
+        },
+        {
+            "name": "DummigtonsCoquette",
+            "vector4": {
+                "coords": {
+                    "x": -502.773620605469,
+                    "y": -258.118682861328,
+                    "z": 34.823486328125
+                },
+                "heading": 111.895599365234
+            }
+        }
+    ]
+}

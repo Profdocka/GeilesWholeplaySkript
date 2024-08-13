@@ -92,6 +92,8 @@ Citizen.CreateThread(function()
 			{ name = "name", help = "Name des Diorama" },
 			{ name = "?Gesinnung", help = "Freund oder Feind? [buddy]/[gegner]" },
 		})
+	TriggerEvent("chat:addSuggestion", "/gwtwoubleinkusskult", "Startet eine Runde Twouble in Kuss Kult für alle Spieler", {})
+	TriggerEvent("chat:addSuggestion", "/gwstopkusskultgame", "Stoppt das aktive Kuss Kult Spiel", {})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)

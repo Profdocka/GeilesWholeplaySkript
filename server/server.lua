@@ -9,6 +9,13 @@ AGGRESSIVE_VARIANT = 3
 
 NETWORK_ID_SYNC_DELAY = 1000
 THRESHOLD_SPAWNING = 10
+BPS = 65536
+
+KUSS_KULT_GAMES = {
+	KUSS_KULT_KNOCKOUT = 0,
+	TWOUBLE_IN_KUSS_KULT = 1
+}
+RunningKussKultGame = nil
 
 ---Auflistung von allen Charakteren, Fahrzeugen und Unterteilung nach Skins
 TableOfAllCharacters, TableOfAllCharactersLower = ListAllEntriesInFolder(CHARFOLDER)
@@ -48,7 +55,7 @@ AddEventHandler("onServerResourceStart", function(resourceName)
             RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(serverID), GetPlayerName(serverID),
                 GetPlayerName(serverID))
         end
-        TriggerClientEvent("CEvUI_InitialGWInfos", -1, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions,
+        TriggerLatentClientEvent("CEvUI_InitialGWInfos", -1, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions,
             Owners)
     end
 end)
@@ -70,8 +77,8 @@ RegisterNetEvent("SEv_PlayerSpawned", function(source)
     local networkID = NetworkGetNetworkIdFromEntity(pedHandle)
     RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(source), GetPlayerName(source), GetPlayerName(source))
     OrganizeTableOfFactions()
-    TriggerClientEvent("CEv_ShowNotificationEvent", -1 , "Ein neuer Spieler hat das Spiel betreten. Lade deinen Charakter mit /gwr neu, falls es Probleme gibt")
-    TriggerClientEvent("CEvUI_InitialGWInfos", source, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
+    --TriggerClientEvent("CEv_ShowNotificationEvent", -1 , "Ein neuer Spieler ist beigetreten. Lade deinen Charakter mit /gwr neu, falls es Probleme gibt")
+    TriggerLatentClientEvent("CEvUI_InitialGWInfos", source, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
     BecomeRandomKussKultCharacter(source)
 end)
@@ -132,7 +139,7 @@ RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function(GroupNetwo
     end
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-    TriggerClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, GroupNetwork, hasWeapon, source, variant,
+    TriggerLatentClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, BPS, GroupNetwork, hasWeapon, source, variant,
         FactionsAndMembers, FactionLeaders, Players)
 end)
 
@@ -155,7 +162,7 @@ RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFactionDiorama",
         end
         OrganizeTableOfFactions()
         Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-        TriggerClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, GroupNetwork, hasWeapon, source, variant,
+        TriggerLatentClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, BPS, GroupNetwork, hasWeapon, source, variant,
             FactionsAndMembers, FactionLeaders, Players)
     end)
 
@@ -183,13 +190,13 @@ end)
 
 ---Event um bei einem Client das Geile Wholeplay Skript Menü mit den aktiven Daten zu öffnen
 RegisterNetEvent("SEv_OpenMenu", function(source)
-    TriggerClientEvent("CEvUI_OpenMenu", source, Players, Characters, Vehicles,
+    TriggerLatentClientEvent("CEvUI_OpenMenu", source, BPS, Players, Characters, Vehicles,
         Players[GetNetworkIDPlayerFromSource(source)].name, TableOfAllDioramas)
 end)
 
 ---Event um die aktiven Server Daten erneut an den Client zu schicken
 RegisterNetEvent("SEv_RequestMenuData", function(source)
-    TriggerClientEvent("CEvUI_InitialGWInfos", source, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions, Owners)
+    TriggerLatentClientEvent("CEvUI_InitialGWInfos", source, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions, Owners)
 end)
 
 ---Event um einem Spieler das Fahrzeug seines Kuss Kult Charakters zu spawnen
@@ -275,15 +282,15 @@ RegisterNetEvent("SEv_PlaceDiorama", function (name, source)
 		if diorama ~= nil then
 			local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession = ExtractTablesOfDiorama(diorama)
 			if nil ~= nil then
-				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup, GetVariantFromInput(args[2]),
+				TriggerLatentClientEvent("CEv_SpawnMultipleCharactersDiorama", source, BPS, charactergroup, GetVariantFromInput(args[2]),
 				weaponPossession,
 				charactervectors, faction)
 			else
-				TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, charactergroup, NEUTRAL_VARIANT,
+				TriggerLatentClientEvent("CEv_SpawnMultipleCharactersDiorama", source, BPS, charactergroup, NEUTRAL_VARIANT,
 				weaponPossession,
 				charactervectors, faction)
 			end
-			TriggerClientEvent("CEv_SpawnMultipleVehicles", source, vehiclegroup, vehiclevectors)
+			TriggerLatentClientEvent("CEv_SpawnMultipleVehicles", source, BPS, vehiclegroup, vehiclevectors)
 			TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama " .. name .. " erfolgreich platziert")
 		else
 			TriggerClientEvent("CEv_ShowNotificationEvent", source, name .. " ist kein Diorama!")
@@ -291,3 +298,5 @@ RegisterNetEvent("SEv_PlaceDiorama", function (name, source)
 	end
 
 end)
+
+RegisterNetEvent("SEv_TwoubleDeathHandler")
