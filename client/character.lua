@@ -1,12 +1,12 @@
 ---Sucht anhand von `name` den Kuss Kult Charakter
 ---und spawnt das Charaktermodell in der Spielwelt
---- 
+---
 ---@param variant integer Konstante die für das Charakterverhalten steht
 ---@param name string Name für die entsprechende Charakter Datei
 ---@param hasWeapon boolean Soll die eigene Waffe bekommen?
 ---@param vector4 table Koordinaten X, Y, Z und die Blickrichtung
 ---@return integer pedHandle Ingame-Handle des Peds
-SpawnCharacter = function (variant, name, hasWeapon, vector4)
+SpawnCharacter = function(variant, name, hasWeapon, vector4)
     local characterJson = Looker(name, CHARFOLDER)
 
     local modelHash = characterJson.OutfitPedData.ModelHash
@@ -20,7 +20,7 @@ SpawnCharacter = function (variant, name, hasWeapon, vector4)
     end
 end
 
----Wählt anhand von `variant` aus, ob das Charaktermodell des Spielers geändert wird 
+---Wählt anhand von `variant` aus, ob das Charaktermodell des Spielers geändert wird
 ---oder ein NPC in die Welt gespawnt wird.
 ---@param variant integer
 ---@param modelHash integer
@@ -28,7 +28,7 @@ end
 ---@param hasWeapon boolean
 ---@param vector4 table
 ---@return integer pedHandle
-ChooseCharacterSpawnVariant = function (variant, modelHash, name, hasWeapon, vector4)
+ChooseCharacterSpawnVariant = function(variant, modelHash, name, hasWeapon, vector4)
     if variant == PLAYER_VARIANT then
         return SpawnCharacterAsPlayer(modelHash, name, hasWeapon, vector4)
     elseif variant == NEUTRAL_VARIANT then
@@ -45,15 +45,16 @@ end
 ---@param hasWeapon boolean
 ---@param vector4 table
 ---@return integer pedHandle
-SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
-    LastWeaponsAndAmmoOfPlayer = GetPlayerWeaponsAndAmmo(PlayerId())
-    LastHealthAndArmorOfPlayer = {health = GetEntityHealth(GetPlayerPed(-1)), armor = GetPedArmour(GetPlayerPed(-1))}
+SpawnCharacterAsPlayer = function(modelHash, name, hasWeapon, vector4)
+    LastWeaponsAndAmmoOfPlayer = GetPedWeaponsAndAmmo(GetPlayerPed(-1))
+    LastHealthAndArmorOfPlayer = { health = GetEntityHealth(GetPlayerPed(-1)), armor = GetPedArmour(GetPlayerPed(-1)) }
     local previousPlayerPed = GetPlayerPed(PlayerId())
     local lastVehicle, lastSeat = GetCurrentVehicleAndSeatNumber(previousPlayerPed)
 
     SetPlayerModel(PlayerId(), modelHash)
     SetPlayerHealthRechargeMultiplier(PlayerId(), 1.0)
     SetPlayerHealthRechargeLimit(PlayerId(), 1.0)
+    SetEveryoneIgnorePlayer(PlayerId(), false)
     --SetPlayerWeaponDamageModifier(PlayerId(), 0.1)
     --SetPlayerMeleeWeaponDamageModifier(PlayerId(), 0.1)
     local newPlayerPed = GetPlayerPed(PlayerId())
@@ -69,33 +70,34 @@ SpawnCharacterAsPlayer = function (modelHash, name, hasWeapon, vector4)
     return newPlayerPed
 end
 
----Ein NPC mit dem `modelHash` wird an den gegebenen Koordinaten gespawnt 
+---Ein NPC mit dem `modelHash` wird an den gegebenen Koordinaten gespawnt
 ---@param modelHash integer
 ---@param vector4 table
 ---@return integer pedHandle
-SpawnCharacterAsNPC = function (modelHash, vector4)
-    local pedHandle = CreatePed(26, modelHash, vector4["coords"].x, vector4["coords"].y, vector4["coords"].z, (vector4["heading"] - 180.0), true, true)
-	ApplyCharacterModifiers(pedHandle)
+SpawnCharacterAsNPC = function(modelHash, vector4)
+    local pedHandle = CreatePed(26, modelHash, vector4["coords"].x, vector4["coords"].y, vector4["coords"].z,
+        (vector4["heading"] - 180.0), true, true)
+    ApplyCharacterModifiers(pedHandle, true)
     return pedHandle
 end
 
 ---Eigenschaften und Flags des Charakters werden geändert
 ---@param pedHandle integer
-ApplyCharacterModifiers = function (pedHandle)
+---@param enable boolean
+ApplyCharacterModifiers = function(pedHandle, enable)
     SetRagdollBlockingFlags(pedHandle, 1)
-    SetPedConfigFlag(pedHandle, 294, true)
-    SetPedFleeAttributes(pedHandle, 0, false)
-    SetPedCombatAttributes(pedHandle, 5, true)
-    SetPedCombatAttributes(pedHandle, 17, false)
-    SetPedCombatAttributes(pedHandle, 46, true)
-    SetPedCombatAttributes(pedHandle, 58, true)
+    SetPedConfigFlag(pedHandle, 294, enable)
+    SetPedFleeAttributes(pedHandle, 0, not enable)
+    SetPedCombatAttributes(pedHandle, 5, enable)
+    SetPedCombatAttributes(pedHandle, 17, not enable)
+    SetPedCombatAttributes(pedHandle, 46, enable)
+    SetPedCombatAttributes(pedHandle, 58, enable)
     SetPedFiringPattern(pedHandle, -957453492)
-    SetPedDiesInWater(pedHandle, false)
+    SetPedDiesInWater(pedHandle, not enable)
 end
 
-EquipWeaponLoadout = function (loadoutname, removeWeapons)
+EquipWeaponLoadout = function(loadoutname, removeWeapons)
     if removeWeapons then
-        print("Waffen wurden entfernt")
         RemoveAllPedWeapons(GetPlayerPed(-1), false)
     end
     local loadout = WeaponLoadouts[loadoutname]
@@ -104,7 +106,34 @@ EquipWeaponLoadout = function (loadoutname, removeWeapons)
     end
 end
 
-function GetPlayerWeaponsAndAmmo(playerId)
+---Sucht anhand von `name` den Kuss Kult Charakter
+---und spawnt das Charaktermodell in der Spielwelt
+---
+---@param variant integer Konstante die für das Charakterverhalten steht
+---@param name string Name für die entsprechende Charakter Datei
+---@param hasWeapon boolean Soll die eigene Waffe bekommen?
+---@param vehicle integer
+---@param seat integer
+---@return integer pedHandle Ingame-Handle des Peds
+SpawnCharacterInVehicle = function(variant, name, hasWeapon, vehicle, seat)
+    local characterJson = Looker(name, CHARFOLDER)
+
+    local modelHash = characterJson.OutfitPedData.ModelHash
+    modelHash = tonumber(modelHash)
+
+    if SearchHash(modelHash) then
+        local pedHandle = CreatePedInsideVehicle(vehicle, 26, modelHash, seat, true, true)
+        SetModelAsNoLongerNeeded(modelHash)
+        ApplyCharacterModifiers(pedHandle, true)
+        ShowNotification("Dein gespawnter Charakter: " .. name)
+        return pedHandle
+    end
+end
+
+---Gibt einem eine Liste der Waffen mit der jeweiligen Munitionsanzahl des Charakters
+---@param pedHandle number
+---@return table weaponsAndMunitionsTable {[1] = {weapon = weaponName, ammo = ammoCount}, ...}
+function GetPedWeaponsAndAmmo(pedHandle)
     local weapons = {}
     local weaponList = {
         "weapon_knife",
@@ -217,9 +246,9 @@ function GetPlayerWeaponsAndAmmo(playerId)
     }
     for _, weaponName in ipairs(weaponList) do
         local weaponHash = GetHashKey(weaponName)
-        if HasPedGotWeapon(GetPlayerPed(playerId), weaponHash, false) then
-            local ammoCount = GetAmmoInPedWeapon(GetPlayerPed(playerId), weaponHash)
-            table.insert(weapons, {weapon = weaponName, ammo = ammoCount})
+        if HasPedGotWeapon(pedHandle, weaponHash, false) then
+            local ammoCount = GetAmmoInPedWeapon(pedHandle, weaponHash)
+            table.insert(weapons, { weapon = weaponName, ammo = ammoCount })
         end
     end
     return weapons

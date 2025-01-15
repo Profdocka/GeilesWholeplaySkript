@@ -2,12 +2,31 @@ CHARACTER_SPAWN_OFFSET_Y = 3.0
 
 
 ---Speichert den Charakter des Spielers als Datei ab (WIP)
+--[[
 RegisterCommand("gwsaveentity", function(source)
 	local model = GetEntityModel(GetPlayerPed(source))
 	local netId = GetNetworkIDPlayerFromSource(source)
 	local information = { model = model, name = Players[netId].name, age = 17, coolness = 1000, size = { height = 175, weight = 70 } }
 
 	SaveResourceFile(GetCurrentResourceName(), "server/Super.json", json.encode(information), -1)
+end, false)
+]]--
+RegisterCommand("gwspawnplayer", function(source, args)
+	if args[1] ~= nil then
+		local vector4 = GetEntityCoordsAndHeading(GetPlayerPed(source))
+		CheckIfEntityIsKussKult(source, args[1], PLAYER_VARIANT, true, vector4, args[1])
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
+	end
+end, false)
+
+RegisterCommand("gwspawnvehicle", function(source, args)
+	if args[1] ~= nil then
+		local vector4 = GetEntityCoordsAndHeading(GetPlayerPed(source))
+		CheckIfEntityIsKussKult(source, args[1], VEHICLE_VARIANT, nil, vector4, nil)
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Da fehlt was!")
+	end
 end, false)
 
 --Befehlerstellung und -definition für den Neutralen
@@ -85,7 +104,6 @@ RegisterCommand("gwspawnmycar", function(source, args)
 	local ownerString = Owners[characterName]
 	if ownerString ~= nil then
 		local vehicleString = ownerString[1]
-		--print("Das gewünschte Fahrzeug: " .. vehicleString)
 		TriggerClientEvent("CEv_SpawnVehicleForDriver", source, vehicleString, index);
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", source, "Dieser Charakter besitzt kein Fahrzeug!")
@@ -140,8 +158,8 @@ end, false)
 
 ---Löscht alle Aktives
 RegisterCommand("gwdropeverything", function(source, args)
-	DropAllVehicles()
-	DropAllCharacters()
+	DropAllAndEverything()
+	--DropAllCharacters()
 end, false)
 
 ---Löscht alle Charaktere die tot sind und alle Fahrzeuge, die kaputt sind
@@ -387,4 +405,113 @@ RegisterCommand("gwstopkusskultgame", function()
 	else
 		TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~r~Kein aktives Spiel gefunden")
 	end
+end, false)
+
+---Wechselt die Spielfigur des Spielers mit einem existierenden Kuss Kult Charakter
+RegisterCommand("gwswitch", function(source, args)
+	local networkID = GetNetworkIDPlayerFromSource(source)
+	local player = Players[networkID]
+	if IsKussKultCharacter(player.name) then
+		if args[1] ~= nil then
+			local found, toSwitchToCharacter = CheckIfCharacterExistsByName(args[1])
+			if found then
+				TriggerClientEvent("CEv_SwitchCharactersIsDeadCheck", source, source, toSwitchToCharacter, player,
+					GetDriversInfo())
+			else
+				TriggerClientEvent("CEv_ShowNotificationEvent", source,
+					args[1] .. " wurde nicht als aktiver Charakter gefunden.")
+			end
+		end
+	end
+end, false)
+
+---Erstellt eine Drivers Fahrgemeinschaft mit dem eingebenen Fahrzeug und Charakteren.
+---Diese müssen in der Spielwelt existieren
+RegisterCommand("gwdrivers", function(source, args)
+	DriversCreateFromArgs(source, args)
+end, false)
+
+---Ändert die Zusammensetzung einer bestehenden Fahrgemeinschaft zu der der definierten Charaktere
+RegisterCommand("gwdriversupdate", function(source, args)
+	if args[1] ~= nil then
+		local isfound, vehicle = CheckIfVehicleExistsByName(args[1])
+		if isfound and args[2] ~= nil then
+			local isfounddriver, driver = CheckIfCharacterExistsByName(args[2])
+			local passengers = {}
+			table.insert(passengers, driver.networkID)
+			if isfounddriver then
+				for i = 3, #args, 1 do
+					local isfoundpassenger, passenger = CheckIfCharacterExistsByName(args[i])
+					if isfoundpassenger then
+						table.insert(passengers, passenger.networkID)
+					end
+				end
+				DriversUpdateCarpool(vehicle.networkID, passengers, source)
+			end
+		else
+			TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Bitte gültiges Fahrzeug und Fahrer angeben!")
+		end
+	end
+end, false)
+
+---Setzt das Verhalten der Fahrgemeinschaft
+---@param args table [VehNet, DriverNet, ?TargetNet]
+RegisterCommand("gwdriverstask", function(source, args)
+	DriversSetTaskFromArgs(source, args)
+end, false)
+
+---Spawnt ein Fahrzeug samt Charakteren. Diese werden automatisch zu einer Fahrgemeinschaft hinzugefügt
+---Entweder mit einem extra definierten Fahrzeug oder mit dem Fahrzeug des ersten Charakters
+RegisterCommand("gwspawndrivers", function(source, args)
+	if args[1] ~= nil then
+		local isfound = IsKussKultVehicle(args[1])
+		local isfounddriver
+		if isfound and args[2] ~= nil then
+			SpawnDriversWithVehicle(args, source)
+		else
+			isfounddriver = IsKussKultCharacter(args[1])
+			if isfounddriver then
+				SpawnDriversWithMyCar(args, source)
+			else
+				TriggerClientEvent("CEv_ShowNotificationEvent", source, "Bitte gültiges Fahrzeug oder Fahrer angeben!")
+			end
+		end
+	end
+end, false)
+
+---Test Command fürs Drivers Feature. Spawnt DunbysCruiser, welcher den Spieler eskortiert
+RegisterCommand("gwspawntestdunby", function(source, args)
+	local vector4 = GetEntityCoordsAndHeading(GetPlayerPed(source))
+	CheckIfEntityIsKussKult(source, "OmaRoswita", PLAYER_VARIANT, true, vector4, "OmaRoswita")
+	TriggerClientEvent("CEv_SpawnVehicle", source, "DunbysCruiser", vector4)
+	CheckIfEntityIsKussKult(source, "MarionDunby", NEUTRAL_VARIANT, true, vector4, "MarionDunby")
+	CheckIfEntityIsKussKult(source, "HudsonHudson", NEUTRAL_VARIANT, true, vector4, "MarionDunby")
+	CheckIfEntityIsKussKult(source, "VladimirSmirnov", NEUTRAL_VARIANT, true, vector4, "MarionDunby")
+	Wait(4000)
+	local nowargs = {}
+	nowargs[1] = "DunbysCruiser"
+	nowargs[2] = "MarionDunby"
+	nowargs[3] = "HudsonHudson"
+	nowargs[4] = "VladimirSmirnov"
+	DriversCreateFromArgs(source, nowargs)
+	Wait(4000)
+	nowargs[2] = "ESCORT"
+	nowargs[3] = "OmaRoswita"
+	DriversSetTaskFromArgs(source, nowargs)
+end, false)
+
+---Test Command fürs Drivers Feature. Spawnt ParkersPolicebike, welches Dunby in der Spielwelt eskortiert
+RegisterCommand("gwspawntestparkers", function(source, args)
+	local vector4 = GetEntityCoordsAndHeading(GetPlayerPed(source))
+	TriggerClientEvent("CEv_SpawnVehicle", source, "ParkersPolicebike", vector4)
+	CheckIfEntityIsKussKult(source, "MelanieParkers", NEUTRAL_VARIANT, true, vector4, "MelanieParkers")
+	Wait(4000)
+	local nowargs = {}
+	nowargs[1] = "ParkersPolicebike"
+	nowargs[2] = "MelanieParkers"
+	DriversCreateFromArgs(source, nowargs)
+	Wait(4000)
+	nowargs[2] = "ESCORT"
+	nowargs[3] = "MarionDunby"
+	DriversSetTaskFromArgs(source, nowargs)
 end, false)

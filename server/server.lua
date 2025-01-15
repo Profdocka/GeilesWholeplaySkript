@@ -12,10 +12,12 @@ THRESHOLD_SPAWNING = 10
 BPS = 65536
 
 KUSS_KULT_GAMES = {
-	KUSS_KULT_KNOCKOUT = 0,
-	TWOUBLE_IN_KUSS_KULT = 1
+    KUSS_KULT_KNOCKOUT = 0,
+    TWOUBLE_IN_KUSS_KULT = 1
 }
 RunningKussKultGame = nil
+
+RespondToDriversInforms = true
 
 ---Auflistung von allen Charakteren, Fahrzeugen und Unterteilung nach Skins
 TableOfAllCharacters, TableOfAllCharactersLower = ListAllEntriesInFolder(CHARFOLDER)
@@ -41,6 +43,14 @@ Vehicles = {}
 FactionsAndMembers = {}
 ---Fraktionen und ihr jeweiliger Spieleranführer
 FactionLeaders = {}
+--Zuordnungen von Fahrzeugen und ihren NPC-Fahrern und -Passagieren
+Drivers = {}
+--Die Handlungen von den Fahrgemeinschaften, die sie in der Spielwelt ausüben sollen
+DriversTask = {}
+--Driversliste sortiert nach den Passagieren
+DriversByPassengers = {}
+--Zuordnungen der Spieler wer welchen DriversTask hostet
+DriversTaskHost = {}
 
 --SERVER EVENTS
 
@@ -55,7 +65,8 @@ AddEventHandler("onServerResourceStart", function(resourceName)
             RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(serverID), GetPlayerName(serverID),
                 GetPlayerName(serverID))
         end
-        TriggerLatentClientEvent("CEvUI_InitialGWInfos", -1, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions,
+        TriggerLatentClientEvent("CEvUI_InitialGWInfos", -1, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins,
+            AllFactions,
             Owners)
     end
 end)
@@ -69,7 +80,7 @@ AddEventHandler("onResourceStop", function(resourceName)
     end
 end)
 
----Beim Spawnen eines neuen Spielers wird dieser in die Player Gruppe mitaufgenommen und bekommt einen zufälligen Kuss Kult Charakter 
+---Beim Spawnen eines neuen Spielers wird dieser in die Player Gruppe mitaufgenommen und bekommt einen zufälligen Kuss Kult Charakter
 RegisterNetEvent("SEv_PlayerSpawned", function(source)
     print("Player spawned: " .. GetPlayerName(source))
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
@@ -78,7 +89,8 @@ RegisterNetEvent("SEv_PlayerSpawned", function(source)
     RegisterEntity(PLAYER_VARIANT, networkID, GetPlayerName(source), GetPlayerName(source), GetPlayerName(source))
     OrganizeTableOfFactions()
     --TriggerClientEvent("CEv_ShowNotificationEvent", -1 , "Ein neuer Spieler ist beigetreten. Lade deinen Charakter mit /gwr neu, falls es Probleme gibt")
-    TriggerLatentClientEvent("CEvUI_InitialGWInfos", source, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions)
+    TriggerLatentClientEvent("CEvUI_InitialGWInfos", source, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins,
+        AllFactions)
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
     BecomeRandomKussKultCharacter(source)
 end)
@@ -118,13 +130,20 @@ RegisterNetEvent("SEv_GiveCharacterSkinAndFaction", function(variant, name, hasW
     end
     if variant == PLAYER_VARIANT then
         ChangePlayerFaction(networkID, variant, name, skin, faction)
+        local driversTargets = DriversWhereIsPedNetTarget(networkID)
+        for _, vehNet in pairs(driversTargets) do
+            local tempDriversTask = DriversTask[vehNet]
+            tempDriversTask.targetNet = networkID
+            DriversTask[vehNet] = nil
+            DriversTask[vehNet] = tempDriversTask
+        end
     else
         RegisterEntity(variant, networkID, name, skin, faction)
     end
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
     TriggerClientEvent("CEv_GiveCharacterSkinAndRole", -1, networkID, skin, hasWeapon, source, variant,
-        FactionsAndMembers, FactionLeaders, Players)
+        FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
 end)
 
 ---Event um mehreren Charakteren ihren Skin und Fraktion zu geben
@@ -140,7 +159,7 @@ RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFaction", function(GroupNetwo
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)
     TriggerLatentClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, BPS, GroupNetwork, hasWeapon, source, variant,
-        FactionsAndMembers, FactionLeaders, Players)
+        FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
 end)
 
 ---Event um mehreren Charakten in einem Diorama ihren Skin und ihre entsprechende Fraktion zu geben
@@ -162,8 +181,9 @@ RegisterNetEvent("SEv_GiveMultipleCharactersSkinAndFactionDiorama",
         end
         OrganizeTableOfFactions()
         Citizen.Wait(NETWORK_ID_SYNC_DELAY)
-        TriggerLatentClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, BPS, GroupNetwork, hasWeapon, source, variant,
-            FactionsAndMembers, FactionLeaders, Players)
+        TriggerLatentClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, BPS, GroupNetwork, hasWeapon, source,
+            variant,
+            FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
     end)
 
 ---Registriert ein Kuss Kult Fahrzeug in der Fahrzeug Gruppe
@@ -196,7 +216,8 @@ end)
 
 ---Event um die aktiven Server Daten erneut an den Client zu schicken
 RegisterNetEvent("SEv_RequestMenuData", function(source)
-    TriggerLatentClientEvent("CEvUI_InitialGWInfos", source, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins, AllFactions, Owners)
+    TriggerLatentClientEvent("CEvUI_InitialGWInfos", source, BPS, TableOfAllCharacterSkins, TableOfAllVehicleSkins,
+        AllFactions, Owners)
 end)
 
 ---Event um einem Spieler das Fahrzeug seines Kuss Kult Charakters zu spawnen
@@ -232,7 +253,7 @@ RegisterNetEvent("SEv_UpdatePlayerFaction", function(source, newFaction)
     end
     ChangePlayerFaction(networkId, PLAYER_VARIANT, name, skin, newFaction)
     OrganizeTableOfFactions()
-    TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players)
+    TriggerClientEvent("CEv_Regroup", -1, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
 end)
 
 ---Event zum Löschen eines Kuss Kult Entities
@@ -276,27 +297,165 @@ RegisterNetEvent("SEv_RelocateCharacter", function(source, Group, coords, headin
 end)
 
 ---Event um ein Diorama zu platzieren
-RegisterNetEvent("SEv_PlaceDiorama", function (name, source)
+RegisterNetEvent("SEv_PlaceDiorama", function(name, source)
     if name ~= nil then
-		local diorama = Looker(name, "dioramas")
-		if diorama ~= nil then
-			local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession = ExtractTablesOfDiorama(diorama)
-			if nil ~= nil then
-				TriggerLatentClientEvent("CEv_SpawnMultipleCharactersDiorama", source, BPS, charactergroup, GetVariantFromInput(args[2]),
-				weaponPossession,
-				charactervectors, faction)
-			else
-				TriggerLatentClientEvent("CEv_SpawnMultipleCharactersDiorama", source, BPS, charactergroup, NEUTRAL_VARIANT,
-				weaponPossession,
-				charactervectors, faction)
-			end
-			TriggerLatentClientEvent("CEv_SpawnMultipleVehicles", source, BPS, vehiclegroup, vehiclevectors)
-			TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama " .. name .. " erfolgreich platziert")
-		else
-			TriggerClientEvent("CEv_ShowNotificationEvent", source, name .. " ist kein Diorama!")
-		end
-	end
-
+        local diorama = Looker(name, "dioramas")
+        if diorama ~= nil then
+            local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
+                ExtractTablesOfDiorama(diorama)
+            if nil ~= nil then
+                TriggerLatentClientEvent("CEv_SpawnMultipleCharactersDiorama", source, BPS, charactergroup,
+                    GetVariantFromInput(args[2]),
+                    weaponPossession,
+                    charactervectors, faction)
+            else
+                TriggerLatentClientEvent("CEv_SpawnMultipleCharactersDiorama", source, BPS, charactergroup,
+                    NEUTRAL_VARIANT,
+                    weaponPossession,
+                    charactervectors, faction)
+            end
+            TriggerLatentClientEvent("CEv_SpawnMultipleVehicles", source, BPS, vehiclegroup, vehiclevectors)
+            TriggerClientEvent("CEv_ShowNotificationEvent", source, "Diorama " .. name .. " erfolgreich platziert")
+        else
+            TriggerClientEvent("CEv_ShowNotificationEvent", source, name .. " ist kein Diorama!")
+        end
+    end
 end)
 
 RegisterNetEvent("SEv_TwoubleDeathHandler")
+
+---Event um die die Kontrolle von einem Spieler auf einen NPC in der Welt zu wechseln
+RegisterNetEvent("SEv_SwitchCharacters",
+	function(source, targetCharacter, sourceCharacter, targetFeatures, sourceFeatures, newTargetNet)
+		if TryForNetworkIDAvailabilityServer(newTargetNet) then
+			local sourceHandle = NetworkGetEntityFromNetworkId(sourceCharacter.networkID)
+			local targetHandle = NetworkGetEntityFromNetworkId(newTargetNet)
+			RespondToDriversInforms = false
+			DeleteEntity(NetworkGetEntityFromNetworkId(targetCharacter.networkID))
+			local sourceCoords = targetFeatures["vector4"]["coords"]
+			--Source ins eventuelle Fahrzeug des alten targetCharacter setzen oder andernfalls an die Position von diesem
+			if targetFeatures["vehicle"] ~= nil then
+					TaskWarpPedIntoVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"]), targetFeatures["seatIndex"])
+				--	Citizen.Await(AwaitUntilPedEnteredVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"])))
+			else
+				SetEntityCoords(sourceHandle, sourceCoords.x, sourceCoords.y, sourceCoords.z, true, false, false, false)
+				SetEntityHeading(sourceHandle, targetFeatures["vector4"]["heading"])
+			end
+			--Neuen TargetCharakter in das eventuelle Fahrzeug der Source setzen
+			if sourceFeatures["vehicle"] ~= nil then
+				TaskWarpPedIntoVehicle(targetHandle, NetworkGetEntityFromNetworkId(sourceFeatures["vehicle"]),
+					sourceFeatures["seatIndex"])
+				Citizen.Await(AwaitUntilPedEnteredVehicle(targetHandle,
+					NetworkGetEntityFromNetworkId(sourceFeatures["vehicle"])))
+			end
+			Characters[targetCharacter.networkID] = nil
+			RegisterEntity(NEUTRAL_VARIANT, newTargetNet, sourceCharacter.name, sourceCharacter.skin,
+				sourceCharacter.faction)
+			RegisterEntity(PLAYER_VARIANT, sourceCharacter.networkID, targetCharacter.name, targetCharacter.skin,
+				targetCharacter.faction)
+			--Anführer der Source Fraktion wird entfernt
+			if FactionLeaders[sourceCharacter.faction] == sourceCharacter.networkID then
+				FactionLeaders[sourceCharacter.faction] = nil
+			end
+			--Anführer der Target Fraktion wird auf den Source gesetzt
+			FactionLeaders[targetCharacter.faction] = sourceCharacter.networkID
+			local driversTargetsWhereSourceChar = DriversWhereIsPedNetTarget(sourceCharacter.networkID)
+			local driversTargetsWhereTargetChar = DriversWhereIsPedNetTarget(targetCharacter.networkID)
+			for _, vehNet in pairs(driversTargetsWhereSourceChar) do
+				local tempDriversTask = DriversTask[vehNet]
+				tempDriversTask.targetNet = newTargetNet
+				DriversTask[vehNet] = nil
+				DriversTask[vehNet] = tempDriversTask
+			end
+			for _, vehNet in pairs(driversTargetsWhereTargetChar) do
+				local tempDriversTask = DriversTask[vehNet]
+				tempDriversTask.targetNet = sourceCharacter.networkID
+				DriversTask[vehNet] = nil
+				DriversTask[vehNet] = tempDriversTask
+			end
+			--Drivers Fahrgemeinschaft im ehemaligen Fahrzeug der Source erzeugen
+			if sourceFeatures["vehicle"] then
+				local passengersUpdatedIndexes = {}
+				for i = -1, sourceFeatures["vehicleCapacity"], 1 do
+					if Characters[sourceFeatures["vehiclePassengers"][i]] then
+						passengersUpdatedIndexes[i + 2] = sourceFeatures["vehiclePassengers"][i]
+					end
+				end
+				passengersUpdatedIndexes[sourceFeatures["seatIndex"] + 2] = newTargetNet
+				DriversCreateCarpool(sourceFeatures["vehicle"], passengersUpdatedIndexes,
+					sourceFeatures["vehicleCapacity"], source)
+			end
+			--Fahrgemeinschaft des Targets auflösen (Falls Fahrer war) oder aus Fahrgemeinschaft entfernen (Wenn Mitfahrer war)
+			if targetFeatures["vehicle"] then
+				if targetFeatures["seatIndex"] == -1 then
+					DriversDropCheckVehicle(targetFeatures["vehicle"])
+				else
+					local tempPassengers = ExcludeEntryOfTable(Drivers[targetFeatures["vehicle"]],
+						targetCharacter.networkID)
+						local tempPassengersUpdatedIndexes = {}
+						for i = -1, targetFeatures["vehicleCapacity"], 1 do
+							if Characters[tempPassengers[i]] then
+								tempPassengersUpdatedIndexes[i + 2] = tempPassengers[i]
+							end
+						end
+					DriversUpdateCarpool(targetFeatures["vehicle"], tempPassengersUpdatedIndexes, source)
+				end
+			end
+			OrganizeTableOfFactions()
+			RespondToDriversInforms = true
+			TriggerLatentClientEvent("CEv_GiveCharacterSkinAndRole", -1, BPS, newTargetNet, sourceCharacter.skin, true,
+				source, PLAYER_VARIANT, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
+			TriggerClientEvent("CEv_ApplySwitchFeatures", -1, targetFeatures, sourceFeatures, newTargetNet,
+				sourceCharacter.networkID)
+		end
+	end)
+
+---Event um über den Fahrzeugverlust einer Fahrgemeinschaft informiert zu werden
+RegisterNetEvent("SEv_InformThatDriversCarIsGone", function(vehNet, source)
+    if RespondToDriversInforms then
+        DriversDropCheckVehicle(vehNet)
+        TriggerClientEvent("CEv_Regroup", source, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
+    end
+end)
+
+---Event um über den Passagierverlust einer Fahrgemeinschaft informiert zu werden
+RegisterNetEvent("SEv_InformThatDriversPedIsGone", function(pedNet, source)
+    if RespondToDriversInforms then
+        DriversDropCheckPed(pedNet)
+        TriggerClientEvent("CEv_Regroup", source, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
+    end
+end)
+
+---Event um über den Zielverfolgungscharakterverlust einer Fahrgemeinschaft informiert zu werden
+RegisterNetEvent("SEv_InformThatDriversTargetIsGone", function(vehNet, source, targetNet)
+    if not Players[targetNet] then
+        DriversTask[vehNet] = DRIVERS_TASK.NONE
+        TriggerClientEvent("CEv_Regroup", source, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
+    else
+        Wait(NETWORK_ID_SYNC_DELAY)
+    end
+end)
+
+---Event um direkt ein Fahrzeug mitsamt Charakteren für eine Fahrgemeinschaft zu registrieren
+RegisterNetEvent("SEv_RegisterVehicleAndCharactersForDrivers", function(vehicle, GroupNetwork, capacity, source)
+    local vehSkin = GetStandardSpellingOfName(vehicle.name, TableOfAllVehiclesLower, TableOfAllVehicles,
+        TableOfAllVehiclesIndexes)
+    local vehName = LookforRootNameOfSkin(TableOfAllVehicleSkins, vehSkin)
+    RegisterEntity(VEHICLE_VARIANT, vehicle.networkID, vehName, vehSkin, nil)
+    local characterSkin
+    local characterName
+    local carpoolGroup = {}
+    for seatIndex, character in pairs(GroupNetwork) do
+        characterSkin = GetStandardSpellingOfName(character.name, TableOfAllCharactersLower, TableOfAllCharacters,
+            TableOfAllCharactersIndexes)
+        characterName = LookforRootNameOfSkin(TableOfAllCharacterSkins, characterSkin)
+        RegisterEntity(NEUTRAL_VARIANT, character.networkID, characterName, characterSkin, character.faction)
+        carpoolGroup[seatIndex+2] = character.networkID
+    end
+    OrganizeTableOfFactions()
+    Citizen.Wait(NETWORK_ID_SYNC_DELAY)
+    DriversCreateCarpool(vehicle.networkID, carpoolGroup, capacity, source)
+    TriggerLatentClientEvent("CEv_GiveMultipleCharactersSkinAndRole", -1, BPS, GroupNetwork, true, source,
+        NEUTRAL_VARIANT,
+        FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
+end)

@@ -25,6 +25,7 @@ RegisterNUICallback("UI_SpawnCharacterOrVehicle", function (data, cb)
     local faction = data.name
     if data.variant == PLAYER_VARIANT then
         faction = CustomFactionOrDefaultFaction(data.name)
+        Citizen.Await(StopAllDriversRunningTasks())
     elseif data.variant == FRIENDLY_VARIANT then
         faction = "PLAYER"
     end

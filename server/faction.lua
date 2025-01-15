@@ -61,7 +61,7 @@ TurnVariantToNeutral = function(name, source)
         Characters[key] = newCharacter
         OrganizeTableOfFactions()
         TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key, NEUTRAL_VARIANT,
-            Players)
+            Players, GetDriversInfo())
     end
 end
 
@@ -83,7 +83,7 @@ TurnVariantToFriendly = function(name, source)
             Characters[key] = newCharacter
             OrganizeTableOfFactions()
             TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key,
-                FRIENDLY_VARIANT, Players)
+                FRIENDLY_VARIANT, Players, GetDriversInfo())
         end
     end
 end
@@ -105,7 +105,7 @@ TurnVariantToAggressive = function(name, source)
         Characters[key] = newCharacter
         OrganizeTableOfFactions()
         TriggerClientEvent("CEv_GiveRoles", -1, FactionsAndMembers, FactionLeaders, networkIDSource, key,
-            AGGRESSIVE_VARIANT, Players)
+            AGGRESSIVE_VARIANT, Players, GetDriversInfo())
     end
 end
 

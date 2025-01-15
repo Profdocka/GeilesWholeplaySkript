@@ -1,6 +1,15 @@
 ---Namen die für die zufällige Charakterwahl ausgeschlossen sind
 BlacklistedNames = { Projekt45Dave = "Projekt45Dave", BrillanterBuckelwal = "BrillanterBuckelwal" }
 
+DRIVERS_TASK = {
+    NONE = { type = "NONE" },
+    GETINVEHICLE = { type = "GETINVEHICLE" },
+    GETOUTOFVEHICLE = { type = "GETOUTOFVEHICLE" },
+    DRIVETOCOORDS = { type = "DRIVETOCOORDS", x = 0.0, y = 0.0, z = 0.0, speed = 60.0, driveMode = 524288, stopRange = 20.0 },
+    ESCORT = { type = "ESCORT", targetNet = 0, escortMode = -1, speed = 100.0, driveMode = 787260, minDistance = 30.0, minDrivingDistance = 10.0, noRoadsDistance = 20.0, followEntityDuration = -1 },
+    CHASE = { type = "CHASE", targetNet = 0, minDistance = 15.0 }
+}
+
 ---Vordefinierte Waffen-Loadouts für den Spieler
 WeaponLoadouts = {
     innocent = {
@@ -124,6 +133,19 @@ TryForNetworkIDAvailability = function(networkID)
     return false
 end
 
+TryForNetworkIDAvailabilityServer = function(networkID)
+    local tries = 5
+    for i = 1, tries, 1 do
+        if NetworkGetEntityFromNetworkId(networkID) ~= 0 then
+            print("ID from Entity in Server: " .. NetworkGetEntityFromNetworkId(networkID) )
+            return true
+        else
+            Wait(1000)
+        end
+    end
+    return false
+end
+
 ---Erzeugt eine Nachricht mit Kuss Kult Logo im GTA Message Feed
 ---@param msg string
 ShowNotification = function(msg)
@@ -153,11 +175,22 @@ GetPlayerCoordsAndHeading = function(serverID, offset)
     return positionData
 end
 
----Schreibt alle aktiven Kuss Kult Entities in die Konsole
+---Gibt einem die Koordinaten und die Blickrichtung eines Entities
+---@param entityHandle integer
+---@return table vector4
+GetEntityCoordsAndHeading = function(entityHandle)
+    local vector4 = {}
+    vector4["coords"] = GetEntityCoords(entityHandle)
+    vector4["heading"] = GetEntityHeading(entityHandle)
+    return vector4
+end
+
+---Schreibt alle aktiven Kuss Kult Entities und Fahrgemeinschaften in die Konsole
 ---@param _Players table
 ---@param _Characters table
 ---@param _Vehicles table
-ListAllOnClient = function(_Players, _Characters, _Vehicles)
+---@param _DriversInfo table
+ListAllOnClient = function(_Players, _Characters, _Vehicles, _DriversInfo)
     print("-------------------------")
     print("SPIELER: ")
     PrintEveryMemberOfSet(_Players)
@@ -167,6 +200,12 @@ ListAllOnClient = function(_Players, _Characters, _Vehicles)
     print("-------------------------")
     print("ALL VEHICLES: ")
     PrintEveryMemberOfSet(_Vehicles)
+    print("-------------------------")
+    print("ALL DRIVERS: ")
+    PrintAllMembersOfTableWithOffset(_DriversInfo, "")
+    print("-------------------------")
+    print("DRIVERS TASK: ")
+    PrintDriversTask()
     print("-------------------------")
 end
 
@@ -193,14 +232,31 @@ end
 ---Rekursive Methode um alle Inhalte eines Tables
 ---in die Konsole zu schreiben
 ---@param tabl table
-PrintAllMembersOfTable = function(tabl)
+function PrintAllMembersOfTable(tabl)
     for key, value in pairs(tabl) do
         print("Key: ", key)
-        print("Value: ", value)
         if type(value) == "table" then
+            print("\t")
             PrintAllMembersOfTable(value)
+        else
+            print("Value: ", value)
+            print("")
         end
-        print("\t")
+    end
+end
+
+---Rekursive Methode um alle Inhalte eines Tables
+---in die Konsole mit Versatz zu schreiben
+---@param tabl table
+---@param offset string
+function PrintAllMembersOfTableWithOffset(tabl, offset)
+    for key, value in pairs(tabl) do
+        print(offset .. "Key: ", key)
+        if type(value) == "table" then
+            PrintAllMembersOfTableWithOffset(value, offset .. "\t")
+        else
+            print(offset .. "\tValue: ", value)
+        end
     end
 end
 
@@ -246,6 +302,9 @@ function CancelCountdown()
     DoCountDown = true
 end
 
+---Gibt einem die jeweilige Rolle des Spielers im aktuellen Twouble in Kuss Kult
+---@param actors table Alle Spieler mit ihren Rollen
+---@return string role
 function GetTwoubleRoleOfPlayer(actors)
     local playerServerID = GetPlayerServerId(PlayerId())
     if actors.dectective == playerServerID then
@@ -255,6 +314,49 @@ function GetTwoubleRoleOfPlayer(actors)
     else
         return "innocent"
     end
+end
+
+---Gibt einem die Eigenschaften, wie Position, Blickrichtung, Waffen und Rüstung eines Peds.
+---Sitzt dieser in einem Fahrzeug, wird das Fahrzeug, der Sitzplatz, die Fahrzeugkapazität und eine Auflistung der Passagiere mitgeliefert
+---@param pedHandle number
+---@return table pedfeatures
+GetFeaturesOfPed = function(pedHandle)
+    local features = {
+        weapons = GetPedWeaponsAndAmmo(pedHandle),
+        vector4 = { heading = GetEntityHeading(pedHandle), coords = GetEntityCoords(pedHandle) },
+        health = GetEntityHealth(pedHandle),
+        armor = GetPedArmour(pedHandle)
+    }
+    local vehHandle, seatIndex = GetCurrentVehicleAndSeatNumber(pedHandle)
+    if vehHandle ~= nil then
+        local vehNet = NetworkGetNetworkIdFromEntity(vehHandle)
+        features["vehicle"] = vehNet
+        features["seatIndex"] = seatIndex
+        features["vehicleCapacity"] = GetVehicleModelNumberOfSeats(GetEntityModel(vehHandle))
+        features["vehiclePassengers"] = GetPassengersOfVehicle(vehHandle, features["vehicleCapacity"], seatIndex)
+    end
+    return features
+end
+
+---Gibt einem die Networks IDs von den Charakteren, die im Fahrzeug sitzen.
+---ExcludeSeatIndex wird ausgelassen und nicht in die finale Liste übernommen
+---@param vehicleHandle number
+---@param capacity number
+---@param excludeSeatIndex number
+---@return table passengerTable {[-1] = driverNet, [0] = passenger1, ... }
+GetPassengersOfVehicle = function(vehicleHandle, capacity, excludeSeatIndex)
+    if not type(excludeSeatIndex) == "number" then
+        excludeSeatIndex = -1
+    end
+    local passengers = {}
+    for i = -1, capacity, 1 do
+        if i ~= excludeSeatIndex then
+            local pedHandle = GetPedInVehicleSeat(vehicleHandle, i)
+            local pedNet = NetworkGetNetworkIdFromEntity(pedHandle)
+            passengers[i] = pedNet
+        end
+    end
+    return passengers
 end
 
 ---SERVER---
@@ -350,7 +452,7 @@ end
 ---Gibt zur entsprechenden Variant Number den passenden String zurück
 ---@param variant integer
 ---@return string variantString
-VariantNumberToString = function (variant)
+VariantNumberToString = function(variant)
     if variant == PLAYER_VARIANT then
         return "player"
     elseif variant == VEHICLE_VARIANT then
@@ -392,7 +494,7 @@ end
 ---@param tabelle table
 ---@return any randomValue
 GetRandomKeyOfTable = function(tabelle)
-	return tabelle[math.random(1, #tabelle)]
+    return tabelle[math.random(1, #tabelle)]
 end
 
 ---Gibt einem dem Index des Kostümes zu einem Kuss Kult Entity
@@ -401,20 +503,20 @@ end
 ---@param skin string
 ---@return integer
 GetCurrentSkinIndex = function(tabl, name, skin)
-	if skin == name then
-		return -1
-	end
-	for index, value in ipairs(tabl[name]) do
-		if value == skin then
-			return index
-		end
-	end
+    if skin == name then
+        return -1
+    end
+    for index, value in ipairs(tabl[name]) do
+        if value == skin then
+            return index
+        end
+    end
 end
 
 ---Alle Charaktere werden sofort zum Stillstand gebracht
 ---@param source integer
 StopAllCharacters = function(source)
-	TriggerClientEvent("CEv_StopAllCharacters", source, Characters)
+    TriggerClientEvent("CEv_StopAllCharacters", source, Characters)
 end
 
 ---Gibt bis auf die Ausnahme eine neue Tabelle zurück mit allen alten Einträgen
@@ -422,26 +524,26 @@ end
 ---@param exceptionTarget any
 ---@return table
 ExcludeEntryOfTable = function(table, exceptionTarget)
-	local tempTemble = {}
-	for key, value in pairs(table) do
-		if value ~= exceptionTarget then
-			tempTemble[key] = value
-		end
-	end
-	return tempTemble
+    local tempTemble = {}
+    for key, value in pairs(table) do
+        if value ~= exceptionTarget then
+            tempTemble[key] = value
+        end
+    end
+    return tempTemble
 end
 
 ---Erstellt einen nummerisch gekeyten Table anhand eines Ursprungstables
 ---@param t table
 ---@return table
 RenumberTable = function(t)
-	local numberedTable = {}
-	local i = 1
-	for _, value in pairs(t) do
-		numberedTable[i] = value
-		i = i + 1
-	end
-	return numberedTable
+    local numberedTable = {}
+    local i = 1
+    for _, value in pairs(t) do
+        numberedTable[i] = value
+        i = i + 1
+    end
+    return numberedTable
 end
 
 ---Erzeugt einen Event Handler, der nach seinem Auslösen direkt zerstört wird
@@ -449,11 +551,76 @@ end
 ---@param eventName string
 ---@param functionCallback function
 AddSelfDestructingEventHandler = function(hostElement, eventName, functionCallback, data)
-	local handler = function(source)
-		functionCallback(source)
-		RemoveEventHandler(hostElement)
-	end
-	hostElement = AddEventHandler(eventName, handler)
+    local handler = function(source)
+        functionCallback(source)
+        RemoveEventHandler(hostElement)
+    end
+    hostElement = AddEventHandler(eventName, handler)
 end
 
+---Gibt einem die Anzahl an Elementen in einem Table
+---@param T table
+---@return integer count
+GetCountOfTable = function(T)
+    local count = 0
+    for key, value in pairs(T) do
+        count = count + 1
+    end
+    return count
+end
 
+---Promise bis ein Ped in besagtem Fahrzeug sitzt
+---@param pedHandle number
+---@param vehHandle number
+---@return promise
+function AwaitUntilPedEnteredVehicle(pedHandle, vehHandle)
+    local promise = promise.new()
+    local tries = 5
+    for i = 1, tries, 1 do
+        if GetVehiclePedIsIn(pedHandle, false) == vehHandle then
+            promise:resolve()
+            break
+        else
+            Wait(1000)
+        end
+    end
+    promise:reject()
+    return promise
+end
+
+---Promise bis ein Ped besagtes Fahrzeug verlässt
+---@param pedHandle number
+---@param vehHandle number
+---@return promise
+function AwaitUntilPedLeftVehicle(pedHandle, vehHandle)
+    local promise = promise.new()
+    local tries = 5
+    for i = 1, tries, 1 do
+        if GetVehiclePedIsIn(pedHandle, false) == 0 or GetVehiclePedIsIn(pedHandle, false) ~= vehHandle then
+            promise:resolve()
+            break
+        else
+            Wait(1000)
+        end
+    end
+    promise:reject()
+    return promise
+end
+
+---Promise bis ein Entity im Spiel existiert
+---@param handle number
+---@return promise
+function AwaitEntityExists(handle)
+    local promise = promise.new()
+    local tries = 5
+    for i = 1, tries, 1 do
+        if handle ~= 0 then
+            promise:resolve()
+            break
+        else
+            Wait(1000)
+        end
+    end
+    promise:reject()
+    return promise
+end

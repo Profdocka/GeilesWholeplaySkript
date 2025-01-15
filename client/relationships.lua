@@ -28,6 +28,8 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
         local u, factionHash = AddRelationshipGroup(faction)
         local factionLeader = FactionLeadersFromServer[faction]
         local squad = nil
+        PlayerGroupID = 0
+        PlayerGroupHandles = {}
         if factionLeader ~= nil then
             if TryForNetworkIDAvailability(factionLeader) then
                 local pedHandleLeader = NetworkGetEntityFromNetworkId(factionLeader)
@@ -63,6 +65,8 @@ ApplyFactions = function(FactionsAndMembersFromServer, FactionLeadersFromServer,
                         SetBlipColour(GetBlipFromEntity(pedHandle), 57)
                         if NetworkGetNetworkIdFromEntity(PlayerPedId()) == factionLeader then
                             TakeOwnershipOfNetworkID(pedHandle, factionMember)
+                            PlayerGroupID = GetPedGroupIndex(PlayerPedId())
+                            table.insert(PlayerGroupHandles, pedHandle)
                         end
                     end
                     SetPedAsGroupMember(pedHandle, squad)

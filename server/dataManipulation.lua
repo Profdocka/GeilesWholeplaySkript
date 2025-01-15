@@ -148,13 +148,15 @@ DropSpecificEntityByName = function(name, source)
     if isFound then
         Characters[entity.networkID] = nil
         OrganizeTableOfFactions()
+        DriversDropCheckPed(entity.networkID)
         TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, entity.networkID, FactionsAndMembers, FactionLeaders,
-            Players)
+            Players, GetDriversInfo())
     else
         isFound, entity = CheckIfVehicleExistsByName(name)
         if isFound then
             Vehicles[entity.networkID] = nil
-            TriggerClientEvent("CEv_DropEntity", -1, VEHICLE_VARIANT, entity.networkID)
+            DriversDropCheckVehicle(entity.networkID)
+            TriggerClientEvent("CEv_DropEntity", -1, VEHICLE_VARIANT, entity.networkID, nil, nil, nil, GetDriversInfo())
         else
             TriggerClientEvent("CEv_ShowNotificationEvent", source, "Kein aktiver Charakter/aktives Fahrzeug gefunden!")
         end
@@ -167,12 +169,14 @@ end
 DropSpecificEntityByNetworkID = function(networkID, variant)
     if variant == VEHICLE_VARIANT then
         Vehicles[networkID] = nil
-        TriggerClientEvent("CEv_DropEntity", -1, VEHICLE_VARIANT, networkID)
+        DriversDropCheckVehicle(networkID)
+        TriggerClientEvent("CEv_DropEntity", -1, VEHICLE_VARIANT, networkID, nil, nil, nil, GetDriversInfo())
     else
         Characters[networkID] = nil
         OrganizeTableOfFactions()
+        DriversDropCheckPed(networkID)
         TriggerClientEvent("CEv_DropEntity", -1, NEUTRAL_VARIANT, networkID, FactionsAndMembers, FactionLeaders,
-            Players)
+            Players, GetDriversInfo())
     end
 end
 
@@ -183,13 +187,15 @@ DropMultipleCharacters = function(characterGroup)
     for _, character in pairs(Characters) do
         if not characterGroup[character.networkID] then
             tempCharacters[character.networkID] = Characters[character.networkID]
+        else
+            DriversDropCheckPed(character.networkID)
         end
     end
     Characters = nil
     Characters = tempCharacters
     OrganizeTableOfFactions()
     TriggerClientEvent("CEv_DropMultipleEntitys", -1, NEUTRAL_VARIANT, characterGroup, FactionsAndMembers, FactionLeaders,
-        Players)
+        Players, GetDriversInfo())
 end
 
 ---Löscht eine Sammlung von Fahrzeugen
@@ -199,14 +205,16 @@ DropMultipleVehicles = function(vehicleGroup)
     for _, vehicle in pairs(Vehicles) do
         if not vehicleGroup[vehicle.networkID] then
             tempVehicles[vehicle.networkID] = Vehicles[vehicle.networkID]
+        else
+            DriversDropCheckVehicle(vehicle.networkID)
         end
     end
     Vehicles = nil
     Vehicles = tempVehicles
-    TriggerClientEvent("CEv_DropMultipleEntitys", -1, VEHICLE_VARIANT, vehicleGroup)
+    TriggerClientEvent("CEv_DropMultipleEntitys", -1, VEHICLE_VARIANT, vehicleGroup, nil, nil, nil, GetDriversInfo())
 end
 
-DropCharacterThroughFaction = function (factionName)
+DropCharacterThroughFaction = function(factionName)
     local faction = FactionsAndMembers[factionName]
     local filteredFaction = {}
     for _, networkid in pairs(faction) do
@@ -222,8 +230,17 @@ DropAllCharacters = function()
     local tempCharacters = Characters
     Characters = nil
     Characters = {}
+    Drivers = nil
+    DriversByPassengers = nil
+    DriversTask = nil
+    DriversTaskHost = nil
+    Drivers = {}
+    DriversByPassengers = {}
+    DriversTask = {}
+    DriversTaskHost = {}
     OrganizeTableOfFactions()
-    TriggerClientEvent("CEv_DropAllCharacters", -1, tempCharacters, FactionsAndMembers, FactionLeaders, Players)
+    TriggerClientEvent("CEv_DropAllCharacters", -1, tempCharacters, FactionsAndMembers, FactionLeaders, Players,
+        GetDriversInfo())
 end
 
 ---Löscht alle aktiven Fahrzeuge
@@ -231,7 +248,35 @@ DropAllVehicles = function()
     local tempVehicles = Vehicles
     Vehicles = nil
     Vehicles = {}
-    TriggerClientEvent("CEv_DropAllCars", -1, tempVehicles)
+    Drivers = nil
+    DriversByPassengers = nil
+    DriversTask = nil
+    DriversTaskHost = nil
+    Drivers = {}
+    DriversByPassengers = {}
+    DriversTask = {}
+    DriversTaskHost = {}
+    TriggerClientEvent("CEv_DropAllCars", -1, tempVehicles, GetDriversInfo())
+end
+
+DropAllAndEverything = function()
+    local tempCharacters = Characters
+    Characters = nil
+    Characters = {}
+    local tempVehicles = Vehicles
+    Vehicles = nil
+    Vehicles = {}
+    Drivers = nil
+    DriversByPassengers = nil
+    DriversTask = nil
+    DriversTaskHost = nil
+    Drivers = {}
+    DriversByPassengers = {}
+    DriversTask = {}
+    DriversTaskHost = {}
+    OrganizeTableOfFactions()
+    TriggerClientEvent("CEv_DropEverything", -1, tempCharacters, FactionsAndMembers, FactionLeaders, Players,
+        GetDriversInfo(), tempVehicles)
 end
 
 ---Prüft ob einen Spieler mit dem Kuss Kult Charakter gibt und gibt beim Finden zurück
@@ -285,7 +330,7 @@ end
 ---Listet alle Aktiven auf für den entsprechenden Spieler
 ---@param source integer Der entsprechende Spieler
 ListAllActiveForClient = function(source)
-    TriggerClientEvent("CEv_ListAll", source, Players, Characters, Vehicles)
+    TriggerClientEvent("CEv_ListAll", source, Players, Characters, Vehicles, GetDriversInfo())
 end
 
 ---Löscht alle Charakterleichen und Fahrzeugwracks sofort oder sobald ein Schwellwert überschritten wird
@@ -414,21 +459,21 @@ end
 ---@param dioramaName string
 ---@param factionName string
 SpawnRandomGroupDiorama = function(source, dioramaName, factionName)
-	local diorama = Looker(dioramaName, "dioramas")
-	if diorama ~= nil then
-		local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
-			ExtractTablesOfDiorama(diorama)
-		local randomGroup = {}
-		local index = 1
-		for _, _ in pairs(charactervectors) do
-			local randomName = GetRandomKeyOfTable(TableOfAllCharacters)
-			randomGroup[index] = randomName
-			faction[randomName] = factionName
-			index = index + 1
-		end
-		TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, randomGroup, variant, true, charactervectors,
-			faction)
-	end
+    local diorama = Looker(dioramaName, "dioramas")
+    if diorama ~= nil then
+        local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
+            ExtractTablesOfDiorama(diorama)
+        local randomGroup = {}
+        local index = 1
+        for _, _ in pairs(charactervectors) do
+            local randomName = GetRandomKeyOfTable(TableOfAllCharacters)
+            randomGroup[index] = randomName
+            faction[randomName] = factionName
+            index = index + 1
+        end
+        TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, randomGroup, variant, true, charactervectors,
+            faction)
+    end
 end
 
 ---Spawnt an den Koordinaten des Dioramas eine Kuss Kult Fraktion
@@ -436,97 +481,387 @@ end
 ---@param dioramaName string
 ---@param factionName string
 SpawnFactionGroupDiorama = function(source, dioramaName, factionName)
-	local diorama = Looker(dioramaName, "dioramas")
-	if diorama ~= nil then
-		local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
-			ExtractTablesOfDiorama(diorama)
-		local FactionGroup = AllFactions[factionName]
-		local finalGroup = {}
-		local index = 1
-		for _, _ in pairs(charactervectors) do
-			if FactionGroup[index] then
-				local characterName = FactionGroup[index]
-				finalGroup[index] = characterName
-				faction[characterName] = factionName
-				index = index + 1
-			else
-				break
-			end
-		end
-		TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, finalGroup, variant, true, charactervectors,
-			faction)
-	end
+    local diorama = Looker(dioramaName, "dioramas")
+    if diorama ~= nil then
+        local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
+            ExtractTablesOfDiorama(diorama)
+        local FactionGroup = AllFactions[factionName]
+        local finalGroup = {}
+        local index = 1
+        for _, _ in pairs(charactervectors) do
+            if FactionGroup[index] then
+                local characterName = FactionGroup[index]
+                finalGroup[index] = characterName
+                faction[characterName] = factionName
+                index = index + 1
+            else
+                break
+            end
+        end
+        TriggerClientEvent("CEv_SpawnMultipleCharactersDiorama", source, finalGroup, variant, true, charactervectors,
+            faction)
+    end
 end
 
 ---Startet eine Runde Twouble in Kuss Kult. Weist allen Spielern die Rollen zu, informiert diese, gibt ihnen die entsprechenden Waffen und richtet die Handler ein
 ---@param terroristCount integer
 StartTwoubleInKussKult = function(terroristCount)
-	RunningKussKultGame = KUSS_KULT_GAMES.TWOUBLE_IN_KUSS_KULT
-	local onlinePlayers = GetPlayers()
-	local playercount = #onlinePlayers
-	local terrorists = {}
-	local dectectiveID
-	local playersWithoutDetective
-	local innocents = {}
-	dectectiveID = GetRandomKeyOfTable(onlinePlayers)
-	playersWithoutDetective = RenumberTable(ExcludeEntryOfTable(onlinePlayers, dectectiveID))
-	for i = 1, terroristCount, 1 do
-		terrorists[i] = GetRandomKeyOfTable(playersWithoutDetective)
-		playersWithoutDetective = RenumberTable(ExcludeEntryOfTable(playersWithoutDetective, terrorists[i]))
-	end
-	innocents = playersWithoutDetective
-	for _, serverid in pairs(terrorists) do
-		TriggerClientEvent("CEv_EquipLoadout", serverid, "terrorist", true)
-		TriggerClientEvent("CEv_EquipLoadout", serverid, "innocent", false)
-		TriggerClientEvent("CEv_ShowNotificationEvent", serverid, "~r~Du bist Widerkussler")
-	end
-	if dectectiveID then
-		TriggerClientEvent("CEv_ShowNotificationEvent", dectectiveID, "~b~Du bist Kussleiter")
-		TriggerClientEvent("CEv_EquipLoadout", dectectiveID, "detective", true)
-		TriggerClientEvent("CEv_EquipLoadout", dectectiveID, "innocent", false)	
-	end
-	for _, serverid in pairs(innocents) do
-		TriggerClientEvent("CEv_EquipLoadout", serverid, "innocent", true)
-		TriggerClientEvent("CEv_ShowNotificationEvent", serverid, "~g~Du bist Kuss Kultler")
-	end
-	local actors = { dectective = dectectiveID, terrorists = terrorists, innocents = innocents }
-	TwoubleManager = nil
-	local twoubleCallback = function(source)
-		local isTerrorist = function(id)
-			for key, terrorist in pairs(terrorists) do
-				if tonumber(terrorist) == (id) then
-					terrorists[key] = nil
-					RenumberTable(terrorists)
-					return true
-				end
-			end
-			return false
-		end
-		if isTerrorist(source) then
-			if #terrorists == 0 then
-				TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~g~Die Kuss Kultler haben gewonnen")
-				TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
-				RemoveEventHandler(TwoubleManager)
-			end
-		else
-			if tonumber(source) == tonumber(dectectiveID) then
-				dectectiveID = nil
-			else
-				for key, innocent in pairs(innocents) do
-					if tonumber(innocent) == tonumber(source) then
-						innocents[key] = nil
-					end
-				end
-			end
-			if dectectiveID == nil and #innocents == 0 then
-				TriggerClientEvent("CEv_ShowNotificationEvent", -1,"~r~Der Kuss Kult wurde vernichtet")
-				TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
-				RemoveEventHandler(TwoubleManager)
-			end
-		end
-	end
-	TwoubleManager = AddEventHandler("SEv_TwoubleDeathHandler", function(source)
-		twoubleCallback(source)
-	end)
-	TriggerLatentClientEvent("CEv_SetUpTwoubleHandler", -1, BPS, actors)
+    RunningKussKultGame = KUSS_KULT_GAMES.TWOUBLE_IN_KUSS_KULT
+    local onlinePlayers = GetPlayers()
+    local playercount = #onlinePlayers
+    local terrorists = {}
+    local dectectiveID
+    local playersWithoutDetective
+    local innocents = {}
+    dectectiveID = GetRandomKeyOfTable(onlinePlayers)
+    playersWithoutDetective = RenumberTable(ExcludeEntryOfTable(onlinePlayers, dectectiveID))
+    for i = 1, terroristCount, 1 do
+        terrorists[i] = GetRandomKeyOfTable(playersWithoutDetective)
+        playersWithoutDetective = RenumberTable(ExcludeEntryOfTable(playersWithoutDetective, terrorists[i]))
+    end
+    innocents = playersWithoutDetective
+    for _, serverid in pairs(terrorists) do
+        TriggerClientEvent("CEv_EquipLoadout", serverid, "terrorist", true)
+        TriggerClientEvent("CEv_EquipLoadout", serverid, "innocent", false)
+        TriggerClientEvent("CEv_ShowNotificationEvent", serverid, "~r~Du bist Gegenkussler")
+    end
+    if dectectiveID then
+        TriggerClientEvent("CEv_ShowNotificationEvent", dectectiveID, "~b~Du bist Kussleiter")
+        TriggerClientEvent("CEv_EquipLoadout", dectectiveID, "detective", true)
+        TriggerClientEvent("CEv_EquipLoadout", dectectiveID, "innocent", false)
+    end
+    for _, serverid in pairs(innocents) do
+        TriggerClientEvent("CEv_EquipLoadout", serverid, "innocent", true)
+        TriggerClientEvent("CEv_ShowNotificationEvent", serverid, "~g~Du bist Kuss Kultler")
+    end
+    local actors = { dectective = dectectiveID, terrorists = terrorists, innocents = innocents }
+    TwoubleManager = nil
+    local twoubleCallback = function(source)
+        local isTerrorist = function(id)
+            for key, terrorist in pairs(terrorists) do
+                if tonumber(terrorist) == (id) then
+                    terrorists[key] = nil
+                    RenumberTable(terrorists)
+                    return true
+                end
+            end
+            return false
+        end
+        if isTerrorist(source) then
+            if #terrorists == 0 then
+                TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~g~Die Kuss Kultler haben gewonnen")
+                TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
+                RemoveEventHandler(TwoubleManager)
+                RunningKussKultGame = nil
+            end
+        else
+            if tonumber(source) == tonumber(dectectiveID) then
+                dectectiveID = nil
+            else
+                for key, innocent in pairs(innocents) do
+                    if tonumber(innocent) == tonumber(source) then
+                        innocents[key] = nil
+                    end
+                end
+            end
+            if dectectiveID == nil and #innocents == 0 then
+                TriggerClientEvent("CEv_ShowNotificationEvent", -1, "~r~Der Kuss Kult wurde vernichtet")
+                TriggerClientEvent("CEv_RemoveKussKultGamesHandler", -1)
+                RemoveEventHandler(TwoubleManager)
+                RunningKussKultGame = nil
+            end
+        end
+    end
+    TwoubleManager = AddEventHandler("SEv_TwoubleDeathHandler", function(source)
+        twoubleCallback(source)
+    end)
+    TriggerLatentClientEvent("CEv_SetUpTwoubleHandler", -1, BPS, actors)
+end
+
+---Erstellt eine Drivers Fahrgemeinschaft mit dem eingebenen Fahrzeug und Charakteren.
+---Diese müssen in der Spielwelt existieren.
+---Der Host Player ist für die clientseitige Logik zuständig
+---@param vehNet number
+---@param passengerTable table {[1] = passengerNet1, [2] = passengerNet2, ...}
+---@param vehicleCapacity number
+---@param hostPlayer number source
+DriversCreateCarpool = function(vehNet, passengerTable, vehicleCapacity, hostPlayer)
+    local passengerPlacement = {}
+    for i = -1, (vehicleCapacity - 2), 1 do
+        passengerPlacement[i] = passengerTable[i + 2]
+        if passengerPlacement[i] ~= nil then
+            DriversByPassengers[passengerPlacement[i]] = vehNet
+        end
+    end
+    Drivers[vehNet] = passengerPlacement
+    DriversTask[vehNet] = DRIVERS_TASK.NONE
+    DriversTaskHost[vehNet] = hostPlayer
+end
+
+---Erstellt eine Drivers Fahrgemeinschaft mit dem eingebenen Fahrzeug und Charakteren.
+---Diese müssen in der Spielwelt existieren
+---@param source number
+---@param args table {[1] = vehName, [2] = driverName, ?[3] = passengerName ...}
+DriversCreateFromArgs = function(source, args)
+    if args[1] ~= nil then
+        local isfound, vehicle = CheckIfVehicleExistsByName(args[1])
+        if isfound and args[2] ~= nil then
+            local isfounddriver, driver = CheckIfCharacterExistsByName(args[2])
+            local passengers = {}
+            table.insert(passengers, driver.networkID)
+            if isfounddriver then
+                for i = 3, #args, 1 do
+                    local isfoundpassenger, passenger = CheckIfCharacterExistsByName(args[i])
+                    if isfoundpassenger then
+                        table.insert(passengers, passenger.networkID)
+                    end
+                end
+                DriversCreateCarpool(vehicle.networkID, passengers, 8, source)
+            end
+        else
+            TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Bitte gültiges Fahrzeug und Fahrer angeben!")
+        end
+    end
+end
+
+---Fahrgemeinschaft erzeugt basierend auf den NPCs, die in dem Kuss Kult Fahrzeug sitzen.
+---Unused
+---@param vehNet number
+---@param vehicleCapacity number
+---@param source number
+DriversCreateCarpoolFromVehicle = function(vehNet, vehicleCapacity, source)
+    if Vehicles[vehNet] ~= nil then
+        local passengers = {}
+        local vehHandle = NetworkGetEntityFromNetworkId(vehNet)
+        for i = 1, vehicleCapacity + 1, 1 do
+            local tempPassenger = GetPedInVehicleSeat(vehHandle, i - 2)
+            local tempPassengerNet = NetworkGetNetworkIdFromEntity(tempPassenger)
+            if Characters[tempPassengerNet] ~= nil then
+                passengers[i] = tempPassengerNet
+            end
+        end
+        if passengers[1] ~= nil then
+            DriversCreateCarpool(vehNet, passengers, vehicleCapacity, source)
+        end
+    end
+end
+
+---Setzt das Verhalten der Fahrgemeinschaft
+---@param source number
+---@param args table [VehNet, TaskActionString, ?TargetNet]
+DriversSetTaskFromArgs = function(source, args)
+    if args[1] ~= nil then
+        local isfound, vehicle = CheckIfVehicleExistsByName(args[1])
+        if isfound and Drivers[vehicle.networkID] ~= nil and args[2] ~= nil then
+            local tempTask = DriversTask[vehicle.networkID]
+            local taskoptions = {
+                ["NONE"] = function()
+                    tempTask = DRIVERS_TASK.NONE
+                end,
+                ["GETINVEHICLE"] = function()
+                    tempTask = DRIVERS_TASK.GETINVEHICLE
+                end,
+                ["GETOUTOFVEHICLE"] = function()
+                    tempTask = DRIVERS_TASK.GETOUTOFVEHICLE
+                end,
+                ["DRIVETOCOORDS"] = function()
+                    tempTask = table.clone(DRIVERS_TASK.DRIVETOCOORDS)
+                    local coords = GetEntityCoords(NetworkGetEntityFromNetworkId(Players
+                        [GetNetworkIDPlayerFromSource(source)].networkID))
+                    if args[3] then
+                        local corrName, target_ = CheckIfCharacterExistsByName(args[3])
+                        if corrName then
+                            coords = GetEntityCoords(NetworkGetEntityFromNetworkId(target_.networkID))
+                        end
+                    end
+                    tempTask.x = coords.x
+                    tempTask.y = coords.y
+                    tempTask.z = coords.z
+                end,
+                ["ESCORT"] = function()
+                    tempTask = table.clone(DRIVERS_TASK.ESCORT)
+                    tempTask.targetNet = GetNetworkIDPlayerFromSource(source)
+                    if args[3] then
+                        local corrName, target_ = CheckIfCharacterExistsByName(args[3])
+                        if corrName then
+                            tempTask.targetNet = target_.networkID
+                        end
+                    end
+                end,
+                ["CHASE"] = function()
+                    tempTask = table.clone(DRIVERS_TASK.CHASE)
+                    tempTask.targetNet = GetNetworkIDPlayerFromSource(source)
+                    if args[3] then
+                        local corrName, target_ = CheckIfCharacterExistsByName(args[3])
+                        if corrName then
+                            tempTask.targetNet = target_.networkID
+                        end
+                    end
+                end
+            }
+            taskoptions[string.upper(args[2])]()
+            DriversTask[vehicle.networkID] = nil
+            DriversTask[vehicle.networkID] = tempTask
+            --DriversTaskHost[vehicle.networkID] = source
+            tempTask = nil
+            TriggerLatentClientEvent("CEv_GiveRoles", -1, BPS, FactionsAndMembers, FactionLeaders, 0, 0,
+                NEUTRAL_VARIANT,
+                Players, GetDriversInfo())
+        else
+            TriggerClientEvent("CEv_ShowNotificationEvent", -1, "Bitte gültiges Fahrzeug und Task angeben!")
+        end
+    end
+end
+
+---Spawnt ein Fahrzeug samt Charakteren. Diese werden automatisch zu einer Fahrgemeinschaft hinzugefügt.
+---Hier mit einem extra definierten Fahrzeug
+---@param args table {[1] = vehicleName, [2] = driverName, [3] = passengerName ...}
+---@param source number
+SpawnDriversWithVehicle = function(args, source)
+    local vehicle = args[1]
+    local isfounddriver = IsKussKultCharacter(args[2])
+    local passengers = {}
+    if isfounddriver then
+        passengers[-1] = args[2]
+        for i = 3, #args, 1 do
+            local isfoundpassenger = IsKussKultCharacter(args[i])
+            if isfoundpassenger then
+                passengers[i - 3] = args[i]
+            end
+        end
+        TriggerLatentClientEvent("CEv_SpawnVehicleWithCharacters", source, BPS, vehicle,
+            GetEntityCoordsAndHeading(GetPlayerPed(source)), passengers)
+    else
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "Bitte gültiges Fahrzeug und Fahrer angeben!")
+    end
+end
+
+---Spawnt ein Fahrzeug samt Charakteren. Diese werden automatisch zu einer Fahrgemeinschaft hinzugefügt.
+---Hier mit dem Fahrzeug des ersten Charakters
+---@param args table {[1] = driverName, [2] = passengerName ...}
+---@param source number
+SpawnDriversWithMyCar = function(args, source)
+    local lowerSkin = GetStandardSpellingOfName(args[1], TableOfAllCharactersLower, TableOfAllCharacters,
+        TableOfAllCharactersIndexes)
+    local lowerName = LookforRootNameOfSkin(TableOfAllCharacterSkins, lowerSkin)
+    local myvehicleTable = Owners[string.lower(lowerName)]
+    local myvehicle
+    local passengers = {}
+    passengers[-1] = lowerSkin
+    if myvehicleTable ~= nil and myvehicleTable[1] ~= nil then
+        myvehicle = myvehicleTable[1]
+        for i = 2, #args, 1 do
+            local isfoundpassenger = IsKussKultCharacter(args[i])
+            if isfoundpassenger then
+                passengers[i - 2] = args[i]
+            end
+        end
+        TriggerLatentClientEvent("CEv_SpawnVehicleWithCharacters", source, BPS, myvehicle,
+            GetEntityCoordsAndHeading(GetPlayerPed(source)), passengers)
+    else
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "Fahrer besitzt kein Fahrzeug!")
+    end
+end
+
+---Ändert die Zusammensetzung einer bestehenden Fahrgemeinschaft zu der der definierten Charaktere
+---@param vehNet number
+---@param passengerTable table {[1] = passengerNet1, ?[2] = passengerNet2, ?[3] = passengerNet3 ...}
+---@param hostPlayer number
+DriversUpdateCarpool = function(vehNet, passengerTable, hostPlayer)
+    if Drivers[vehNet] then
+        local passengerPlacement = Drivers[vehNet]
+        for i = -1, 10, 1 do
+            local passenger = passengerPlacement[i]
+            local seatIndex = i
+            if passenger then
+                DriversByPassengers[passenger] = nil
+            end
+            passengerPlacement[seatIndex] = passengerTable[seatIndex + 2]
+            if passenger and passengerPlacement[seatIndex] then
+                DriversByPassengers[passengerPlacement[seatIndex]] = vehNet
+            end
+        end
+        Drivers[vehNet] = nil
+        Drivers[vehNet] = passengerPlacement
+        DriversTaskHost[vehNet] = hostPlayer
+    else
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "Fahrgemeinschaft existiert nicht!")
+    end
+end
+
+---Entfernt das Fahrzeug aus der Fahrgemeinschaftsliste und somit auch die gesamte Fahrgemeinschaft
+---@param vehNet number
+DriversDropCheckVehicle    = function(vehNet)
+    local passengers = Drivers[vehNet]
+    if passengers then
+        Drivers[vehNet] = nil
+        for seatIndex, passengerNet in pairs(passengers) do
+            DriversByPassengers[passengerNet] = nil
+        end
+        DriversTask[vehNet] = nil
+        DriversTaskHost[vehNet] = nil
+        DriversTaskHost[vehNet] = nil
+    end
+end
+
+---Entfernt den jeweiligen Passagier aus seiner Fahrgemeinschaft. Ist dies der Fahrer, so rückt der nächte Passagier zum Fahrer auf.
+---Ist keiner verfügbar, wird die Fahrgemeinschaft entfernt
+---@param pedNet number
+DriversDropCheckPed = function(pedNet)
+    local vehNet = DriversByPassengers[pedNet]
+    if vehNet then
+        local passengers = Drivers[vehNet]
+        local currentPedSeatIndex
+        local nextAvailablePassenger
+        for i = -1, 10, 1 do
+            local seatIndex = i
+            local passengerNet = passengers[i]
+            if passengerNet then
+                if currentPedSeatIndex == -1 then
+                    if passengerNet then
+                        nextAvailablePassenger = passengerNet
+                        passengers[seatIndex] = nil
+                        passengers[currentPedSeatIndex] = nextAvailablePassenger
+                        currentPedSeatIndex = seatIndex
+                    end
+                end
+                if passengerNet == pedNet then
+                    currentPedSeatIndex = seatIndex
+                    passengers[seatIndex] = nil
+                    DriversByPassengers[passengerNet] = nil
+                end
+            end
+        end
+        if currentPedSeatIndex ~= -1 or nextAvailablePassenger then
+            Drivers[vehNet] = nil
+            Drivers[vehNet] = passengers
+        else
+            DriversDropCheckVehicle(vehNet)
+        end
+    end
+end
+
+---Alle Tabellen zu dem Drivers Feature in einem
+---@return table
+GetDriversInfo = function()
+    return {
+        drivers = Drivers,
+        driversbypassengers = DriversByPassengers,
+        driverstask = DriversTask,
+        driverstaskhost =
+            DriversTaskHost
+    }
+end
+
+---Erstellt eine Liste, in welchen Fahrgemeinschaften der besagte Charakter ein Ziel ist
+---@param pedNet number
+---@return table trefferliste
+DriversWhereIsPedNetTarget = function(pedNet)
+    local hits = {}
+    for vehNet, task in pairs(DriversTask) do
+        if task.targetNet ~= nil and task.targetNet == pedNet then
+            table.insert(hits, vehNet)
+        end
+    end
+    return hits
 end

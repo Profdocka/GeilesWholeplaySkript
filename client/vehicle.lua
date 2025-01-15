@@ -51,3 +51,36 @@ VehicleAddons = function(vehHandle, carMis, carColors, carNeon, carExtras, carMo
 	Mods(vehHandle, carMods)
 	--Speed(vehHandle, carMis)
 end
+
+---Spawnt ein Fahrzeug an der besagten Position mit den Charakteren als Fahrzeuginsassen
+---@param vehicleName string
+---@param vector4 table
+---@param characterGroup table {[-1] = passengerName1, [0] = passengerName2}
+SpawnVehicleWithCharacters = function(vehicleName, vector4, characterGroup)
+    local GroupNetwork = {}
+    local vehHandle = SpawnVehicle(vehicleName, vector4)
+    local VehNetworkID = NetworkGetNetworkIdFromEntity(vehHandle)
+    SetNetworkIdExistsOnAllMachines(VehNetworkID, true)
+    SetNetworkIdCanMigrate(VehNetworkID, true)
+    local vehicle = { networkID = VehNetworkID, name = vehicleName }
+    local capacity = GetVehicleModelNumberOfSeats(GetEntityModel(vehHandle))
+    ShowNotification("Dein gespawntes Fahrzeug: " .. vehicleName)
+    for seatIndex, character in pairs(characterGroup) do
+        if seatIndex < capacity then
+            local pedHandle = SpawnCharacterInVehicle(NEUTRAL_VARIANT, character, true, vehHandle,
+                seatIndex)
+            local pedNetworkID = NetworkGetNetworkIdFromEntity(pedHandle)
+            SetNetworkIdExistsOnAllMachines(pedNetworkID, true)
+            SetNetworkIdCanMigrate(pedNetworkID, true)
+            local characterNetwork = {
+                networkID = pedNetworkID,
+                name = character,
+                faction = characterGroup[-1],
+                variant = NEUTRAL_VARIANT
+            }
+            GroupNetwork[seatIndex] = characterNetwork
+        end
+    end
+    TriggerServerEvent("SEv_RegisterVehicleAndCharactersForDrivers", vehicle, GroupNetwork, capacity,
+        GetPlayerServerId(PlayerId()))
+end

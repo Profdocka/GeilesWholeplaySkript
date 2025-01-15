@@ -1,5 +1,9 @@
 --UNTERTITEL DER COMMANDS---
 Citizen.CreateThread(function()
+	TriggerEvent("chat:addSuggestion", "/gwspawnplayer",
+		"Ändert den Charakter des Spielers zu dem jeweiligen Charakter", {
+			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
+		})
 	TriggerEvent("chat:addSuggestion", "/gwspawnneutral",
 		"Spawnt den jeweiligen Charakter neutral gegenüber des Spielers", {
 			{ name = "VornameNachname", help = "Den Charakternamen zusammen geschrieben (Gibt Ausnahmen, required)" },
@@ -19,9 +23,13 @@ Citizen.CreateThread(function()
 			{ name = "Gesinnung",     help = "Freund oder Feind? [buddy]/[gegner] (required)" },
 			{ name = "?true",         help = "Ob die Fraktion ihre Waffe bekommen soll (optional)" },
 		})
-	--TriggerEvent("chat:addSuggestion", "/switch", "Wechselt die Kontrolle des Spielers zu einem anderen Charakter", {
-	--	{ name = "VornameNachname", help = "Den Charakternamen zusammen geschrieben (Gibt Ausnahmen, required)" },
-	--})
+	TriggerEvent("chat:addSuggestion", "/gwswitch", "Wechselt die Kontrolle des Spielers zu einem anderen Charakter", {
+		{ name = "VornameNachname", help = "Den Charakternamen zusammen geschrieben (Gibt Ausnahmen, required)" },
+	})
+	TriggerEvent("chat:addSuggestion", "/gwspawnvehicle",
+		"Spawnt das jeweilige Fahrzeug für den Spieler", {
+			{ name = "NachnameFahrzeugmodell", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
+		})
 	TriggerEvent("chat:addSuggestion", "/gwspawnmycar", "Spawnt das Hauptfahrzeug des eigenen Charakters", {})
 	TriggerEvent("chat:addSuggestion", "/gwgesinnungneutral",
 		"Ändert die Gesinnung des Charakters zu neutral", {
@@ -89,11 +97,39 @@ Citizen.CreateThread(function()
 		})
 	TriggerEvent("chat:addSuggestion", "/gwplacediorama",
 		"Platziert alle Fahrzeuge und Charaktere eines Diorama in der Spielwelt", {
-			{ name = "name", help = "Name des Diorama" },
+			{ name = "name",       help = "Name des Diorama" },
 			{ name = "?Gesinnung", help = "Freund oder Feind? [buddy]/[gegner]" },
 		})
-	TriggerEvent("chat:addSuggestion", "/gwtwoubleinkusskult", "Startet eine Runde Twouble in Kuss Kult für alle Spieler", {})
+	TriggerEvent("chat:addSuggestion", "/gwtwoubleinkusskult", "Startet eine Runde Twouble in Kuss Kult für alle Spieler",
+		{})
 	TriggerEvent("chat:addSuggestion", "/gwstopkusskultgame", "Stoppt das aktive Kuss Kult Spiel", {})
+	TriggerEvent("chat:addSuggestion", "/gwdrivers",
+		"Erstellt eine Drivers Fahrgemeinschaft mit dem eingebenen Fahrzeug und Charakteren. Diese müssen in der Spielwelt existieren",
+		{
+			{ name = "Fahrzeugname", help = "Nach dem bekannten Schema NachnameFahrzeugmodell (required)" },
+			{ name = "Fahrername",   help = "Der Charakter der das Fahrzeug führen soll. VornameNachname (required)" },
+			{ name = "?Passagiere",  help = "Weitere Passagiere einzeln mit Leerzeichen auflisten. VornameNachname (optional)" },
+		})
+	TriggerEvent("chat:addSuggestion", "/gwdriversupdate",
+		"Ändert die Zusammensetzung einer bestehenden Fahrgemeinschaft zu der der definierten Charaktere. Diese müssen in der Spielwelt existieren",
+		{
+			{ name = "Fahrername",  help = "Der Charakter der das Fahrzeug führen soll. VornameNachname (required)" },
+			{ name = "?Passagiere", help = "Weitere Passagiere einzeln mit Leerzeichen auflisten. VornameNachname (optional)" },
+		})
+	TriggerEvent("chat:addSuggestion", "/gwdriverstask",
+		"Setzt das Verhalten der Fahrgemeinschaft. Möglich sind: NONE, GETINVEHICLE, GETOUTOFVEHICLE, DRIVETOCOORDS, ESCORT, CHASE",
+		{
+			{ name = "Fahrzeugname",     help = "Nach dem bekannten Schema NachnameFahrzeugmodell (required)" },
+			{ name = "Verhalten [Task]", help = "Verhalten, welches die Fahrgemeinschaft ausführen soll (required)" },
+			{ name = "?Verfolgungsziel", help = "Charakter welcher verfolgt werden soll. Nur für CHASE und ESCORT. Weglassen um Ziel auf eigenen Spieler festzulegen (optional)" },
+		})
+	TriggerEvent("chat:addSuggestion", "/gwspawndrivers",
+		"Spawnt ein Fahrzeug samt Charakteren. Diese werden automatisch zu einer Fahrgemeinschaft hinzugefügt. Entweder mit einem extra definierten Fahrzeug oder mit dem Fahrzeug des ersten Charakters",
+		{
+			{ name = "Fahrzeugname/Fahrername", help = "Entweder ein spezifisches Fahrzeug definieren [NachnameFahrzeugmodell] oder das Fahrzeug des Charakters nehmen [VornameNachname] (required)" },
+			{ name = "?Fahrername/Passagiere",  help = "Wenn spezifisches Fahrzeug, dann Fahrer angeben (required) ansonsten zusätzliche Passagiere (optional)" },
+			{ name = "?Passagiere",             help = "Weitere Passagiere einzeln mit Leerzeichen auflisten. VornameNachname (optional)" },
+		})
 end)
 
 RegisterCommand("gwsetoption", function(source, args)

@@ -2,18 +2,18 @@
   "OutfitPedData": {
     "ClearDecalOverlays": "true",
     "ModelHash": "1885233650",
-	"IsSkinOf": "RalphHopkins",
+    "IsSkinOf": "RalphHopkins",
     "Type": "1",
     "Dynamic": "true",
     "FrozenPos": "false",
-    "HashName": "0x705e61f2",
+    "HashName": "1885233650",
     "InitialHandle": "602370",
     "PedProperties": {
       "IsStill": "false",
       "CanRagdoll": "true",
       "HasShortHeight": "false",
       "Armour": "0",
-      "CurrentWeapon": "0xa2719263",
+      "CurrentWeapon": "-1569615261",
       "PedProps": {
         "_0": "61,4",
         "_1": "8,3",
@@ -30,7 +30,7 @@
         "_0": "0,0",
         "_1": "0,0",
         "_2": "19,0",
-        "_3": "1,0",
+        "_3": "0,0",
         "_4": "4,0",
         "_5": "0,0",
         "_6": "20,1",
@@ -161,11 +161,13 @@
         }
       },
       "TattooLogoDecals": null,
-	  "Weapon": "weapon_combatmg",
       "RelationshipGroupAltered": "false",
-      "RelationshipGroup": "0xfade4843",
+      "RelationshipGroup": "-86095805",
       "ScenarioActive": "false",
-      "AnimActive": "false"
+      "AnimActive": "false",
+      "Weapon": "weapon_combatmg",
+      "WalkStyle": null,
+      "Voice": null
     },
     "OpacityLevel": "255",
     "LodDistance": "16960",
