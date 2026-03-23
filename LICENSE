@@ -1,0 +1,77 @@
+DUAL LICENSE / DUALE LIZENZ
+
+Dieses Projekt unterliegt einer dualen Lizenzierung. Der Quellcode und die
+kreativen Inhalte werden getrennt lizenziert.
+
+This project is dual-licensed. The source code and the creative content are
+licensed separately.
+
+================================================================================
+1. QUELLCODE / SOURCE CODE — MIT License
+================================================================================
+
+Betrifft / Applies to:
+  - Alle Lua-Dateien (*.lua)
+  - HTML, CSS, JavaScript und sonstige Programmdateien
+  - Die technische Struktur und Logik des Skripts
+
+MIT License
+
+Copyright (c) 2026 Kuss Kult Kurator
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+2. KREATIVE INHALTE / CREATIVE CONTENT — Alle Rechte vorbehalten / All Rights Reserved
+================================================================================
+
+Betrifft / Applies to:
+  - Alle Charakternamen, Charakterbeschreibungen und Charakter-Definitionen
+    (characters/*.json)
+  - Alle Fahrzeugnamen und Fahrzeug-Zuordnungen (vehicles/*.json)
+  - Alle Diorama-Szenen und Ortsnamen (dioramas/*.json)
+  - Fraktionsnamen und -definitionen
+  - Das Kuss Kult Logo (kusskultlogo.png) und sonstige Grafiken
+  - Alle Eigennamen, Orte, Geschichten und sonstige Elemente des
+    Kuss Kult Universums
+  - Die Bezeichnungen "Geiles Wholeplay", "Kuss Kult", "Kuss Kult Knockout",
+    "Twouble in Kuss Kult" und verwandte Begriffe
+
+Copyright (c) 2026 Kuss Kult Kurator. Alle Rechte vorbehalten.
+
+Die oben genannten kreativen Inhalte sind urheberrechtlich geschützt. Ohne
+ausdrückliche schriftliche Genehmigung des Kuss Kult Kurators ist es nicht
+gestattet, diese Inhalte zu kopieren, zu verbreiten, zu verändern oder
+anderweitig zu verwenden.
+
+The creative content listed above is protected by copyright. Without the
+express written permission of the Kuss Kult Kurator, copying, distributing,
+modifying, or otherwise using this content is not permitted.
+
+================================================================================
+ZUSAMMENFASSUNG / SUMMARY
+================================================================================
+
+  CODE (*.lua, *.html, *.js, *.css)  →  MIT License (frei verwendbar)
+  KREATIVE INHALTE (Charaktere,      →  Alle Rechte vorbehalten
+  Orte, Namen, Logos, Lore)              (All Rights Reserved)
+                                         © Kuss Kult Kurator
+
+Bei Fragen zur Lizenzierung: Kontaktiere den Kuss Kult Kurator.
+For licensing questions: Contact the Kuss Kult Kurator.

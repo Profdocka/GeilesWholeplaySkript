@@ -26,7 +26,17 @@ ListAllEntriesInFolder = function(folder)
     local resourcePath = GetResourcePath(GetCurrentResourceName()) .. "/" .. folder .. "/"
     local filenames = {}
     local filesnamesLower = {}
-    for filename in io.popen('dir "' .. resourcePath .. '" /b'):lines() do
+
+    -- Plattformerkennung ohne package (FiveM-Sandbox stellt package nicht bereit)
+    local isWindows = resourcePath:sub(2, 2) == ":"
+    local command
+    if isWindows then
+        command = 'dir "' .. resourcePath .. '" /b'
+    else
+        command = 'ls "' .. resourcePath .. '"'
+    end
+
+    for filename in io.popen(command):lines() do
         if filename:match("%.json$") then
             filename = filename:gsub("%.json$", "")
             filenames[filename] = filename
@@ -354,7 +364,7 @@ end
 ---Löscht die Sammlung an Leichen und Wracks
 ---@param deadCharacters table
 ---@param deadVehicles table
-DeadGarbageCleanerCleaning = function(deadCharacters, deadVehicles)
+DeadGarbageCleanerCleaning      = function(deadCharacters, deadVehicles)
     if next(deadCharacters) ~= nil then
         DropMultipleCharacters(deadCharacters)
     end
@@ -365,7 +375,7 @@ end
 
 ---Gibt einen Table zurück mit alle Aktiven Namen als Keys. Wird benutzt um Ausnahmen festzustellen
 ---@return table existing
-GetNamesListOfExisting = function()
+GetNamesListOfExisting          = function()
     local existing = {}
     for _, player in pairs(Players) do
         existing[LookforRootNameOfSkin(TableOfAllCharacterSkins, player.name)] = player.name
@@ -387,7 +397,7 @@ end
 ---@return table vehiclevectors Vector4 Sammlung der Fahrzeuge
 ---@return table faction Fraktionszugehörigkeit nach Charaktername
 ---@return table weaponPossession Wer bewaffnet sein soll und wer nicht
-ExtractTablesOfDiorama = function(diorama)
+ExtractTablesOfDiorama          = function(diorama)
     local charactergroup = {}
     local charactervectors = {}
     local vehiclegroup = {}
@@ -414,14 +424,14 @@ end
 
 ---Der Spieler wird ein zufälliger Kuss Kult Charakter
 ---@param source any
-BecomeRandomKussKultCharacter = function(source)
+BecomeRandomKussKultCharacter   = function(source)
     local randomKey = GetRandomKeyOfTable(TableOfAllCharactersNumbered)
     local characterName = TableOfAllCharacters[randomKey]
     TriggerClientEvent("CEv_SpawnCharacter", source, PLAYER_VARIANT, characterName, true, nil, characterName)
 end
 
 ---Ein zufälliges Kuss Kult Fahrzeug wird gespawnt
-SpawnRandomKussKultVehicle = function(source)
+SpawnRandomKussKultVehicle      = function(source)
     local randomKey = GetRandomKeyOfTable(TableOfAllVehiclesNumbered)
     local vehicleName = TableOfAllVehicles[randomKey]
     local networkIDDriver = GetNetworkIDPlayerFromSource(source)
@@ -434,7 +444,7 @@ end
 ---@param folder string
 ---@param source integer
 ---@param faction string
-FullModelSwitchOrJustCosmetics = function(networkID, skin, folder, source, faction)
+FullModelSwitchOrJustCosmetics  = function(networkID, skin, folder, source, faction)
     local pedHandle = NetworkGetEntityFromNetworkId(networkID)
     local hash = GetEntityModel(pedHandle)
     local pedJson = Looker(skin, folder)
@@ -458,7 +468,7 @@ end
 ---@param source integer
 ---@param dioramaName string
 ---@param factionName string
-SpawnRandomGroupDiorama = function(source, dioramaName, factionName)
+SpawnRandomGroupDiorama         = function(source, dioramaName, factionName)
     local diorama = Looker(dioramaName, "dioramas")
     if diorama ~= nil then
         local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
@@ -480,7 +490,7 @@ end
 ---@param source integer
 ---@param dioramaName string
 ---@param factionName string
-SpawnFactionGroupDiorama = function(source, dioramaName, factionName)
+SpawnFactionGroupDiorama        = function(source, dioramaName, factionName)
     local diorama = Looker(dioramaName, "dioramas")
     if diorama ~= nil then
         local charactergroup, charactervectors, vehiclegroup, vehiclevectors, faction, weaponPossession =
@@ -505,7 +515,7 @@ end
 
 ---Startet eine Runde Twouble in Kuss Kult. Weist allen Spielern die Rollen zu, informiert diese, gibt ihnen die entsprechenden Waffen und richtet die Handler ein
 ---@param terroristCount integer
-StartTwoubleInKussKult = function(terroristCount)
+StartTwoubleInKussKult          = function(terroristCount)
     RunningKussKultGame = KUSS_KULT_GAMES.TWOUBLE_IN_KUSS_KULT
     local onlinePlayers = GetPlayers()
     local playercount = #onlinePlayers
@@ -585,7 +595,7 @@ end
 ---@param passengerTable table {[1] = passengerNet1, [2] = passengerNet2, ...}
 ---@param vehicleCapacity number
 ---@param hostPlayer number source
-DriversCreateCarpool = function(vehNet, passengerTable, vehicleCapacity, hostPlayer)
+DriversCreateCarpool            = function(vehNet, passengerTable, vehicleCapacity, hostPlayer)
     local passengerPlacement = {}
     for i = -1, (vehicleCapacity - 2), 1 do
         passengerPlacement[i] = passengerTable[i + 2]
@@ -602,7 +612,7 @@ end
 ---Diese müssen in der Spielwelt existieren
 ---@param source number
 ---@param args table {[1] = vehName, [2] = driverName, ?[3] = passengerName ...}
-DriversCreateFromArgs = function(source, args)
+DriversCreateFromArgs           = function(source, args)
     if args[1] ~= nil then
         local isfound, vehicle = CheckIfVehicleExistsByName(args[1])
         if isfound and args[2] ~= nil then
@@ -649,7 +659,7 @@ end
 ---Setzt das Verhalten der Fahrgemeinschaft
 ---@param source number
 ---@param args table [VehNet, TaskActionString, ?TargetNet]
-DriversSetTaskFromArgs = function(source, args)
+DriversSetTaskFromArgs          = function(source, args)
     if args[1] ~= nil then
         local isfound, vehicle = CheckIfVehicleExistsByName(args[1])
         if isfound and Drivers[vehicle.networkID] ~= nil and args[2] ~= nil then
@@ -717,7 +727,7 @@ end
 ---Hier mit einem extra definierten Fahrzeug
 ---@param args table {[1] = vehicleName, [2] = driverName, [3] = passengerName ...}
 ---@param source number
-SpawnDriversWithVehicle = function(args, source)
+SpawnDriversWithVehicle         = function(args, source)
     local vehicle = args[1]
     local isfounddriver = IsKussKultCharacter(args[2])
     local passengers = {}
@@ -740,7 +750,7 @@ end
 ---Hier mit dem Fahrzeug des ersten Charakters
 ---@param args table {[1] = driverName, [2] = passengerName ...}
 ---@param source number
-SpawnDriversWithMyCar = function(args, source)
+SpawnDriversWithMyCar           = function(args, source)
     local lowerSkin = GetStandardSpellingOfName(args[1], TableOfAllCharactersLower, TableOfAllCharacters,
         TableOfAllCharactersIndexes)
     local lowerName = LookforRootNameOfSkin(TableOfAllCharacterSkins, lowerSkin)
@@ -767,7 +777,7 @@ end
 ---@param vehNet number
 ---@param passengerTable table {[1] = passengerNet1, ?[2] = passengerNet2, ?[3] = passengerNet3 ...}
 ---@param hostPlayer number
-DriversUpdateCarpool = function(vehNet, passengerTable, hostPlayer)
+DriversUpdateCarpool            = function(vehNet, passengerTable, hostPlayer)
     if Drivers[vehNet] then
         local passengerPlacement = Drivers[vehNet]
         for i = -1, 10, 1 do
@@ -791,7 +801,7 @@ end
 
 ---Entfernt das Fahrzeug aus der Fahrgemeinschaftsliste und somit auch die gesamte Fahrgemeinschaft
 ---@param vehNet number
-DriversDropCheckVehicle    = function(vehNet)
+DriversDropCheckVehicle         = function(vehNet)
     local passengers = Drivers[vehNet]
     if passengers then
         Drivers[vehNet] = nil
@@ -807,7 +817,7 @@ end
 ---Entfernt den jeweiligen Passagier aus seiner Fahrgemeinschaft. Ist dies der Fahrer, so rückt der nächte Passagier zum Fahrer auf.
 ---Ist keiner verfügbar, wird die Fahrgemeinschaft entfernt
 ---@param pedNet number
-DriversDropCheckPed = function(pedNet)
+DriversDropCheckPed             = function(pedNet)
     local vehNet = DriversByPassengers[pedNet]
     if vehNet then
         local passengers = Drivers[vehNet]
@@ -843,20 +853,31 @@ end
 
 ---Alle Tabellen zu dem Drivers Feature in einem
 ---@return table
-GetDriversInfo = function()
+GetDriversInfo                  = function()
+    -- Namenszuordnung: networkID → Name (für Fahrzeuge und Charaktere)
+    local nameMap = {}
+    for netID, veh in pairs(Vehicles) do
+        nameMap[tostring(netID)] = veh.name or veh.skin or tostring(netID)
+    end
+    for netID, char in pairs(Characters) do
+        nameMap[tostring(netID)] = char.name or char.skin or tostring(netID)
+    end
+    for netID, plr in pairs(Players) do
+        nameMap[tostring(netID)] = plr.name or plr.skin or tostring(netID)
+    end
     return {
         drivers = Drivers,
         driversbypassengers = DriversByPassengers,
         driverstask = DriversTask,
-        driverstaskhost =
-            DriversTaskHost
+        driverstaskhost = DriversTaskHost,
+        nameMap = nameMap
     }
 end
 
 ---Erstellt eine Liste, in welchen Fahrgemeinschaften der besagte Charakter ein Ziel ist
 ---@param pedNet number
 ---@return table trefferliste
-DriversWhereIsPedNetTarget = function(pedNet)
+DriversWhereIsPedNetTarget      = function(pedNet)
     local hits = {}
     for vehNet, task in pairs(DriversTask) do
         if task.targetNet ~= nil and task.targetNet == pedNet then

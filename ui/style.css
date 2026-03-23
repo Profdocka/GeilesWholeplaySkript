@@ -239,3 +239,431 @@ Diese beiden folgenden gehen nicht :(
     border-radius: 0.6vh;
     color: white;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Overlay – Submenüs (Optionen, Drivers)
+   ═══════════════════════════════════════════════════════════════ */
+
+.overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.overlay-panel {
+    position: relative;
+    width: 40em;
+    max-height: 80vh;
+    background: rgba(20, 20, 20, 0.95);
+    border-radius: 0.8vh;
+    padding: 1.5em;
+    overflow-y: auto;
+    z-index: 1001;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.overlay-panel::-webkit-scrollbar {
+    width: 0.8vh;
+}
+
+.overlay-panel::-webkit-scrollbar-thumb {
+    background: #288be2;
+    border-radius: 0.8vh;
+}
+
+.overlay-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.8em;
+}
+
+.overlay-close {
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+}
+
+.overlay-close:hover {
+    color: #ff4444;
+}
+
+.overlay-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+}
+
+.overlay-section-title {
+    margin: 0 0 0.5em 0;
+    font-size: 1.4em;
+    border-bottom: 2px solid #ff8000;
+    padding-bottom: 0.3em;
+}
+
+.overlay-section-subtitle {
+    margin: 0.8em 0 0.3em 0;
+    font-size: 1.1em;
+    color: #ffaf60;
+}
+
+/* Optionen-Overlay */
+
+.overlay-option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5em 0.8em;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.4vh;
+}
+
+.overlay-option-label {
+    font-size: 1em;
+}
+
+.overlay-toggle-btn {
+    padding: 0.3em 1em;
+    border: none;
+    border-radius: 0.3vh;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.toggle-on {
+    background: #28a745;
+    color: white;
+}
+
+.toggle-off {
+    background: #6c757d;
+    color: white;
+}
+
+.overlay-toggle-btn:hover {
+    opacity: 0.85;
+}
+
+/* Drivers-Overlay */
+
+.overlay-input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+
+.overlay-input-label {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.overlay-input-field {
+    padding: 0.4em 0.6em;
+    border: 1px solid #555;
+    border-radius: 0.3vh;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 0.95em;
+    outline: none;
+}
+
+.overlay-input-field:focus {
+    border-color: #288be2;
+}
+
+.overlay-action-btn {
+    padding: 0.5em 1.2em;
+    border: none;
+    border-radius: 0.3vh;
+    background: #ff8000;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    align-self: flex-start;
+    margin-top: 0.3em;
+}
+
+.overlay-action-btn:hover {
+    background: #e67300;
+}
+
+.overlay-driver-card {
+    padding: 0.6em 0.8em;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.4vh;
+    border-left: 3px solid #288be2;
+}
+
+.overlay-driver-card ul {
+    margin: 0.3em 0;
+    padding-left: 1.2em;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+.overlay-driver-task {
+    display: block;
+    margin-top: 0.3em;
+    font-size: 0.85em;
+    color: #ffaf60;
+}
+
+.overlay-empty-text {
+    color: #888;
+    font-style: italic;
+}
+
+/* Dropdown (select) – dunkler Hintergrund */
+
+.overlay-select,
+.overlay-panel select {
+    background: rgba(30, 30, 30, 0.95);
+    color: white;
+    border: 1px solid #555;
+}
+
+.overlay-select option,
+.overlay-panel select option {
+    background: #1e1e1e;
+    color: white;
+}
+
+/* ─── Aktive Fahrgemeinschaften – Karten ─────────────────────── */
+
+.overlay-driver-card-clickable {
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.overlay-driver-card-clickable:hover {
+    border-left-color: #ff8000;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.driver-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 0.3em;
+}
+
+.driver-card-net-badge {
+    font-size: 0.75em;
+    color: #888;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.1em 0.4em;
+    border-radius: 0.3em;
+}
+
+.driver-card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+    margin: 0.3em 0;
+}
+
+.driver-chip {
+    position: relative;
+    display: inline-block;
+    background: rgba(40, 139, 226, 0.25);
+    color: #8cc4ff;
+    padding: 0.15em 0.5em;
+    border-radius: 0.3em;
+    font-size: 0.85em;
+    cursor: default;
+}
+
+.driver-chip-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #ffaf60;
+    padding: 0.2em 0.5em;
+    border-radius: 0.3em;
+    font-size: 0.8em;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.driver-chip:hover .driver-chip-tooltip {
+    display: block;
+}
+
+/* ─── Bearbeitungs-Panel (Drag & Drop) ───────────────────────── */
+
+.driver-edit-panel {
+    margin-top: 1em;
+    padding: 1em;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #555;
+    border-radius: 0.5em;
+}
+
+.driver-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8em;
+}
+
+.driver-edit-header h3 {
+    margin: 0;
+    color: #ffaf60;
+}
+
+.driver-edit-seats {
+    margin-bottom: 1em;
+}
+
+.driver-edit-seats h4,
+.driver-edit-pool h4 {
+    margin: 0 0 0.4em 0;
+    font-size: 0.95em;
+    color: #ccc;
+}
+
+.driver-edit-slot {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.35em 0.5em;
+    margin-bottom: 0.25em;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed #444;
+    border-radius: 0.3em;
+    min-height: 2em;
+    transition: background 0.15s;
+}
+
+.driver-edit-slot.drag-over {
+    background: rgba(40, 139, 226, 0.15);
+    border-color: #288be2;
+}
+
+.driver-edit-slot-label {
+    min-width: 7em;
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.driver-edit-chip {
+    display: inline-block;
+    background: #288be2;
+    color: white;
+    padding: 0.15em 0.5em;
+    border-radius: 0.3em;
+    font-size: 0.85em;
+    cursor: grab;
+    user-select: none;
+}
+
+.driver-edit-chip:active {
+    cursor: grabbing;
+}
+
+/* Ghost-Element das dem Cursor folgt */
+.driver-drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    background: #288be2;
+    color: white;
+    padding: 0.2em 0.6em;
+    border-radius: 0.3em;
+    font-size: 0.85em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    opacity: 0.85;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Markierung für potentielle Drop-Ziele während des Ziehens */
+.drop-candidate {
+    outline: 1px dashed #288be266;
+}
+
+.driver-edit-pool {
+    margin-bottom: 0.8em;
+}
+
+.driver-pool-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+    min-height: 2em;
+    padding: 0.4em;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed #444;
+    border-radius: 0.3em;
+}
+
+.driver-pool-chip {
+    display: inline-block;
+    background: rgba(255, 128, 0, 0.3);
+    color: #ffcc88;
+    padding: 0.15em 0.5em;
+    border-radius: 0.3em;
+    font-size: 0.85em;
+    cursor: grab;
+    user-select: none;
+}
+
+.driver-pool-chip:active {
+    cursor: grabbing;
+}
+
+.driver-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+}
+
+/* ─── Ziel-Feld mit Quick-Button ─────────────────────────────── */
+
+.target-field-row {
+    display: flex;
+    gap: 0.4em;
+    align-items: center;
+}
+
+.target-field-row .overlay-input-field {
+    flex: 1;
+}
+
+.overlay-quick-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em 0.5em;
+    border: 1px solid #555;
+    border-radius: 0.3em;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffaf60;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.overlay-quick-btn:hover {
+    background: rgba(255, 128, 0, 0.3);
+}

@@ -112,6 +112,12 @@ end
 ---Erzeugt die clientseitigen Threads zur Behandlung der serverseitigen Definition der Fahrgemeinschaften
 ---@param DriversInfoFromServer table
 ApplyDrivers = function(DriversInfoFromServer)
+    -- UI synchronisieren, damit das Drivers-Overlay aktuelle Daten zeigt
+    SendNUIMessage({
+        type        = "GW_DriversSync",
+        driversInfo = DriversInfoFromServer
+    })
+
     Citizen.Await(StopAllDriversRunningTasks())
     DriversRunningTasks = {}
     for vehNet, passengers in pairs(DriversInfoFromServer.drivers) do

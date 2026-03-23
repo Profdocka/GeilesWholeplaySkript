@@ -106,6 +106,54 @@ RegisterNetEvent("SEv_ListAll", function(source)
     ListAllActiveForClient(source)
 end)
 
+---Entfernt die Items aus Slot 1 (Waffe) und dem letzten Slot (Munition) des Spielers
+---@param src number Server-ID des Spielers
+ClearWeaponAndAmmoSlots = function(src)
+    if GetResourceState('ox_inventory') ~= 'started' then return end
+    local lastSlot = GetConvarInt('inventory:slots', 50)
+
+    local slot1Data = exports.ox_inventory:GetSlot(src, 1)
+    if slot1Data then
+        exports.ox_inventory:RemoveItem(src, slot1Data.name, slot1Data.count, nil, 1)
+    end
+
+    local lastSlotData = exports.ox_inventory:GetSlot(src, lastSlot)
+    if lastSlotData then
+        exports.ox_inventory:RemoveItem(src, lastSlotData.name, lastSlotData.count, nil, lastSlot)
+    end
+end
+
+---Entfernt beim Charakterwechsel Waffe und Munition aus dem Inventar
+RegisterNetEvent("SEv_ClearWeaponSlots", function()
+    ClearWeaponAndAmmoSlots(source)
+end)
+
+---Gibt dem Spieler eine Waffe und die passende Munition ins Inventar,
+---wenn ox_inventory auf dem Server läuft. Waffe in Slot 1, Munition in den letzten Slot.
+---Bereits vorhandene Items in diesen Slots werden vorher entfernt.
+RegisterNetEvent("SEv_GiveWeaponToInventory", function(weaponName)
+    if GetResourceState('ox_inventory') ~= 'started' then return end
+    local src = source
+    if type(weaponName) ~= 'string' or not string.match(weaponName, "^[%w_]+$") then return end
+
+    local oxWeaponName = string.upper(weaponName)
+    if string.sub(oxWeaponName, 1, 7) ~= 'WEAPON_' then return end
+
+    local itemData = exports.ox_inventory:Items(oxWeaponName)
+    if not itemData then return end
+
+    ClearWeaponAndAmmoSlots(src)
+
+    local weaponCount = itemData.throwable and 25 or 1
+    exports.ox_inventory:AddItem(src, oxWeaponName, weaponCount, nil, 1)
+
+    local ammoName = itemData.ammoname
+    if ammoName and string.sub(string.upper(ammoName), 1, 7) ~= 'WEAPON_' then
+        local lastSlot = GetConvarInt('inventory:slots', 50)
+        exports.ox_inventory:AddItem(src, ammoName, 100, nil, lastSlot)
+    end
+end)
+
 ---Event zum prüfen, ob ein String zum Namen eines Kuss Kult Entities passt
 RegisterNetEvent("SEv_CheckIfEntityIsKussKult", function(input, variant, hasWeapon, vector4, faction)
     if faction == "PLAYER" then
@@ -191,6 +239,7 @@ RegisterNetEvent("SEv_RegisterVehicle", function(name, networkID)
     local skin = GetStandardSpellingOfName(name, TableOfAllVehiclesLower, TableOfAllVehicles, TableOfAllVehiclesIndexes)
     name = LookforRootNameOfSkin(TableOfAllVehicleSkins, skin)
     RegisterEntity(VEHICLE_VARIANT, networkID, name, skin, nil)
+    GiveVehicleKeysIfQBox(source, networkID)
 end)
 
 ---Registriert mehrere Kuss Kult Fahrzeuge in der Fahrzeug Gruppe
@@ -200,6 +249,7 @@ RegisterNetEvent("SEv_RegisterMultipleVehicles", function(GroupNetwork)
             TableOfAllVehiclesIndexes)
         local name = LookforRootNameOfSkin(TableOfAllVehicleSkins, skin)
         RegisterEntity(VEHICLE_VARIANT, vehicle.networkID, name, skin, nil)
+        GiveVehicleKeysIfQBox(source, vehicle.networkID)
     end
 end)
 
@@ -211,7 +261,7 @@ end)
 ---Event um bei einem Client das Geile Wholeplay Skript Menü mit den aktiven Daten zu öffnen
 RegisterNetEvent("SEv_OpenMenu", function(source)
     TriggerLatentClientEvent("CEvUI_OpenMenu", source, BPS, Players, Characters, Vehicles,
-        Players[GetNetworkIDPlayerFromSource(source)].name, TableOfAllDioramas)
+        Players[GetNetworkIDPlayerFromSource(source)].name, TableOfAllDioramas, GetDriversInfo())
 end)
 
 ---Event um die aktiven Server Daten erneut an den Client zu schicken
@@ -291,6 +341,93 @@ RegisterNetEvent("SEv_ChangeCharacterAttitude", function(source, variant, name)
     end
 end)
 
+-- ═══════════════════════════════════════════════════════════════
+-- Neue Server Events für die UI-Submenüs (Drivers)
+-- ═══════════════════════════════════════════════════════════════
+
+---Event zum Spawnen einer Fahrgemeinschaft über die UI
+RegisterNetEvent("SEv_SpawnDriversFromUI", function(args)
+    if args and args[1] then
+        local isfound = IsKussKultVehicle(args[1])
+        if isfound and args[2] ~= nil then
+            SpawnDriversWithVehicle(args, source)
+        else
+            local isfounddriver = IsKussKultCharacter(args[1])
+            if isfounddriver then
+                SpawnDriversWithMyCar(args, source)
+            else
+                TriggerClientEvent("CEv_ShowNotificationEvent", source, "Bitte gültiges Fahrzeug oder Fahrer angeben!")
+            end
+        end
+    end
+end)
+
+---Event zum Setzen eines Drivers Tasks über die UI
+RegisterNetEvent("SEv_DriversTaskFromUI", function(args)
+    if args and args[1] then
+        DriversSetTaskFromArgs(source, args)
+    end
+end)
+
+---Event zum Erstellen einer Fahrgemeinschaft aus bestehenden Aktiven über die UI
+RegisterNetEvent("SEv_DriversCreateFromUI", function(args)
+    if args and args[1] then
+        DriversCreateFromArgs(source, args)
+        TriggerLatentClientEvent("CEv_GiveRoles", -1, BPS, FactionsAndMembers, FactionLeaders, 0, 0,
+            NEUTRAL_VARIANT, Players, GetDriversInfo())
+    end
+end)
+
+---Event zum Aktualisieren der Passagiere einer Fahrgemeinschaft über die UI
+RegisterNetEvent("SEv_DriversUpdateFromUI", function(args)
+    if args and args[1] then
+        local isfound, vehicle = CheckIfVehicleExistsByName(args[1])
+        if isfound and args[2] ~= nil then
+            local isfounddriver, driver = CheckIfCharacterExistsByName(args[2])
+            local passengers = {}
+            if isfounddriver then
+                table.insert(passengers, driver.networkID)
+                for i = 3, #args, 1 do
+                    local isfoundpassenger, passenger = CheckIfCharacterExistsByName(args[i])
+                    if isfoundpassenger then
+                        table.insert(passengers, passenger.networkID)
+                    end
+                end
+                DriversUpdateCarpool(vehicle.networkID, passengers, source)
+                TriggerLatentClientEvent("CEv_GiveRoles", -1, BPS, FactionsAndMembers, FactionLeaders, 0, 0,
+                    NEUTRAL_VARIANT, Players, GetDriversInfo())
+            end
+        else
+            TriggerClientEvent("CEv_ShowNotificationEvent", source, "Bitte gültiges Fahrzeug und Fahrer angeben!")
+        end
+    end
+end)
+
+---Event zum sitzplatzgenauen Aktualisieren über das Bearbeitungs-Panel
+RegisterNetEvent("SEv_DriversUpdateSeatedFromUI", function(vehicleName, seatMap)
+    local isfound, vehicle = CheckIfVehicleExistsByName(vehicleName)
+    if isfound and Drivers[vehicle.networkID] then
+        local vehNet = vehicle.networkID
+        -- seatMap: { ["-1"] = "CharName", ["0"] = "CharName", ... }
+        -- In passengerTable umwandeln: { [seatIndex+2] = networkID }
+        local passengerTable = {}
+        for seatStr, charName in pairs(seatMap) do
+            local seatIndex = tonumber(seatStr)
+            if seatIndex then
+                local found, character = CheckIfCharacterExistsByName(charName)
+                if found then
+                    passengerTable[seatIndex + 2] = character.networkID
+                end
+            end
+        end
+        DriversUpdateCarpool(vehNet, passengerTable, source)
+        TriggerLatentClientEvent("CEv_GiveRoles", -1, BPS, FactionsAndMembers, FactionLeaders, 0, 0,
+            NEUTRAL_VARIANT, Players, GetDriversInfo())
+    else
+        TriggerClientEvent("CEv_ShowNotificationEvent", source, "Fahrgemeinschaft existiert nicht!")
+    end
+end)
+
 ---Event um mehrere Kuss Kult Charaktere zu teleportieren
 RegisterNetEvent("SEv_RelocateCharacter", function(source, Group, coords, heading)
     TeleportMultiple(Group, coords, heading)
@@ -326,89 +463,90 @@ RegisterNetEvent("SEv_TwoubleDeathHandler")
 
 ---Event um die die Kontrolle von einem Spieler auf einen NPC in der Welt zu wechseln
 RegisterNetEvent("SEv_SwitchCharacters",
-	function(source, targetCharacter, sourceCharacter, targetFeatures, sourceFeatures, newTargetNet)
-		if TryForNetworkIDAvailabilityServer(newTargetNet) then
-			local sourceHandle = NetworkGetEntityFromNetworkId(sourceCharacter.networkID)
-			local targetHandle = NetworkGetEntityFromNetworkId(newTargetNet)
-			RespondToDriversInforms = false
-			DeleteEntity(NetworkGetEntityFromNetworkId(targetCharacter.networkID))
-			local sourceCoords = targetFeatures["vector4"]["coords"]
-			--Source ins eventuelle Fahrzeug des alten targetCharacter setzen oder andernfalls an die Position von diesem
-			if targetFeatures["vehicle"] ~= nil then
-					TaskWarpPedIntoVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"]), targetFeatures["seatIndex"])
-				--	Citizen.Await(AwaitUntilPedEnteredVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"])))
-			else
-				SetEntityCoords(sourceHandle, sourceCoords.x, sourceCoords.y, sourceCoords.z, true, false, false, false)
-				SetEntityHeading(sourceHandle, targetFeatures["vector4"]["heading"])
-			end
-			--Neuen TargetCharakter in das eventuelle Fahrzeug der Source setzen
-			if sourceFeatures["vehicle"] ~= nil then
-				TaskWarpPedIntoVehicle(targetHandle, NetworkGetEntityFromNetworkId(sourceFeatures["vehicle"]),
-					sourceFeatures["seatIndex"])
-				Citizen.Await(AwaitUntilPedEnteredVehicle(targetHandle,
-					NetworkGetEntityFromNetworkId(sourceFeatures["vehicle"])))
-			end
-			Characters[targetCharacter.networkID] = nil
-			RegisterEntity(NEUTRAL_VARIANT, newTargetNet, sourceCharacter.name, sourceCharacter.skin,
-				sourceCharacter.faction)
-			RegisterEntity(PLAYER_VARIANT, sourceCharacter.networkID, targetCharacter.name, targetCharacter.skin,
-				targetCharacter.faction)
-			--Anführer der Source Fraktion wird entfernt
-			if FactionLeaders[sourceCharacter.faction] == sourceCharacter.networkID then
-				FactionLeaders[sourceCharacter.faction] = nil
-			end
-			--Anführer der Target Fraktion wird auf den Source gesetzt
-			FactionLeaders[targetCharacter.faction] = sourceCharacter.networkID
-			local driversTargetsWhereSourceChar = DriversWhereIsPedNetTarget(sourceCharacter.networkID)
-			local driversTargetsWhereTargetChar = DriversWhereIsPedNetTarget(targetCharacter.networkID)
-			for _, vehNet in pairs(driversTargetsWhereSourceChar) do
-				local tempDriversTask = DriversTask[vehNet]
-				tempDriversTask.targetNet = newTargetNet
-				DriversTask[vehNet] = nil
-				DriversTask[vehNet] = tempDriversTask
-			end
-			for _, vehNet in pairs(driversTargetsWhereTargetChar) do
-				local tempDriversTask = DriversTask[vehNet]
-				tempDriversTask.targetNet = sourceCharacter.networkID
-				DriversTask[vehNet] = nil
-				DriversTask[vehNet] = tempDriversTask
-			end
-			--Drivers Fahrgemeinschaft im ehemaligen Fahrzeug der Source erzeugen
-			if sourceFeatures["vehicle"] then
-				local passengersUpdatedIndexes = {}
-				for i = -1, sourceFeatures["vehicleCapacity"], 1 do
-					if Characters[sourceFeatures["vehiclePassengers"][i]] then
-						passengersUpdatedIndexes[i + 2] = sourceFeatures["vehiclePassengers"][i]
-					end
-				end
-				passengersUpdatedIndexes[sourceFeatures["seatIndex"] + 2] = newTargetNet
-				DriversCreateCarpool(sourceFeatures["vehicle"], passengersUpdatedIndexes,
-					sourceFeatures["vehicleCapacity"], source)
-			end
-			--Fahrgemeinschaft des Targets auflösen (Falls Fahrer war) oder aus Fahrgemeinschaft entfernen (Wenn Mitfahrer war)
-			if targetFeatures["vehicle"] then
-				if targetFeatures["seatIndex"] == -1 then
-					DriversDropCheckVehicle(targetFeatures["vehicle"])
-				else
-					local tempPassengers = ExcludeEntryOfTable(Drivers[targetFeatures["vehicle"]],
-						targetCharacter.networkID)
-						local tempPassengersUpdatedIndexes = {}
-						for i = -1, targetFeatures["vehicleCapacity"], 1 do
-							if Characters[tempPassengers[i]] then
-								tempPassengersUpdatedIndexes[i + 2] = tempPassengers[i]
-							end
-						end
-					DriversUpdateCarpool(targetFeatures["vehicle"], tempPassengersUpdatedIndexes, source)
-				end
-			end
-			OrganizeTableOfFactions()
-			RespondToDriversInforms = true
-			TriggerLatentClientEvent("CEv_GiveCharacterSkinAndRole", -1, BPS, newTargetNet, sourceCharacter.skin, true,
-				source, PLAYER_VARIANT, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
-			TriggerClientEvent("CEv_ApplySwitchFeatures", -1, targetFeatures, sourceFeatures, newTargetNet,
-				sourceCharacter.networkID)
-		end
-	end)
+    function(source, targetCharacter, sourceCharacter, targetFeatures, sourceFeatures, newTargetNet)
+        if TryForNetworkIDAvailabilityServer(newTargetNet) then
+            local sourceHandle = NetworkGetEntityFromNetworkId(sourceCharacter.networkID)
+            local targetHandle = NetworkGetEntityFromNetworkId(newTargetNet)
+            RespondToDriversInforms = false
+            DeleteEntity(NetworkGetEntityFromNetworkId(targetCharacter.networkID))
+            local sourceCoords = targetFeatures["vector4"]["coords"]
+            --Source ins eventuelle Fahrzeug des alten targetCharacter setzen oder andernfalls an die Position von diesem
+            if targetFeatures["vehicle"] ~= nil then
+                TaskWarpPedIntoVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"]),
+                    targetFeatures["seatIndex"])
+                --	Citizen.Await(AwaitUntilPedEnteredVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"])))
+            else
+                SetEntityCoords(sourceHandle, sourceCoords.x, sourceCoords.y, sourceCoords.z, true, false, false, false)
+                SetEntityHeading(sourceHandle, targetFeatures["vector4"]["heading"])
+            end
+            --Neuen TargetCharakter in das eventuelle Fahrzeug der Source setzen
+            if sourceFeatures["vehicle"] ~= nil then
+                TaskWarpPedIntoVehicle(targetHandle, NetworkGetEntityFromNetworkId(sourceFeatures["vehicle"]),
+                    sourceFeatures["seatIndex"])
+                Citizen.Await(AwaitUntilPedEnteredVehicle(targetHandle,
+                    NetworkGetEntityFromNetworkId(sourceFeatures["vehicle"])))
+            end
+            Characters[targetCharacter.networkID] = nil
+            RegisterEntity(NEUTRAL_VARIANT, newTargetNet, sourceCharacter.name, sourceCharacter.skin,
+                sourceCharacter.faction)
+            RegisterEntity(PLAYER_VARIANT, sourceCharacter.networkID, targetCharacter.name, targetCharacter.skin,
+                targetCharacter.faction)
+            --Anführer der Source Fraktion wird entfernt
+            if FactionLeaders[sourceCharacter.faction] == sourceCharacter.networkID then
+                FactionLeaders[sourceCharacter.faction] = nil
+            end
+            --Anführer der Target Fraktion wird auf den Source gesetzt
+            FactionLeaders[targetCharacter.faction] = sourceCharacter.networkID
+            local driversTargetsWhereSourceChar = DriversWhereIsPedNetTarget(sourceCharacter.networkID)
+            local driversTargetsWhereTargetChar = DriversWhereIsPedNetTarget(targetCharacter.networkID)
+            for _, vehNet in pairs(driversTargetsWhereSourceChar) do
+                local tempDriversTask = DriversTask[vehNet]
+                tempDriversTask.targetNet = newTargetNet
+                DriversTask[vehNet] = nil
+                DriversTask[vehNet] = tempDriversTask
+            end
+            for _, vehNet in pairs(driversTargetsWhereTargetChar) do
+                local tempDriversTask = DriversTask[vehNet]
+                tempDriversTask.targetNet = sourceCharacter.networkID
+                DriversTask[vehNet] = nil
+                DriversTask[vehNet] = tempDriversTask
+            end
+            --Drivers Fahrgemeinschaft im ehemaligen Fahrzeug der Source erzeugen
+            if sourceFeatures["vehicle"] then
+                local passengersUpdatedIndexes = {}
+                for i = -1, sourceFeatures["vehicleCapacity"], 1 do
+                    if Characters[sourceFeatures["vehiclePassengers"][i]] then
+                        passengersUpdatedIndexes[i + 2] = sourceFeatures["vehiclePassengers"][i]
+                    end
+                end
+                passengersUpdatedIndexes[sourceFeatures["seatIndex"] + 2] = newTargetNet
+                DriversCreateCarpool(sourceFeatures["vehicle"], passengersUpdatedIndexes,
+                    sourceFeatures["vehicleCapacity"], source)
+            end
+            --Fahrgemeinschaft des Targets auflösen (Falls Fahrer war) oder aus Fahrgemeinschaft entfernen (Wenn Mitfahrer war)
+            if targetFeatures["vehicle"] then
+                if targetFeatures["seatIndex"] == -1 then
+                    DriversDropCheckVehicle(targetFeatures["vehicle"])
+                else
+                    local tempPassengers = ExcludeEntryOfTable(Drivers[targetFeatures["vehicle"]],
+                        targetCharacter.networkID)
+                    local tempPassengersUpdatedIndexes = {}
+                    for i = -1, targetFeatures["vehicleCapacity"], 1 do
+                        if Characters[tempPassengers[i]] then
+                            tempPassengersUpdatedIndexes[i + 2] = tempPassengers[i]
+                        end
+                    end
+                    DriversUpdateCarpool(targetFeatures["vehicle"], tempPassengersUpdatedIndexes, source)
+                end
+            end
+            OrganizeTableOfFactions()
+            RespondToDriversInforms = true
+            TriggerLatentClientEvent("CEv_GiveCharacterSkinAndRole", -1, BPS, newTargetNet, sourceCharacter.skin, true,
+                source, PLAYER_VARIANT, FactionsAndMembers, FactionLeaders, Players, GetDriversInfo())
+            TriggerClientEvent("CEv_ApplySwitchFeatures", -1, targetFeatures, sourceFeatures, newTargetNet,
+                sourceCharacter.networkID)
+        end
+    end)
 
 ---Event um über den Fahrzeugverlust einer Fahrgemeinschaft informiert zu werden
 RegisterNetEvent("SEv_InformThatDriversCarIsGone", function(vehNet, source)
@@ -442,6 +580,7 @@ RegisterNetEvent("SEv_RegisterVehicleAndCharactersForDrivers", function(vehicle,
         TableOfAllVehiclesIndexes)
     local vehName = LookforRootNameOfSkin(TableOfAllVehicleSkins, vehSkin)
     RegisterEntity(VEHICLE_VARIANT, vehicle.networkID, vehName, vehSkin, nil)
+    GiveVehicleKeysIfQBox(source, vehicle.networkID)
     local characterSkin
     local characterName
     local carpoolGroup = {}
@@ -450,7 +589,7 @@ RegisterNetEvent("SEv_RegisterVehicleAndCharactersForDrivers", function(vehicle,
             TableOfAllCharactersIndexes)
         characterName = LookforRootNameOfSkin(TableOfAllCharacterSkins, characterSkin)
         RegisterEntity(NEUTRAL_VARIANT, character.networkID, characterName, characterSkin, character.faction)
-        carpoolGroup[seatIndex+2] = character.networkID
+        carpoolGroup[seatIndex + 2] = character.networkID
     end
     OrganizeTableOfFactions()
     Citizen.Wait(NETWORK_ID_SYNC_DELAY)

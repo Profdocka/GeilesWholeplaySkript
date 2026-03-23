@@ -21,6 +21,11 @@ Cosmetics = function(pedHandle, pedJson, ShouldHaveWeapon)
 	SetEntityMaxHealth(pedHandle, 200)
 	SetEntityHealth(pedHandle, 200)
 	SetPedArmour(pedHandle, 100)
+
+	-- Bei Spieler-Ped alte Waffe und Munition aus dem Inventar entfernen
+	if pedHandle == PlayerPedId() and GetResourceState('ox_inventory') == 'started' then
+		TriggerServerEvent("SEv_ClearWeaponSlots")
+	end
 	Components(pedHandle, pedComps)
 	Props(pedHandle, pedProps, pedHash)
 
@@ -97,7 +102,11 @@ end
 ---@param headFeatures table Informationen über die Kopfform, Haar- und Augenfarbe
 Freemode = function(pedHandle, headFeatures)
 	local blend = headFeatures.ShapeAndSkinTone
-	SetPedHeadBlendData(pedHandle, tonumber(blend.ShapeFatherId), tonumber(blend.ShapeMotherId), tonumber(blend.ShapeOverrideId), tonumber(blend.ToneFatherId), tonumber(blend.ToneMotherId), tonumber(blend.ToneOverrideId), tonumber(CheckAndConvertToFloat(blend.ShapeVal)), tonumber(CheckAndConvertToFloat(blend.ToneVal)), tonumber(CheckAndConvertToFloat(blend.OverrideVal)), OneAndZeroToBoolean(blend.IsP))
+	SetPedHeadBlendData(pedHandle, tonumber(blend.ShapeFatherId), tonumber(blend.ShapeMotherId),
+		tonumber(blend.ShapeOverrideId), tonumber(blend.ToneFatherId), tonumber(blend.ToneMotherId),
+		tonumber(blend.ToneOverrideId), tonumber(CheckAndConvertToFloat(blend.ShapeVal)),
+		tonumber(CheckAndConvertToFloat(blend.ToneVal)), tonumber(CheckAndConvertToFloat(blend.OverrideVal)),
+		OneAndZeroToBoolean(blend.IsP))
 	SetPedHairColor(pedHandle, tonumber(headFeatures.HairColour), tonumber(headFeatures.HairColourStreaks))
 	SetPedEyeColor(pedHandle, tonumber(headFeatures.EyeColour))
 
@@ -151,11 +160,17 @@ ColorType = function(i)
 end
 
 --- Gibt dem Charakter die Waffe
+--- Wenn der Ped der Spieler ist und ox_inventory läuft,
+--- wird die Waffe ins Inventar gelegt (Slot 1 + Munition letzter Slot)
 --- @param pedHandle integer
 --- @param weaponName string
 Weapon = function(pedHandle, weaponName)
 	local weaponHash = GetHashKey(weaponName)
-	GiveDelayedWeaponToPed(pedHandle, weaponHash, 9999, false)
+	if pedHandle == PlayerPedId() and GetResourceState('ox_inventory') == 'started' then
+		TriggerServerEvent("SEv_GiveWeaponToInventory", weaponName)
+	else
+		GiveDelayedWeaponToPed(pedHandle, weaponHash, 9999, false)
+	end
 end
 
 ---Gibt dem Charakter Tattoos und visuelle Wunden
@@ -178,7 +193,7 @@ end
 ---Stimme des Charakters wird auf die vorgebene Stimmbibliothek gesetzt
 ---@param pedHandle integer
 ---@param pedVoice string
-Voice = function (pedHandle, pedVoice)
+Voice = function(pedHandle, pedVoice)
 	SetAmbientVoiceName(pedHandle, pedVoice)
 end
 
@@ -198,11 +213,11 @@ end
 ---Gibt die eingebene Zahl als Kommazahl zurück
 ---@param number integer | string
 ---@return string
-CheckAndConvertToFloat = function (number)
+CheckAndConvertToFloat = function(number)
 	number = tonumber(number)
-    if number == math.floor(number) then
-        return number .. ".0" -- Wenn ja, ".0" hinzufügen
-    else
-        return number
-    end
+	if number == math.floor(number) then
+		return number .. ".0" -- Wenn ja, ".0" hinzufügen
+	else
+		return number
+	end
 end

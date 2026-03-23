@@ -137,7 +137,7 @@ TryForNetworkIDAvailabilityServer = function(networkID)
     local tries = 5
     for i = 1, tries, 1 do
         if NetworkGetEntityFromNetworkId(networkID) ~= 0 then
-            print("ID from Entity in Server: " .. NetworkGetEntityFromNetworkId(networkID) )
+            print("ID from Entity in Server: " .. NetworkGetEntityFromNetworkId(networkID))
             return true
         else
             Wait(1000)
@@ -605,6 +605,32 @@ function AwaitUntilPedLeftVehicle(pedHandle, vehHandle)
     end
     promise:reject()
     return promise
+end
+
+--- Gibt dem Spieler die Fahrzeugschlüssel für ein Fahrzeug,
+--- sofern qbx_vehiclekeys auf dem Server läuft.
+--- Wartet bis zu 5 Sekunden auf die Synchronisierung des Entities.
+---@param src number Server-ID des Spielers
+---@param networkID number Network-ID des Fahrzeugs
+function GiveVehicleKeysIfQBox(src, networkID)
+    if GetResourceState('qbx_vehiclekeys') ~= 'started' then return end
+    CreateThread(function()
+        local vehicle = 0
+        local maxRetries = 10
+        for i = 1, maxRetries do
+            vehicle = NetworkGetEntityFromNetworkId(networkID)
+            if vehicle and vehicle ~= 0 then
+                break
+            end
+            Wait(500)
+        end
+        if vehicle and vehicle ~= 0 then
+            exports.qbx_vehiclekeys:GiveKeys(src, vehicle)
+        else
+            print('[GeilesWholeplaySkript] Warnung: Fahrzeugschlüssel konnten nicht vergeben werden (NetworkID: ' ..
+            tostring(networkID) .. ' nicht verfügbar)')
+        end
+    end)
 end
 
 ---Promise bis ein Entity im Spiel existiert

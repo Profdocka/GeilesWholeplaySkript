@@ -10,7 +10,7 @@ RegisterCommand("gwsaveentity", function(source)
 
 	SaveResourceFile(GetCurrentResourceName(), "server/Super.json", json.encode(information), -1)
 end, false)
-]]--
+]] --
 RegisterCommand("gwspawnplayer", function(source, args)
 	if args[1] ~= nil then
 		local vector4 = GetEntityCoordsAndHeading(GetPlayerPed(source))
@@ -498,6 +498,22 @@ RegisterCommand("gwspawntestdunby", function(source, args)
 	nowargs[2] = "ESCORT"
 	nowargs[3] = "OmaRoswita"
 	DriversSetTaskFromArgs(source, nowargs)
+end, false)
+
+---Gibt dem Spieler die Schlüssel für das Fahrzeug in dem er sitzt
+RegisterCommand("gwkeys", function(source, args)
+	if GetResourceState('qbx_vehiclekeys') ~= 'started' then
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "qbx_vehiclekeys ist nicht aktiv!")
+		return
+	end
+	local ped = GetPlayerPed(source)
+	local vehicle = GetVehiclePedIsIn(ped, false)
+	if vehicle and vehicle ~= 0 then
+		exports.qbx_vehiclekeys:GiveKeys(source, vehicle)
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~g~Fahrzeugschlüssel erhalten!")
+	else
+		TriggerClientEvent("CEv_ShowNotificationEvent", source, "~r~Du sitzt in keinem Fahrzeug!")
+	end
 end, false)
 
 ---Test Command fürs Drivers Feature. Spawnt ParkersPolicebike, welches Dunby in der Spielwelt eskortiert

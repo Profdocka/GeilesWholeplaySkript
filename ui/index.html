@@ -5,9 +5,10 @@
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel='stylesheet' type='text/css' media='screen' href='./style.css'>
-    <script src='./script.js' defer></script>
+    <script type="module" src="./script.js"></script>
 </head>
 
 
@@ -24,6 +25,8 @@
             <span id="locationTab" class="material-icons md-18 sidebar" style="color: white;">explore</span>
             <span id="dioramaTab" class="material-icons md-18 sidebar" style="color: white;">theater_comedy</span>
             <span id="myVehiclesTab" class="material-icons md-18 sidebar" style="color: white;">car_rental</span>
+            <!-- WIP <span id="driversTab" class="material-icons md-18 sidebar" style="color: white;">directions_bus</span>
+            <span id="optionsTab" class="material-icons md-18 sidebar" style="color: white;">settings</span> -->
         </div>
         <div class="content-container">
             <nav class="navbar">
@@ -37,6 +40,16 @@
             <main id="content-holder" class="entity-block">
                 <!--Data inserted by Javascript-->
             </main>
+        </div>
+    </div>
+    <!-- Overlay für Submenüs (Optionen, Drivers) -->
+    <div id="overlay-container" class="overlay-container">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-panel">
+            <div class="overlay-header">
+                <span id="overlay-close" class="material-icons overlay-close">close</span>
+            </div>
+            <div id="overlay-content" class="overlay-content"></div>
         </div>
     </div>
 </body>

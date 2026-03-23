@@ -1,0 +1,17 @@
+# OS-Dateien / OS files
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Editor / IDE
+.vscode/
+*.swp
+*.swo
+*~
+*.bak
+
+# Node (falls NUI-Entwicklung)
+node_modules/
+
+# Logs
+*.log

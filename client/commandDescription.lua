@@ -31,6 +31,7 @@ Citizen.CreateThread(function()
 			{ name = "NachnameFahrzeugmodell", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
 		})
 	TriggerEvent("chat:addSuggestion", "/gwspawnmycar", "Spawnt das Hauptfahrzeug des eigenen Charakters", {})
+	TriggerEvent("chat:addSuggestion", "/gwkeys", "Gibt dir die Schlüssel für das Fahrzeug in dem du sitzt", {})
 	TriggerEvent("chat:addSuggestion", "/gwgesinnungneutral",
 		"Ändert die Gesinnung des Charakters zu neutral", {
 			{ name = "VornameNachname", help = "Den Namen zusammen geschrieben (Gibt Ausnahmen, required)" },
@@ -154,6 +155,14 @@ EnableOption = function(option)
 		ShowNotification("~r~Es wurde keine entsprechende Option gefunden!")
 		return
 	end
+
+	-- UI synchronisieren, damit Toggles im Options-Overlay aktuell bleiben
+	SendNUIMessage({
+		type        = "GW_OptionsSync",
+		unbesiegbar = IsInvincible,
+		formation   = WantsFormationSpawn,
+		blips       = WantsBlips
+	})
 end
 
 ---Ereignis um vom Server aus Client Einstellungen zu ändern

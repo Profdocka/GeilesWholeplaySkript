@@ -63,10 +63,9 @@ Citizen.CreateThread(function()
     end
 end)
 
----Was mit dem Spieler passiert, sobald er in der Spielwelt gespawnt ist
----und sich bewegen kann
-AddEventHandler("playerSpawned", function()
-    Citizen.Wait(10)
+---Gemeinsame Logik die beim ersten Spawnen und bei jedem Respawn ausgeführt wird
+---@param isFirstJoin boolean
+local function OnPlayerSpawnedLogic(isFirstJoin)
     --Macht den Spieler nach dem Respawn zu Michael, sollte er ein Tier sein und gestorben sein
     if GetPedType(PlayerPedId()) == 28 then
         SearchHash(GetHashKey("player_zero"))
@@ -78,13 +77,38 @@ AddEventHandler("playerSpawned", function()
     SetAiMeleeWeaponDamageModifier(0.3)
     --Gerade auf den Server gejoint => zufälliger Charakter
     --Sonst wenn er gestorben ist => eventuell zum Spawnpoint teleportiert und Charakter neugeladen
-    if HasJustJoined then
-        HasJustJoined = false
+    if isFirstJoin then
         TriggerServerEvent("SEv_PlayerSpawned", GetPlayerServerId(PlayerId()))
     else
         TeleportToSetSpawnpoint()
         Citizen.Wait(2000)
         ExecuteCommand("gwr", GetPlayerServerId(PlayerId()))
+    end
+end
+
+---Was mit dem Spieler passiert, sobald er in der Spielwelt gespawnt ist
+---und sich bewegen kann (Standalone / spawnmanager)
+AddEventHandler("playerSpawned", function()
+    Citizen.Wait(10)
+    local isFirstJoin = HasJustJoined
+    if HasJustJoined then
+        HasJustJoined = false
+    end
+    OnPlayerSpawnedLogic(isFirstJoin)
+end)
+
+---Fallback für Frameworks wie Qbox/QBCore, bei denen das spawnmanager-Event
+---"playerSpawned" beim ersten Joinen nicht ausgelöst wird.
+---Wartet bis der Spieler im Netzwerk aktiv ist und löst die Spawn-Logik aus,
+---falls "playerSpawned" bis dahin noch nicht gefeuert hat.
+Citizen.CreateThread(function()
+    while not NetworkIsPlayerActive(PlayerId()) do
+        Citizen.Wait(500)
+    end
+    Citizen.Wait(3000)
+    if HasJustJoined then
+        HasJustJoined = false
+        OnPlayerSpawnedLogic(true)
     end
 end)
 
@@ -421,7 +445,8 @@ RegisterNetEvent("CEv_DropMultipleEntitys",
 ---@param FactionsAndMembersFromServer table
 ---@param FactionLeadersFromServer table
 ---@param PlayersFromServer table
-RegisterNetEvent("CEv_DropAllCharacters", function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer, DriversInfoFromServer)
+RegisterNetEvent("CEv_DropAllCharacters",
+    function(Characters, FactionsAndMembersFromServer, FactionLeadersFromServer, PlayersFromServer, DriversInfoFromServer)
         local handle = nil
         local counter = 0
         Citizen.Await(StopAllDriversRunningTasks())
@@ -649,7 +674,8 @@ RegisterNetEvent("CEv_SwitchCharacters",
 ---@param targetCharacter table
 ---@param sourceCharacter table
 ---@param DriversInfoFromServer table
-RegisterNetEvent("CEv_SwitchCharactersIsDeadCheck", function(source, targetCharacter, sourceCharacter, DriversInfoFromServer)
+RegisterNetEvent("CEv_SwitchCharactersIsDeadCheck",
+    function(source, targetCharacter, sourceCharacter, DriversInfoFromServer)
         if TryForNetworkIDAvailability(targetCharacter.networkID) and TryForNetworkIDAvailability(sourceCharacter.networkID) then
             local targetPed = NetworkGetEntityFromNetworkId(targetCharacter.networkID)
             local sourcePed = NetworkGetEntityFromNetworkId(sourceCharacter.networkID)
@@ -693,13 +719,13 @@ RegisterNetEvent("CEv_ApplySwitchFeatures", function(toFeatures, fromFeatures, t
         SetPedArmour(targetPed, fromFeatures["armor"])
         if toFeatures["vehicle"] ~= nil then
             if TryForNetworkIDAvailability(toFeatures["vehicle"]) then
-                local vehicleHandle =  NetworkGetEntityFromNetworkId(toFeatures["vehicle"])
+                local vehicleHandle = NetworkGetEntityFromNetworkId(toFeatures["vehicle"])
                 while not IsVehicleSeatFree(vehicleHandle, toFeatures["seatIndex"]) do
                     Wait(500)
                 end
                 TaskWarpPedIntoVehicle(sourcePed, vehicleHandle,
                     toFeatures["seatIndex"])
-                --Citizen.Await(AwaitUntilPedEnteredVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"])))    
+                --Citizen.Await(AwaitUntilPedEnteredVehicle(sourceHandle, NetworkGetEntityFromNetworkId(targetFeatures["vehicle"])))
             end
         end
         SetEntityHealth(sourcePed, toFeatures["health"])
@@ -712,8 +738,8 @@ end)
 ---@param vector4 table
 ---@param characterGroup table
 RegisterNetEvent("CEv_SpawnVehicleWithCharacters", function(vehicleName, vector4, characterGroup)
-        SpawnVehicleWithCharacters(vehicleName, vector4, characterGroup)
-    end)
+    SpawnVehicleWithCharacters(vehicleName, vector4, characterGroup)
+end)
 
 ---Sendet alle statischen Informationen an die UI
 ---@param CharacterSkins table
@@ -736,7 +762,7 @@ end)
 ---@param Characters table
 ---@param Vehicles table
 ---@param playerName string
-RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName, dioramas)
+RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playerName, dioramas, driversInfo)
     for _, playerid in pairs(GetActivePlayers()) do
         local networkid = GetNetworkIDPlayerFromSource(playerid)
         local playername = GetPlayerName(playerid)
@@ -748,7 +774,8 @@ RegisterNetEvent("CEvUI_OpenMenu", function(Players, Characters, Vehicles, playe
         characters = Characters,
         vehicles = Vehicles,
         playerName = playerName,
-        dioramas = dioramas
+        dioramas = dioramas,
+        driversInfo = driversInfo
     })
     SetNuiFocus(true, true)
     TriggerScreenblurFadeIn(3000)

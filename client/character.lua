@@ -77,6 +77,7 @@ end
 SpawnCharacterAsNPC = function(modelHash, vector4)
     local pedHandle = CreatePed(26, modelHash, vector4["coords"].x, vector4["coords"].y, vector4["coords"].z,
         (vector4["heading"] - 180.0), true, true)
+    SetEntityAsMissionEntity(pedHandle, true, true)
     ApplyCharacterModifiers(pedHandle, true)
     return pedHandle
 end
@@ -123,6 +124,7 @@ SpawnCharacterInVehicle = function(variant, name, hasWeapon, vehicle, seat)
 
     if SearchHash(modelHash) then
         local pedHandle = CreatePedInsideVehicle(vehicle, 26, modelHash, seat, true, true)
+        SetEntityAsMissionEntity(pedHandle, true, true)
         SetModelAsNoLongerNeeded(modelHash)
         ApplyCharacterModifiers(pedHandle, true)
         ShowNotification("Dein gespawnter Charakter: " .. name)
