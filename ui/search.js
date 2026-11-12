@@ -39,7 +39,7 @@ export function initSearch(closeMenuFn) {
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
             closeMenuFn();
-        } else if (event.key === 'f' && document.activeElement !== searchbar) {
+        } else if (event.key === 'f' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
             event.preventDefault();
             searchbar.focus();
         }

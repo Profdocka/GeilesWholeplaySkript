@@ -963,6 +963,7 @@ function DriversAdvancedTargetTaskInterruptor:TargetLeftVehicleInterruptor()
     local passengersHandle = self.passengersHandle
     local targetHandle = self.targetHandle
     while self:IsInterruptorAbleToRun(self.threadsActive.targetLeftTheVehicle) do
+        if not DoesEntityExist(targetHandle) or IsEntityDead(targetHandle) then break end
         if not IsPedSittingInVehicle(targetHandle, GetVehiclePedIsIn(targetHandle, false)) and self:IsAbleToFulfillTaskAction() then
             --self:Interrupt()
             print(self.vehNet .. ": Interruptor TargetLeftVehicleInterruptor")
@@ -993,6 +994,7 @@ function DriversAdvancedTargetTaskInterruptor:TargetTriesToGetInVehicleInterrupt
     self.threadsActive.targetTriesToGetInVehicle = true
     local targetHandle = self.targetHandle
     while self:IsInterruptorAbleToRun(self.threadsActive.targetTriesToGetInVehicle) do
+        if not DoesEntityExist(targetHandle) or IsEntityDead(targetHandle) then break end
         if tonumber(GetVehiclePedIsTryingToEnter(targetHandle)) ~= 0 and self:IsAbleToFulfillTaskAction() then
             self:Interrupt()
             print(self.vehNet .. ": Interruptor TargetTriesToGetInVehicleInterruptor")
@@ -1016,6 +1018,7 @@ function DriversAdvancedTargetTaskInterruptor:TargetAboundedGetInVehicleInterrup
     self.threadsActive.targetAboundedGetInVehicle = true
     local targetHandle = self.targetHandle
     while self:IsInterruptorAbleToRun(self.threadsActive.targetAboundedGetInVehicle) do
+        if not DoesEntityExist(targetHandle) or IsEntityDead(targetHandle) then break end
         if tonumber(GetVehiclePedIsTryingToEnter(targetHandle)) == 0 and not IsPedInAnyVehicle(targetHandle, true) and self:IsAbleToFulfillTaskAction() then
             self:Interrupt()
             print(self.vehNet .. ": Interruptor TargetAboundedGetInVehicleInterruptor")
@@ -1041,6 +1044,7 @@ function DriversAdvancedTargetTaskInterruptor:TargetInVehicleInterruptor()
     local passengersHandle = self.passengersHandle
     local targetHandle = self.targetHandle
     while self:IsInterruptorAbleToRun(self.threadsActive.targetInVehicle) do
+        if not DoesEntityExist(targetHandle) or IsEntityDead(targetHandle) then break end
         if IsPedSittingInVehicle(targetHandle, GetVehiclePedIsIn(targetHandle, false)) and self:IsAbleToFulfillTaskAction() then
             --self:Interrupt()
             if self.threadsActive.targetTriesToGetInVehicle ~= nil then
@@ -1082,6 +1086,7 @@ function DriversAdvancedTargetTaskInterruptor:TargetInGetOutReachInterruptor()
     local passengersHandle = self.passengersHandle
     local targetHandle = self.targetHandle
     while self:IsInterruptorAbleToRun(self.threadsActive.targetInGetOutReach) do
+        if not DoesEntityExist(targetHandle) or IsEntityDead(targetHandle) then break end
         if self:IsTargetNearSource(targetHandle, passengersHandle[-1], self.taskInfo.minDistance) then
             if self.threadsActive.someoneLeftTheVehicle ~= nil then
                 self.threadsActive.someoneLeftTheVehicle = false

@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'ME'
 description 'Alles wichtige fürs Geile Wholeplay'
-version '1.1.0'
+version '1.2.0'
 
 -- Optionale QBox-Integration: Wenn qbx_vehiclekeys läuft,
 -- bekommen Spieler automatisch Fahrzeugschlüssel beim Spawnen.

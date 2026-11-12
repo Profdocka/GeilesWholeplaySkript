@@ -637,33 +637,144 @@ Diese beiden folgenden gehen nicht :(
     display: flex;
     justify-content: flex-end;
     gap: 0.5em;
+    margin-top: 0.8em;
 }
 
-/* ─── Ziel-Feld mit Quick-Button ─────────────────────────────── */
+/* ─── Task-Sektion im Bearbeitungspanel ──────────────────────── */
 
-.target-field-row {
-    display: flex;
-    gap: 0.4em;
-    align-items: center;
+.driver-edit-task-section {
+    margin-top: 0.8em;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.6em;
 }
 
-.target-field-row .overlay-input-field {
-    flex: 1;
+.driver-edit-task-section h4 {
+    margin: 0 0 0.4em;
+    font-size: 0.85em;
+    color: #ddd;
 }
 
-.overlay-quick-btn {
+/* ─── Verfolgungsziel-Drop-Feld ──────────────────────────────── */
+
+.driver-target-drop {
+    margin-top: 0.3em;
+}
+
+.driver-target-drop .overlay-input-field {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px dashed #555;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.driver-target-drop.drop-candidate .overlay-input-field {
+    border-color: #888;
+}
+
+.driver-target-drop.drag-over .overlay-input-field {
+    border-color: #ffaf60;
+    background: rgba(255, 128, 0, 0.12);
+}
+
+/* ─── Wizard: Fahrzeug-Drop-Zone ─────────────────────────────── */
+
+.driver-vehicle-drop {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.3em 0.5em;
+    min-height: 56px;
+    border: 2px dashed #555;
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.04);
+    margin: 0.5em 0;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+}
+
+.driver-vehicle-drop.drop-candidate {
+    border-color: #888;
+}
+
+.driver-vehicle-drop.drag-over {
+    border-color: #ffaf60;
+    background: rgba(255, 128, 0, 0.12);
+}
+
+.vehicle-drop-display {
+    color: #888;
+    font-style: italic;
+    font-size: 0.9em;
+    pointer-events: none;
+}
+
+.vehicle-drop-display.has-value {
+    color: #fff;
+    font-style: normal;
+    font-weight: bold;
+}
+
+/* ─── Wizard Buttons ─────────────────────────────────────────── */
+
+.wizard-next-btn {
+    margin-top: 0.6em;
+}
+
+.wizard-next-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.overlay-action-btn-secondary {
+    display: inline-block;
+    padding: 0.35em 0.8em;
     border: 1px solid #555;
     border-radius: 0.3em;
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffaf60;
+    background: rgba(255, 255, 255, 0.06);
+    color: #ccc;
     cursor: pointer;
+    font-size: 0.8em;
+    margin-bottom: 0.6em;
     transition: background 0.2s;
 }
 
-.overlay-quick-btn:hover {
-    background: rgba(255, 128, 0, 0.3);
+.overlay-action-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+/* ─── Spawn-Sektion: Button-Reihe & Toggle ───────────────────── */
+
+.driver-spawn-buttons {
+    display: flex;
+    gap: 0.5em;
+    margin-top: 0.4em;
+    align-items: center;
+}
+
+.driver-spawn-inputs.hidden,
+.driver-spawn-buttons.hidden {
+    display: none;
+}
+
+/* ─── Fahrer-Slot Fehler-Highlight ───────────────────────────── */
+
+.driver-slot-error {
+    outline: 2px solid #e55;
+    outline-offset: -1px;
+    animation: slot-shake 0.3s;
+}
+
+@keyframes slot-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    75% {
+        transform: translateX(4px);
+    }
 }

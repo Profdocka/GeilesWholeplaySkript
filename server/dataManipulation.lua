@@ -314,7 +314,7 @@ CheckIfCharacterExistsByName = function(input)
         return false
     end
     for _, character in pairs(Characters) do
-        if string.lower(character.name) == string.lower(input) then
+        if string.lower(character.name) == string.lower(input) or string.lower(character.skin) == string.lower(input) then
             return true, character
         end
     end
@@ -330,7 +330,7 @@ CheckIfVehicleExistsByName = function(input)
         return false
     end
     for _, vehicle in pairs(Vehicles) do
-        if string.lower(vehicle.name) == string.lower(input) then
+        if string.lower(vehicle.name) == string.lower(input) or string.lower(vehicle.skin) == string.lower(input) then
             return true, vehicle
         end
     end
@@ -857,13 +857,13 @@ GetDriversInfo                  = function()
     -- Namenszuordnung: networkID → Name (für Fahrzeuge und Charaktere)
     local nameMap = {}
     for netID, veh in pairs(Vehicles) do
-        nameMap[tostring(netID)] = veh.name or veh.skin or tostring(netID)
+        nameMap[tostring(netID)] = veh.skin or veh.name or tostring(netID)
     end
     for netID, char in pairs(Characters) do
-        nameMap[tostring(netID)] = char.name or char.skin or tostring(netID)
+        nameMap[tostring(netID)] = char.skin or char.name or tostring(netID)
     end
     for netID, plr in pairs(Players) do
-        nameMap[tostring(netID)] = plr.name or plr.skin or tostring(netID)
+        nameMap[tostring(netID)] = plr.skin or plr.name or tostring(netID)
     end
     return {
         drivers = Drivers,

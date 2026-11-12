@@ -143,8 +143,8 @@ export function initSidebarTabs() {
         locationTab: 'Locations',
         dioramaTab: 'Dioramen',
         myVehiclesTab: 'MeineFahrzeuge',
-        /*         driversTab: 'Drivers',
-                optionsTab: 'Optionen', */
+        driversTab: 'Drivers',
+        optionsTab: 'Optionen',
     };
 
     for (const [id, section] of Object.entries(tabs)) {
