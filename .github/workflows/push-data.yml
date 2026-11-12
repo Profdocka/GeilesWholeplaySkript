@@ -24,7 +24,7 @@ jobs:
   push:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           ref: main
 
@@ -39,7 +39,7 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
         run: |
           lftp -c "
-            set ftp:ssl-force yes;
+            set ftp:ssl-allow no;
             open --env-password -u \"$FTP_USERNAME\" \"ftp://$FTP_SERVER\";
             mirror --reverse --only-missing --verbose $DRY_RUN ./dioramas \"$ZAP_DIR/dioramas\";
             mirror --reverse --only-missing --verbose $DRY_RUN --no-recursion --include-glob '*.json' --exclude-glob '*' ./server \"$ZAP_DIR/server\";

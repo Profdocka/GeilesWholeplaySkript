@@ -22,7 +22,7 @@ jobs:
   pull:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           ref: main
 
@@ -36,7 +36,7 @@ jobs:
           LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           lftp -c "
-            set ftp:ssl-force yes;
+            set ftp:ssl-allow no;
             open --env-password -u \"$FTP_USERNAME\" \"ftp://$FTP_SERVER\";
             mirror --verbose \"$ZAP_DIR/dioramas\" ./dioramas;
             mirror --verbose --no-recursion --include-glob '*.json' --exclude-glob '*' \"$ZAP_DIR/server\" ./server;
