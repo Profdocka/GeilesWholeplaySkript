@@ -1,0 +1,48 @@
+# Lädt Code und Vorlagen auf den ZAP-Server.
+# Laufzeitdaten (dioramas/, server/*.json) werden nie hochgeladen oder gelöscht –
+# dafür gibt es pull-data.yml und push-data.yml.
+#
+# Auslöser:
+#   - Push eines Tags "v*"  → deployt diesen Tag
+#   - Manuell (Actions → Deploy to ZAP → Run workflow) → deployt den angegebenen Tag,
+#     z.B. "v1.1.0" für einen Rollback. Funktioniert auch für Tags ohne diese Workflow-Datei.
+# Danach im txAdmin: restart GeilesWholeplaySkript
+
+name: Deploy to ZAP
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Tag, der deployt werden soll (z.B. v1.1.0)'
+        required: true
+
+concurrency:
+  group: zap-ftp
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          server-dir: /g619270/fivem/Qbox_9E2E93.base/resources/GeilesWholeplaySkript/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            README.md
+            CONTRIBUTING.md
+            dioramas/**
+            server/*.json

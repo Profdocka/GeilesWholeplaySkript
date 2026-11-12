@@ -1,0 +1,46 @@
+# Lädt neue Laufzeitdaten (dioramas/, server/*.json) aus dem Repo auf den ZAP-Server.
+# Es werden nur Dateien hochgeladen, die auf dem Server noch fehlen –
+# bestehende Dateien werden nie überschrieben oder gelöscht.
+# Danach im txAdmin: restart GeilesWholeplaySkript (Diorama-Liste wird nur beim Start eingelesen)
+
+name: Neue Daten hochschicken (Repo → ZAP)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Nur anzeigen, was hochgeladen würde'
+        type: boolean
+        default: true
+
+concurrency:
+  group: zap-ftp
+  cancel-in-progress: false
+
+env:
+  ZAP_DIR: /g619270/fivem/Qbox_9E2E93.base/resources/GeilesWholeplaySkript
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: lftp installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Fehlende Dateien hochladen
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          lftp -c "
+            set ftp:ssl-allow no;
+            open --env-password -u \"$FTP_USERNAME\" \"ftp://$FTP_SERVER\";
+            mirror --reverse --only-missing --verbose $DRY_RUN ./dioramas \"$ZAP_DIR/dioramas\";
+            mirror --reverse --only-missing --verbose $DRY_RUN --no-recursion --include-glob '*.json' --exclude-glob '*' ./server \"$ZAP_DIR/server\";
+          "
