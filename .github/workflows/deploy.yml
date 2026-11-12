@@ -51,7 +51,7 @@ jobs:
             set ftp:ssl-allow no;
             set net:max-retries 3;
             open --env-password -u \"$FTP_USERNAME\" \"ftp://$FTP_SERVER\";
-            mirror --reverse --verbose --parallel=4 \
+            mirror --reverse --no-perms --verbose --parallel=4 \
               --exclude '^\.git' \
               --exclude '^README\.md$' \
               --exclude '^CONTRIBUTING\.md$' \

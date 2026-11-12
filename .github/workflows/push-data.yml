@@ -41,6 +41,6 @@ jobs:
           lftp -c "
             set ftp:ssl-allow no;
             open --env-password -u \"$FTP_USERNAME\" \"ftp://$FTP_SERVER\";
-            mirror --reverse --only-missing --verbose $DRY_RUN ./dioramas \"$ZAP_DIR/dioramas\";
-            mirror --reverse --only-missing --verbose $DRY_RUN --no-recursion --include-glob '*.json' --exclude-glob '*' ./server \"$ZAP_DIR/server\";
+            mirror --reverse --no-perms --only-missing --verbose $DRY_RUN ./dioramas \"$ZAP_DIR/dioramas\";
+            mirror --reverse --no-perms --only-missing --verbose $DRY_RUN --no-recursion --include-glob '*.json' --exclude-glob '*' ./server \"$ZAP_DIR/server\";
           "
